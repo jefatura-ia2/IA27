@@ -1,4 +1,6 @@
 {
+  "framework": null,
+  "outputDirectory": "frontend",
   "headers": [
     { "source": "/(.*)", "headers": [
       { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
