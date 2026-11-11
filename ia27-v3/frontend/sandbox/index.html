@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sandbox Python · IA 1º Bach</title>
+<style>
+:root{--bg:#0f1722;--surface:#1a2332;--border:#2a3442;--text:#e3e8f0;--muted:#6b7a8e;--green:#4ade80;--blue:#60a5fa;--yellow:#fbbf24;--red:#f87171;--radius:8px;--mono:"Fira Code","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+/* TOOLBAR */
+.toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:.95rem;color:var(--blue);white-space:nowrap}
+.brand span{color:var(--muted);font-weight:400;font-size:.8rem;margin-left:6px}
+.spacer{flex:1}
+.toolbar-btn{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:6px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .12s}
+.toolbar-btn:hover{border-color:var(--blue);color:var(--blue)}
+.toolbar-btn.run{background:var(--green);border-color:var(--green);color:#0f1722;font-weight:800}
+.toolbar-btn.run:hover{filter:brightness(1.1)}
+.toolbar-btn.run:disabled{opacity:.5;cursor:not-allowed}
+.status{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.status.loading{color:var(--yellow)}
+.status.ready{color:var(--green)}
+.status.error{color:var(--red)}
+/* SPLIT PANE */
+.split{display:flex;flex:1;overflow:hidden;gap:0}
+/* EDITOR */
+.editor-pane{display:flex;flex-direction:column;flex:1;border-right:1px solid var(--border);min-width:0}
+.editor-label{background:var(--surface);padding:5px 12px;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.editor-wrap{flex:1;overflow:auto;position:relative}
+textarea#editor{width:100%;height:100%;background:var(--bg);color:var(--text);border:none;outline:none;padding:12px 14px;font-family:var(--mono);font-size:13.5px;line-height:1.6;resize:none;tab-size:4}
+textarea#editor::selection{background:rgba(96,165,250,.3)}
+/* OUTPUT */
+.output-pane{display:flex;flex-direction:column;flex:1;min-width:0}
+.output-label{background:var(--surface);padding:5px 12px;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.output-label .clear-btn{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.78rem;font-family:inherit;padding:0}
+.output-label .clear-btn:hover{color:var(--red)}
+.output{flex:1;overflow-y:auto;padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.out-line{display:block}
+.out-stdout{color:var(--text)}
+.out-stderr{color:var(--red)}
+.out-info{color:var(--muted);font-style:italic}
+.out-ok{color:var(--green)}
+.out-prompt{color:var(--blue)}
+/* EXAMPLES */
+.examples-bar{background:var(--surface);border-top:1px solid var(--border);padding:6px 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.examples-label{font-size:.72rem;color:var(--muted);font-weight:700;white-space:nowrap}
+.ex-btn{background:var(--bg);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:5px;font-family:inherit;font-size:.76rem;cursor:pointer;transition:all .1s}
+.ex-btn:hover{border-color:var(--blue);color:var(--blue)}
+/* Mobile: stack */
+@media(max-width:600px){.split{flex-direction:column}.editor-pane,.output-pane{flex:none;height:50%}}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <span class="brand">🐍 Python Sandbox <span>via Pyodide</span></span>
+  <div class="spacer"></div>
+  <span class="status loading" id="status">⏳ Cargando Pyodide…</span>
+  <button class="toolbar-btn run" id="run-btn" disabled onclick="runCode()">▶ Ejecutar</button>
+  <button class="toolbar-btn" onclick="clearOutput()">🗑 Limpiar</button>
+</div>
+
+<div class="split">
+  <div class="editor-pane">
+    <div class="editor-label">
+      <span>EDITOR</span>
+      <span style="margin-left:auto;font-size:.7rem;color:var(--muted)">Ctrl+Enter para ejecutar</span>
+    </div>
+    <div class="editor-wrap">
+      <textarea id="editor" spellcheck="false" autocorrect="off" autocapitalize="off">
+# IA · 1º Bachillerato · Sandbox Python
+# Escribe tu código aquí y pulsa Ejecutar (o Ctrl+Enter)
+
+# Ejemplo: Hola Mundo
+print("¡Hola, mundo!")
+
+# Ejemplo: Variables y operaciones
+nombre = "Alumno"
+curso = "1º Bachillerato"
+print(f"Bienvenido, {nombre} de {curso}")
+
+# Ejemplo: Lista y bucle
+frutas = ["manzana", "pera", "naranja"]
+for i, fruta in enumerate(frutas, 1):
+    print(f"  {i}. {fruta}")
+</textarea>
+    </div>
+  </div>
+  <div class="output-pane">
+    <div class="output-label">
+      <span>SALIDA</span>
+      <button class="clear-btn" onclick="clearOutput()">✕ Limpiar</button>
+    </div>
+    <div class="output" id="output">
+      <span class="out-info"># La salida de tu programa aparecerá aquí</span>
+    </div>
+  </div>
+</div>
+
+<div class="examples-bar">
+  <span class="examples-label">Ejemplos rápidos:</span>
+  <button class="ex-btn" onclick="loadEx('variables')">Variables</button>
+  <button class="ex-btn" onclick="loadEx('condicional')">if/else</button>
+  <button class="ex-btn" onclick="loadEx('bucle')">for/while</button>
+  <button class="ex-btn" onclick="loadEx('funcion')">Funciones</button>
+  <button class="ex-btn" onclick="loadEx('lista')">Listas</button>
+  <button class="ex-btn" onclick="loadEx('diccionario')">Diccionarios</button>
+  <button class="ex-btn" onclick="loadEx('estadistica')">Estadística</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<script>
+var pyodide = null;
+var EXAMPLES = {
+  variables: `# Variables en Python
+entero = 42
+flotante = 3.14
+texto = "Python es genial"
+booleano = True
+
+print("Entero:", entero, type(entero))
+print("Flotante:", flotante, type(flotante))
+print("Texto:", texto, type(texto))
+print("Booleano:", booleano, type(booleano))
+
+# Operaciones
+print("\\n--- Operaciones ---")
+print(f"{entero} + {flotante} =", entero + flotante)
+print(f"{entero} ** 2 =", entero ** 2)
+print(f"Texto mayús:", texto.upper())`,
+
+  condicional: `# Condicionales if / elif / else
+nota = 7.5
+
+if nota >= 9:
+    calificacion = "Sobresaliente"
+elif nota >= 7:
+    calificacion = "Notable"
+elif nota >= 5:
+    calificacion = "Aprobado"
+else:
+    calificacion = "Insuficiente"
+
+print(f"Nota: {nota} → {calificacion}")
+
+# Operadores lógicos
+edad = 17
+carnet = False
+if edad >= 18 and carnet:
+    print("Puede conducir")
+elif edad >= 18 or carnet:
+    print("Condición parcial")
+else:
+    print("No puede conducir")`,
+
+  bucle: `# Bucles for y while
+
+# For con range
+print("Tabla del 3:")
+for i in range(1, 11):
+    print(f"  3 x {i:2d} = {3*i:2d}")
+
+# While
+print("\\nCuenta atrás:")
+n = 5
+while n > 0:
+    print(f"  {n}...")
+    n -= 1
+print("  ¡Despegue!")
+
+# For con enumerate
+frutas = ["manzana", "pera", "uva"]
+print("\\nLista de frutas:")
+for i, f in enumerate(frutas, 1):
+    print(f"  {i}. {f}")`,
+
+  funcion: `# Funciones
+def saludar(nombre, formal=False):
+    """Genera un saludo personalizado."""
+    if formal:
+        return f"Buenos días, {nombre}."
+    return f"¡Hola, {nombre}!"
+
+def es_par(n):
+    return n % 2 == 0
+
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+# Usar las funciones
+print(saludar("Ana"))
+print(saludar("Sr. García", formal=True))
+print()
+
+for num in range(1, 8):
+    par = "par" if es_par(num) else "impar"
+    print(f"  {num} es {par}, {num}! = {factorial(num)}")`,
+
+  lista: `# Listas
+numeros = [4, 2, 7, 1, 9, 3, 8, 5, 6]
+print("Original:", numeros)
+print("Ordenada:", sorted(numeros))
+print("Máx:", max(numeros), "| Mín:", min(numeros))
+print("Suma:", sum(numeros))
+
+# Métodos de lista
+frutas = ["pera", "manzana"]
+frutas.append("uva")
+frutas.insert(0, "naranja")
+print("\\nFrutas:", frutas)
+print("Última:", frutas[-1])
+print("Slice [1:3]:", frutas[1:3])
+
+# List comprehension
+cuadrados = [x**2 for x in range(1, 6)]
+print("\\nCuadrados:", cuadrados)
+pares = [x for x in range(20) if x % 2 == 0]
+print("Pares hasta 20:", pares)`,
+
+  diccionario: `# Diccionarios
+alumno = {
+    "nombre": "Ana García",
+    "nota_ia": 8.5,
+    "nota_mates": 7.0,
+    "activo": True
+}
+
+# Acceso
+print("Nombre:", alumno["nombre"])
+print("Nota IA:", alumno.get("nota_ia", "sin nota"))
+
+# Modificar y añadir
+alumno["nota_fisica"] = 9.0
+alumno["nota_ia"] = 9.0  # actualizar
+print("\\nAlumno actualizado:")
+for clave, valor in alumno.items():
+    print(f"  {clave}: {valor}")
+
+# Diccionario de alumnos
+clase = {"al01": 8.5, "al02": 7.0, "al03": 9.5, "al04": 6.0}
+media_clase = sum(clase.values()) / len(clase)
+print(f"\\nMedia de clase: {media_clase:.1f}")
+mejor = max(clase, key=clase.get)
+print(f"Mejor nota: {mejor} con {clase[mejor]}")`,
+
+  estadistica: `# Estadística descriptiva con Python
+import statistics
+
+notas = [5, 7, 8, 6, 9, 7, 8, 6, 10, 7, 5, 9, 8, 7, 6]
+
+print("=== ESTADÍSTICA DESCRIPTIVA ===")
+print(f"N          = {len(notas)}")
+print(f"Media      = {statistics.mean(notas):.2f}")
+print(f"Mediana    = {statistics.median(notas):.2f}")
+print(f"Moda       = {statistics.mode(notas)}")
+print(f"Varianza   = {statistics.variance(notas):.2f}")
+print(f"Desv. típ. = {statistics.stdev(notas):.2f}")
+print(f"Mínimo     = {min(notas)}")
+print(f"Máximo     = {max(notas)}")
+rango = max(notas) - min(notas)
+print(f"Rango      = {rango}")
+cv = statistics.stdev(notas) / statistics.mean(notas) * 100
+print(f"C.V.       = {cv:.1f}%")
+
+print("\\n=== DISTRIBUCIÓN ===")
+from collections import Counter
+dist = Counter(sorted(notas))
+for nota, cnt in dist.items():
+    bar = "█" * cnt
+    print(f"  {nota:2d}: {bar} ({cnt})")`
+};
+
+async function initPyodide() {
+  try {
+    setStatus('loading', '⏳ Cargando Pyodide…');
+    pyodide = await loadPyodide({
+      stdout: function(text) { appendOutput('stdout', text); },
+      stderr: function(text) { appendOutput('stderr', text); }
+    });
+    setStatus('ready', '✓ Listo');
+    document.getElementById('run-btn').disabled = false;
+    appendOutput('ok', '🐍 Python ' + pyodide.runPython('import sys; sys.version.split()[0]') + ' listo — escribe código y pulsa Ejecutar');
+  } catch(e) {
+    setStatus('error', '✗ Error al cargar');
+    appendOutput('stderr', 'Error cargando Pyodide: ' + e.message);
+  }
+}
+
+function setStatus(cls, text) {
+  var s = document.getElementById('status');
+  s.className = 'status ' + cls;
+  s.textContent = text;
+}
+
+function appendOutput(type, text) {
+  var out = document.getElementById('output');
+  var line = document.createElement('span');
+  line.className = 'out-line out-' + type;
+  line.textContent = text;
+  out.appendChild(line);
+  out.appendChild(document.createTextNode('\n'));
+  out.scrollTop = out.scrollHeight;
+}
+
+async function runCode() {
+  if (!pyodide) { appendOutput('info', '# Pyodide no cargado todavía'); return; }
+  var code = document.getElementById('editor').value;
+  var btn = document.getElementById('run-btn');
+  btn.disabled = true; btn.textContent = '⏳ Ejecutando…';
+  var sep = '─'.repeat(40);
+  appendOutput('prompt', '>>> [Ejecutando] ' + new Date().toLocaleTimeString());
+  try {
+    var result = await pyodide.runPythonAsync(code);
+    if (result !== undefined && result !== null) appendOutput('ok', String(result));
+    appendOutput('ok', sep);
+  } catch(e) {
+    appendOutput('stderr', e.message);
+    appendOutput('stderr', sep);
+  }
+  btn.disabled = false; btn.textContent = '▶ Ejecutar';
+}
+
+function clearOutput() {
+  document.getElementById('output').innerHTML = '<span class="out-info"># Salida limpiada</span>\n';
+}
+
+function loadEx(name) {
+  if (EXAMPLES[name]) {
+    document.getElementById('editor').value = EXAMPLES[name];
+    document.getElementById('editor').focus();
+  }
+}
+
+// Ctrl+Enter to run
+document.getElementById('editor').addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
+  // Tab key inserts spaces
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    var t = this, s = t.selectionStart, end = t.selectionEnd;
+    t.value = t.value.substring(0,s) + '    ' + t.value.substring(end);
+    t.selectionStart = t.selectionEnd = s + 4;
+  }
+});
+
+initPyodide();
+</script>
+</body>
+</html>

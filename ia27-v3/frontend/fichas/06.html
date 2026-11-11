@@ -1,0 +1,851 @@
+<header class="header">
+  <div class="header-text">
+    <div class="session-num">Sesión 06</div>
+    <h1 class="ficha-h1">Machine Learning: <em>tipos de aprendizaje y workflow</em></h1>
+    <div class="meta">Aprendizaje automático &nbsp;·&nbsp; 30 Oct 2026 &nbsp;·&nbsp; 2 sesiones</div>
+  </div>
+  <img class="header-logo" src="img/logo-ies.png" alt="IES Valle del Jerte">
+</header>
+
+<style>
+/* ══ Estética de la sesión 06 (tomada de las diapositivas: verde tecnológico + neón) ══ */
+.ml6-hero{position:relative;overflow:hidden;border-radius:14px;padding:26px 26px 22px;margin:4px 0 18px;color:#e9f7ec;
+  background:radial-gradient(circle at 85% 20%,rgba(163,255,64,.35),transparent 28%),
+             linear-gradient(135deg,#0b4d1c 0%,#063314 55%,#041a0b 100%)}
+.ml6-hero::before{content:"";position:absolute;inset:0;opacity:.18;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px);background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 35%,#000 75%);mask-image:linear-gradient(90deg,transparent 35%,#000 75%)}
+.ml6-hero h2{all:unset;display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:1.7rem;letter-spacing:.04em;line-height:1.05;color:#eaf6e6;text-transform:uppercase}
+.ml6-hero h2 small{display:block;font-size:.95rem;letter-spacing:.08em;color:#b8f36b;margin-top:8px}
+.ml6-hero p{position:relative;max-width:640px;font-size:.88rem;line-height:1.6;margin:12px 0 0;color:#cfe9d4}
+.ml6-hero .ml6-chip{display:inline-block;margin:12px 6px 0 0;padding:3px 10px;border:1px solid rgba(184,243,107,.5);border-radius:999px;font-size:.74rem;font-weight:700;color:#b8f36b}
+
+.ml6-dark{background:linear-gradient(135deg,#0b3f19 0%,#06240e 70%,#04150a 100%);color:#dcefdf;border-radius:12px;padding:18px 20px;margin:12px 0}
+.ml6-dark strong{color:#fff}
+.ml6-dark .hl{color:#5ce8e6;font-weight:700}
+.ml6-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0}
+.ml6-card{background:linear-gradient(160deg,#0d4a1e,#06240e);border:1px solid rgba(184,243,107,.18);border-radius:12px;padding:14px 16px;color:#d6ecd9}
+.ml6-card .n{font-family:Montserrat,sans-serif;font-weight:800;font-size:1.9rem;line-height:1;color:#8fe83a;float:left;margin:0 12px 4px 0}
+.ml6-card .n.c{color:#5ce8e6}
+.ml6-card h4{all:unset;display:block;font-family:Montserrat,sans-serif;font-weight:700;font-size:.95rem;color:#b8f36b;margin:2px 0 6px}
+.ml6-card p{font-size:.82rem;line-height:1.55;margin:0;clear:none}
+.ml6-card .tagline{display:block;clear:both;margin-top:8px;font-size:.74rem;color:#5ce8e6;font-weight:700}
+
+.ml6-lead{font-size:.88rem;line-height:1.7;margin:0 0 14px}
+.ml6-sub{font-size:.9rem;font-weight:800;margin:20px 0 8px;color:var(--primary)}
+.ml6-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:640px){.ml6-compare{grid-template-columns:1fr}}
+.ml6-box{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--surface2);font-size:.84rem;line-height:1.55}
+.ml6-box b.t{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.ml6-eq{font-family:var(--mono);font-size:.8rem;background:var(--bg);border:1px dashed var(--border);border-radius:8px;padding:8px 10px;margin-top:8px}
+
+/* Diagrama de flujo (pipeline) */
+.ml6-flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0;font-size:.78rem;font-weight:700}
+.ml6-flow .b{padding:8px 12px;border-radius:9px;color:#fff;text-align:center;line-height:1.25}
+.ml6-flow .arr{color:#e34b3c;font-size:1.1rem}
+.b-data{background:#1f7a3f}.b-algo{background:#0f6b5c;border-radius:50%!important;padding:14px 12px!important}
+.b-new{background:#f08c00}.b-model{background:#16a34a;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);padding:12px 20px!important}
+.b-out{background:#5ce8e6;color:#063314!important}.b-dep{background:#e5383b}
+
+.ml6-tools{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.ml6-tools span{font-family:var(--mono);font-size:.74rem;padding:3px 9px;border-radius:6px;background:var(--primary-soft);color:var(--primary);font-weight:700}
+
+/* Modelos del curso */
+.ml6-models{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:640px){.ml6-models{grid-template-columns:1fr}}
+.ml6-models .col{border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.ml6-models .head{padding:10px 14px;color:#fff;font-weight:800;font-family:Montserrat,sans-serif}
+.ml6-models .reg .head{background:#7a1414}.ml6-models .cla .head{background:#2b5aa8}
+.ml6-models ul{list-style:none;margin:0;padding:8px 10px;display:grid;gap:6px;background:var(--surface)}
+.ml6-models li{padding:7px 10px;border-radius:7px;font-size:.84rem;font-weight:700;color:#fff}
+.ml6-models .reg li{background:#ee7a2a}.ml6-models .cla li{background:#27a9b8}
+.ml6-models li small{display:block;font-weight:500;opacity:.9;font-size:.74rem}
+
+/* Bucle de refuerzo (SVG) */
+.ml6-svg{width:100%;max-width:560px;display:block;margin:10px auto}
+
+/* Workflow 8 pasos */
+.ml6-wf{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.ml6-step{border:3px solid var(--c);border-radius:16px 16px 16px 4px;padding:10px 12px 12px;background:var(--surface)}
+.ml6-step .num{font-family:Montserrat,sans-serif;font-weight:900;font-size:2.2rem;line-height:1;color:var(--c)}
+.ml6-step .ttl{font-weight:800;font-size:.8rem;text-transform:uppercase;color:var(--c);margin:2px 0 6px;letter-spacing:.02em}
+.ml6-step p{font-size:.76rem;line-height:1.45;margin:0;color:var(--text)}
+.ml6-step .lib{display:block;margin-top:6px;font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+
+/* Listas numeradas tipo diapositiva */
+.ml6-ol{list-style:none;padding:0;margin:10px 0;display:grid;gap:7px}
+.ml6-ol li{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;box-shadow:0 1px 3px rgba(0,0,0,.05);font-size:.84rem;line-height:1.45}
+.ml6-ol li .k{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:2px solid var(--c,#1a4fa0);color:var(--c,#1a4fa0);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem}
+.ml6-ol li b{color:var(--c,#1a4fa0)}
+.ml6-ol li small{display:block;color:var(--muted);font-size:.76rem}
+.ml6-big{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.ml6-bubble{width:150px;height:150px;border-radius:50%;background:#6d72d8;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:.9rem;padding:16px;flex-shrink:0}
+.ml6-src{columns:2 260px;font-size:.8rem;line-height:1.5;margin:8px 0;padding-left:18px}
+.ml6-src li{margin-bottom:4px;break-inside:avoid}
+
+/* Diapositivas originales */
+.ml6-slide{margin:12px 0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.ml6-slide summary{cursor:pointer;padding:8px 12px;font-size:.8rem;font-weight:700;color:var(--primary);background:var(--surface2);list-style:none}
+.ml6-slide summary::-webkit-details-marker{display:none}
+.ml6-slide img{display:block;width:100%;height:auto}
+.ml6-dl{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.ml6-dl a{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;background:#0b4d1c;color:#dff7d0;font-size:.8rem;font-weight:700;text-decoration:none}
+.ml6-dl a:hover{background:#0f6a26}
+
+/* Reto interactivo */
+.ml6-quiz{border:2px solid #16a34a;border-radius:12px;padding:14px 16px;margin:16px 0;background:var(--surface)}
+.ml6-quiz .q{font-weight:700;font-size:.92rem;margin:6px 0 10px;min-height:2.6em}
+.ml6-quiz .opts{display:flex;flex-wrap:wrap;gap:8px}
+.ml6-quiz button{border:1.5px solid var(--border);background:var(--surface2);color:var(--text);border-radius:8px;padding:7px 12px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+.ml6-quiz button:hover{border-color:#16a34a}
+.ml6-quiz .fb{margin-top:10px;font-size:.84rem;min-height:1.3em}
+.ml6-quiz .bar{height:6px;background:var(--surface2);border-radius:6px;overflow:hidden;margin-top:8px}
+.ml6-quiz .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#16a34a,#5ce8e6);transition:width .3s}
+
+/* Tarjetas de autoevaluación (mismo formato que la sesión 03) */
+.fc-header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.fc-title{font-family:Montserrat,sans-serif;font-size:1.2rem;font-weight:700;color:var(--ink)}
+.fc-desc{margin:0 0 16px;font-size:.95rem;color:#555}
+.fc-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.fc-ctrl-btn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:.85rem;font-weight:600;transition:background .15s}
+#fc-score{margin-left:auto;font-size:.9rem;font-weight:700;color:var(--ink);padding:6px 12px;background:var(--bg);border-radius:8px;border:1.5px solid var(--border)}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.fc-card{height:190px;cursor:pointer;perspective:800px;border-radius:12px}
+.fc-card.fc-known{outline:2.5px solid var(--green)}
+.fc-card.fc-unknown{outline:2.5px solid var(--red)}
+.fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.4,0,.2,1)}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;border:1.5px solid var(--border);padding:16px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.fc-front{background:#fff;border-top:4px solid #16a34a}
+.fc-back{background:var(--bg);transform:rotateY(180deg)}
+.fc-num{font-size:.72rem;font-weight:700;color:var(--accent);margin-bottom:8px;font-family:var(--mono)}
+.fc-q{font-size:.95rem;font-weight:600;color:var(--ink);margin:0;line-height:1.4}
+.fc-a{font-size:.84rem;color:var(--ink);margin:0 0 auto;line-height:1.5;overflow:auto;max-height:110px}
+.fc-hint{font-size:.75rem;color:#999;margin-top:auto;text-align:center}
+.fc-btns{display:flex;gap:8px;margin-top:10px}
+.fc-btn{flex:1;padding:6px;border-radius:8px;border:none;cursor:pointer;font-size:.8rem;font-weight:700}
+.fc-btn-no{background:#fee2e2;color:#dc2626}
+.fc-btn-yes{background:#dcfce7;color:#16a34a}
+
+/* Entrega y rúbrica */
+.ml6-task{border:2px solid #16a34a;border-radius:14px;overflow:hidden;margin:6px 0}
+.ml6-task .top{background:linear-gradient(135deg,#065f2c,#16a34a);color:#fff;padding:16px 18px}
+.ml6-task .top h3{margin:0;font-size:1.05rem;font-family:Montserrat,sans-serif}
+.ml6-task .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.ml6-task .badges span{background:rgba(255,255,255,.2);border-radius:999px;padding:3px 10px;font-size:.74rem;font-weight:700}
+.ml6-task .in{padding:14px 18px;font-size:.86rem;line-height:1.6}
+.ml6-rub{width:100%;border-collapse:collapse;font-size:.8rem;margin:10px 0}
+.ml6-rub th{background:#065f2c;color:#fff;text-align:left;padding:8px 10px}
+.ml6-rub td{border-bottom:1px solid var(--border);padding:8px 10px;vertical-align:top}
+.ml6-rub td:last-child{text-align:center;font-weight:800;color:#16a34a;white-space:nowrap}
+.ml6-send{display:inline-flex;align-items:center;gap:8px;background:#16a34a;color:#fff;border:none;border-radius:10px;padding:11px 20px;font:inherit;font-weight:800;cursor:pointer;margin-top:6px}
+.ml6-send:hover{background:#12853d}
+
+/* Autoevaluación de competencias */
+.ml6-ae{display:grid;gap:10px}
+.ml6-ae .it{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface)}
+.ml6-ae .it p{margin:0 0 8px;font-size:.84rem;font-weight:600}
+.ml6-ae .lv{display:flex;flex-wrap:wrap;gap:6px}
+.ml6-ae input{display:none}
+.ml6-ae label{border:1.5px solid var(--border);border-radius:999px;padding:4px 10px;font-size:.76rem;cursor:pointer;background:var(--surface2)}
+.ml6-ae input:checked+label{background:#16a34a;color:#fff;border-color:#16a34a}
+.ml6-ae-res{margin-top:12px;font-weight:800;font-size:.9rem;color:#16a34a}
+
+@media (prefers-color-scheme:dark){
+  .ml6-step,.ml6-ol li,.ml6-quiz,.ml6-ae .it{background:var(--surface)}
+  .fc-desc{color:var(--muted)}
+}
+/* ══ Laboratorio EDA + regresión (opción resaltada) ══ */
+.ml6-lab{position:relative;margin:18px 0 22px;border-radius:16px;padding:20px 22px;background:linear-gradient(135deg,#1d3557 0%,#264b7a 60%,#2f7d4f 140%);color:#eef3fb;box-shadow:0 8px 24px rgba(29,53,87,.28);border:2px solid #d4a017}
+.ml6-lab-badge{display:inline-block;background:#d4a017;color:#1d1d1d;font-weight:800;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 12px;margin-bottom:8px}
+.ml6-lab h3{color:#fff;margin:0 0 6px;font-size:1.25rem}
+.ml6-lab p{margin:0 0 10px;font-size:.92rem;line-height:1.55;color:#dfe7f3}
+.ml6-lab-steps{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px;padding:0;list-style:none}
+.ml6-lab-steps li{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 10px;font-size:.74rem;font-weight:700}
+.ml6-lab-btns{display:flex;flex-wrap:wrap;gap:8px}
+.ml6-lab-btns button,.ml6-lab-btns a{font:inherit;font-size:.86rem;font-weight:800;border-radius:10px;padding:9px 16px;cursor:pointer;text-decoration:none;border:2px solid #fff}
+.ml6-lab-btns .go{background:#d4a017;border-color:#d4a017;color:#1d1d1d}
+.ml6-lab-btns .ghost{background:transparent;color:#fff}
+.ml6-lab-btns button:hover,.ml6-lab-btns a:hover{filter:brightness(1.1)}
+.ml6-lab-frame{margin-top:16px;border-radius:12px;overflow:hidden;background:#f7f5ef;border:1px solid rgba(255,255,255,.35)}
+.ml6-lab-frame iframe{display:block;width:100%;height:860px;border:0}
+@media(max-width:720px){.ml6-lab{padding:16px}.ml6-lab-frame iframe{height:80vh}}
+.ml6-lab-link{display:inline-flex;gap:6px;align-items:center;margin:10px 0 4px;padding:8px 14px;border-radius:10px;background:#fff7df;border:1.5px solid #d4a017;color:#7a5200;font-weight:800;text-decoration:none;font-size:.86rem}
+</style>
+
+<div class="ml6-hero">
+  <h2>Machine Learning<small>Aprendizaje automático · IA_Bachillerato</small></h2>
+  <p>Los algoritmos de ML permiten que los ordenadores <strong>aprendan a tomar decisiones a partir de datos</strong>, sin que tengamos que programar explícitamente cada regla. En esta sesión veremos los tipos de aprendizaje, los modelos que trabajaremos durante el curso y las fases de un proyecto real.</p>
+  <span class="ml6-chip">Supervisado</span><span class="ml6-chip">No supervisado</span><span class="ml6-chip">Refuerzo</span><span class="ml6-chip">Deep Learning</span><span class="ml6-chip">Workflow 1→8</span>
+</div>
+
+<!-- ══════════ LABORATORIO EDA + REGRESIÓN (opción resaltada) ══════════ -->
+<div class="ml6-lab" id="s6-lab">
+  <span class="ml6-lab-badge">🧪 Nuevo · Laboratorio interactivo</span>
+  <h3>EDA y regresión lineal con un péndulo simple</h3>
+  <p>40 ensayos de laboratorio con <strong>valores ausentes (NaN)</strong> y <strong>outliers</strong> escondidos. Explora los datos, decide cómo limpiarlos, transforma las variables y ajusta una regresión lineal hasta estimar la gravedad <em>g</em>. Es la práctica del <a href="#s6-8" style="color:#ffe08a">preprocesamiento</a> y del EDA de esta sesión.</p>
+  <ul class="ml6-lab-steps"><li>1 Pregunta</li><li>2 Inspección</li><li>3 Calidad</li><li>4 Transformaciones</li><li>5 Univariante</li><li>6 Relaciones</li><li>7 Regresión</li><li>8 Práctica en vivo</li><li>9 Python y Sheets</li></ul>
+  <div class="ml6-lab-btns">
+    <button type="button" class="go" id="ml6-lab-btn" onclick="ml6Lab()">▶ Abrir el laboratorio aquí</button>
+    <a class="ghost" href="laboratorios/eda-regresion/index.html" target="_blank" rel="noopener">⤢ Pantalla completa</a>
+    <a class="ghost" href="descargas/s06/pendulo_raw.csv" download>⬇ Dataset CSV</a>
+  </div>
+  <div class="ml6-lab-frame" id="ml6-lab-frame" hidden></div>
+
+<div class="toc">
+  <div class="toc-title">Contenidos</div>
+  <ol>
+    <li><a href="#s6-lab"><strong>🧪 Laboratorio interactivo: EDA y regresión (péndulo)</strong></a></li>
+    <li><a href="#s6-1">¿Qué es el Machine Learning?</a></li>
+    <li><a href="#s6-2">Los cuatro tipos de aprendizaje</a></li>
+    <li><a href="#s6-3">Aprendizaje supervisado: regresión y clasificación</a></li>
+    <li><a href="#s6-4">Aprendizaje no supervisado</a></li>
+    <li><a href="#s6-5">Aprendizaje por refuerzo</a></li>
+    <li><a href="#s6-6">Aprendizaje profundo y redes neuronales</a></li>
+    <li><a href="#s6-7">Workflow de un proyecto de ML</a></li>
+    <li><a href="#s6-8">Preprocesamiento de datos</a></li>
+    <li><a href="#s6-ej">&#x270F;&#xFE0F;&nbsp;Ejercicios propuestos</a></li>
+    <li><a href="#tarjetas">&#x1F0CF;&nbsp;Tarjetas de autoevaluación</a></li>
+    <li><a href="#s6-entrega">&#x1F4E8;&nbsp;Actividad de entrega final</a></li>
+    <li><a href="#s6-ae">&#x2705;&nbsp;Autoevaluación</a></li>
+  </ol>
+  <div class="ml6-dl">
+    <a href="descargas/s06/1.1_Machine_learning.pdf" target="_blank" rel="noopener">📄 Apuntes: Machine Learning</a>
+    <a href="descargas/s06/1.1.0_Modelos_ML.pdf" target="_blank" rel="noopener">📄 Modelos de ML del curso</a>
+    <a href="descargas/s06/1.2_Workflow_proyecto_ML.pdf" target="_blank" rel="noopener">📄 Workflow de un proyecto ML</a>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+
+</div>
+
+<!-- ══════════ 01 ══════════ -->
+<section class="ficha-section" id="s6-1">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="ficha-h2">¿Qué es el Machine Learning?</span>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">El <strong>Machine Learning</strong> (aprendizaje automático) es la rama de la Inteligencia Artificial que estudia algoritmos capaces de <strong>mejorar su rendimiento en una tarea a partir de la experiencia</strong>, es decir, de los datos. El término lo popularizó Arthur Samuel en 1959, mientras programaba un ordenador que aprendía a jugar a las damas.</p>
+
+    <div class="ml6-compare">
+      <div class="ml6-box"><b class="t">Programación clásica</b>
+        El programador escribe <strong>las reglas</strong>. El ordenador aplica esas reglas a los datos y obtiene respuestas.
+        <div class="ml6-eq">reglas + datos → respuestas</div>
+        <p style="margin:8px 0 0">Ejemplo: <em>si la temperatura &gt; 30 → encender ventilador</em>.</p>
+      </div>
+      <div class="ml6-box"><b class="t">Machine Learning</b>
+        Le damos <strong>datos y respuestas conocidas</strong>. El algoritmo descubre por sí mismo las reglas (el <em>modelo</em>).
+        <div class="ml6-eq">datos + respuestas → reglas (modelo)</div>
+        <p style="margin:8px 0 0">Ejemplo: con miles de correos marcados como spam/no spam, el modelo aprende a detectar spam nuevo.</p>
+      </div>
+    </div>
+
+    <p class="ml6-sub">▸ IA, Machine Learning y Deep Learning</p>
+    <div class="ml6-dark">
+      <strong>Inteligencia Artificial</strong> ⊃ <span class="hl">Machine Learning</span> ⊃ <strong style="color:#b8f36b">Deep Learning</strong><br>
+      <span style="font-size:.84rem">Toda técnica de ML es IA, pero no toda IA aprende de datos (por ejemplo, un sistema experto basado en reglas escritas a mano). El Deep Learning es un subconjunto del ML basado en <strong>redes neuronales con muchas capas</strong>.</span>
+    </div>
+
+    <div class="tip">💡 <strong>Conexión con sesiones anteriores:</strong> la estadística de la sesión 03 (media, dispersión, outliers) y Python con sus estructuras de datos (sesiones 04 y 05) son las herramientas con las que prepararemos los datos para entrenar modelos.</div>
+
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (portada)</summary><img src="img/s06/portada.webp" alt="Portada: Machine Learning, aprendizaje automático" loading="lazy"></details>
+  </div>
+</section>
+
+<!-- ══════════ 02 ══════════ -->
+<section class="ficha-section" id="s6-2">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="ficha-h2">Los cuatro tipos de aprendizaje</span>
+    <span class="section-time">15 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">Según <strong>cómo son los datos</strong> con los que aprende el algoritmo y <strong>qué señal</strong> recibe, distinguimos cuatro grandes familias:</p>
+    <div class="ml6-grid">
+      <div class="ml6-card"><span class="n">01</span><h4>Aprendizaje supervisado</h4>
+        <p>Genera un modelo predictivo a partir de datos de <strong>entrada y salida</strong>. Disponemos de un conjunto de datos previamente <strong>etiquetado y clasificado</strong>.</p>
+        <span class="tagline">Datos etiquetados → predecir la etiqueta</span></div>
+      <div class="ml6-card"><span class="n c">02</span><h4>Aprendizaje no supervisado</h4>
+        <p>Similar al supervisado, pero el modelo se ajusta <strong>solo con los datos de entrada</strong>, sin salidas conocidas. Busca estructura oculta en los datos.</p>
+        <span class="tagline">Datos no etiquetados → descubrir grupos</span></div>
+      <div class="ml6-card"><span class="n">03</span><h4>Aprendizaje por refuerzo</h4>
+        <p>Un <strong>agente</strong> realiza <strong>acciones</strong> en un <strong>ambiente</strong> y aprende a maximizar una medida de <strong>recompensa</strong> mediante prueba y error.</p>
+        <span class="tagline">Acción → recompensa → mejor acción</span></div>
+      <div class="ml6-card"><span class="n c">04</span><h4>Aprendizaje profundo</h4>
+        <p>Utiliza <strong>redes neuronales artificiales con múltiples capas</strong>, que permiten reconocer patrones complejos (imágenes, voz, texto) y tomar decisiones.</p>
+        <span class="tagline">Redes neuronales multicapa</span></div>
+    </div>
+
+    <div class="ml6-quiz" id="ml6-quiz">
+      <div style="font-weight:800;color:#16a34a">🎯 Reto rápido: ¿qué tipo de aprendizaje es?</div>
+      <div class="q" id="ml6-q">Pulsa «Empezar» para ver la primera situación.</div>
+      <div class="opts" id="ml6-opts"><button type="button" onclick="ml6Start()">▶ Empezar</button></div>
+      <div class="fb" id="ml6-fb"></div>
+      <div class="bar"><i id="ml6-bar"></i></div>
+    </div>
+
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (algoritmos de ML)</summary><img src="img/s06/tipos.webp" alt="Algoritmos de Machine Learning: cuatro tipos" loading="lazy"></details>
+  </div>
+</section>
+
+<!-- ══════════ 03 ══════════ -->
+<section class="ficha-section" id="s6-3">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="ficha-h2">Aprendizaje supervisado: regresión y clasificación</span>
+    <span class="section-time">20 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">La predicción del modelo se basa en su <strong>entrenamiento con experiencias previas</strong>. Esas experiencias previas forman el <strong>conjunto de entrenamiento</strong> del modelo.</p>
+
+    <div class="ml6-compare">
+      <div class="ml6-box"><b class="t">Características · <em>features</em> (X)</b>
+        Las variables de entrada que describen cada ejemplo: altura, edad, metros de una casa, píxeles de una imagen…
+      </div>
+      <div class="ml6-box"><b class="t">Etiqueta · <em>target</em> (y)</b>
+        Lo que queremos predecir: el precio, si es spam o no, la especie de una flor…
+      </div>
+    </div>
+
+    <p class="ml6-sub">▸ Cómo funciona</p>
+    <div class="ml6-flow">
+      <span class="b b-data">Características (X)<br>+ Etiquetas (y)</span><span class="arr">→</span>
+      <span class="b b-algo">Entrenamiento<br>algoritmo ML</span><span class="arr">→</span>
+      <span class="b b-model">Modelo<br>entrenado</span>
+    </div>
+    <div class="ml6-flow">
+      <span class="b b-new">Características nuevas<br>de entrada</span><span class="arr">→</span>
+      <span class="b b-model">Modelo</span><span class="arr">→</span>
+      <span class="b b-out">Etiqueta esperada</span><span class="arr">→</span>
+      <span class="b b-dep">Deployment<br><small>(Streamlit)</small></span>
+    </div>
+
+    <div class="ml6-grid">
+      <div class="ml6-card"><span class="n">01</span><h4>Regresión</h4>
+        <p>Predice <strong>valores continuos</strong>: la etiqueta es un <strong>número</strong>. Según el número de variables predictoras hablamos de regresión <strong>de una variable</strong> o <strong>multivariable</strong>.</p>
+        <span class="tagline">Ej.: precio de una vivienda, temperatura de mañana</span></div>
+      <div class="ml6-card"><span class="n c">02</span><h4>Clasificación</h4>
+        <p>Categoriza los datos en <strong>clases</strong> distintas: la etiqueta es una <strong>categoría</strong>.</p>
+        <span class="tagline">Ej.: spam / no spam, aprobado / suspenso, tipo de flor</span></div>
+    </div>
+
+    <p class="ml6-sub">▸ Modelos de ML que veremos este curso</p>
+    <div class="ml6-models">
+      <div class="col reg"><div class="head">Regresión</div><ul>
+        <li>Regresión lineal<small>Linear Regression</small></li>
+        <li>MVS para regresión<small>Máquinas de Vectores Soporte (SVR)</small></li>
+        <li>Redes neuronales<small>Artificial Neural Networks</small></li>
+      </ul></div>
+      <div class="col cla"><div class="head">Clasificación</div><ul>
+        <li>Regresión logística<small>Logistic Regression — ¡aunque se llame «regresión», clasifica!</small></li>
+        <li>MVS para clasificación<small>Máquinas de Vectores Soporte (SVC)</small></li>
+        <li>Árboles de decisión<small>Decision Trees</small></li>
+      </ul></div>
+    </div>
+    <div class="tip">📊 En el esquema del curso, aproximadamente <strong>7 de cada 10 problemas</strong> que resolveremos son de <strong>clasificación</strong> y 3 de cada 10 de <strong>regresión</strong>.</div>
+
+    <p class="ml6-sub">▸ Herramientas (librerías de Python)</p>
+    <div class="ml6-tools"><span>pandas</span><span>NumPy</span><span>SciPy</span><span>matplotlib</span><span>seaborn</span><span>scikit-learn</span><span>statsmodels</span><span>Streamlit</span></div>
+
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (supervisado)</summary><img src="img/s06/supervisado.webp" alt="Algoritmos de aprendizaje supervisado" loading="lazy"></details>
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (modelos del curso)</summary><img src="img/s06/modelos.webp" alt="Modelos de ML que vamos a ver este año" loading="lazy"></details>
+  </div>
+</section>
+
+<!-- ══════════ 04 ══════════ -->
+<section class="ficha-section" id="s6-4">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="ficha-h2">Aprendizaje no supervisado</span>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">Los datos de entrada <strong>no están clasificados ni etiquetados</strong>, y no es necesario que lo estén para entrenar el modelo. El algoritmo busca por sí solo patrones o estructura en los datos.</p>
+    <div class="ml6-grid">
+      <div class="ml6-card"><span class="n">01</span><h4>Clustering (agrupamiento)</h4>
+        <p>Agrupa los datos según la <strong>similitud de sus características</strong>. El modelo no sabe qué significa cada grupo: eso lo interpretamos nosotros.</p>
+        <span class="tagline">Ej.: segmentar clientes por hábitos de compra</span></div>
+      <div class="ml6-card"><span class="n c">02</span><h4>Reducción de la dimensionalidad</h4>
+        <p>Elimina o combina las características <strong>que no son determinantes</strong> para el funcionamiento del modelo. La técnica más conocida es el <strong>PCA</strong> (análisis de componentes principales).</p>
+        <span class="tagline">Ej.: pasar de 50 variables a 5 sin perder casi información</span></div>
+    </div>
+    <div class="ml6-flow">
+      <span class="b b-data">Solo características (X)</span><span class="arr">→</span>
+      <span class="b b-algo">Entrenamiento<br>algoritmo ML</span><span class="arr">→</span>
+      <span class="b b-model">Modelo</span><span class="arr">→</span>
+      <span class="b b-out">Cluster</span>
+    </div>
+    <div class="warn">⚠️ Diferencia clave: en el supervisado el modelo devuelve una <strong>etiqueta conocida</strong> (p. ej. «spam»); en el no supervisado devuelve un <strong>grupo</strong> (p. ej. «grupo 2») que hay que interpretar.</div>
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (no supervisado)</summary><img src="img/s06/no-supervisado.webp" alt="Algoritmos de aprendizaje no supervisado" loading="lazy"></details>
+  </div>
+</section>
+
+<!-- ══════════ 05 ══════════ -->
+<section class="ficha-section" id="s6-5">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="ficha-h2">Aprendizaje por refuerzo</span>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">Los modelos están enfocados a <strong>maximizar la recompensa</strong> que recibe un agente inteligente cuando acierta con sus acciones en el ambiente en el que se desenvuelve. No hay datos etiquetados: el agente aprende <strong>por prueba y error</strong>.</p>
+    <svg class="ml6-svg" viewBox="0 0 560 300" role="img" aria-label="Bucle agente, acción, ambiente, recompensa">
+      <defs><marker id="ml6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5ce8e6"/></marker></defs>
+      <rect width="560" height="300" rx="14" fill="#06240e"/>
+      <rect x="215" y="22" width="130" height="40" rx="8" fill="#1f7a3f"/><text x="280" y="47" text-anchor="middle" fill="#fff" font-size="15" font-weight="700" font-family="Montserrat,sans-serif">Ambiente</text>
+      <rect x="215" y="238" width="130" height="40" rx="8" fill="#0f6b5c"/><text x="280" y="263" text-anchor="middle" fill="#fff" font-size="15" font-weight="700" font-family="Montserrat,sans-serif">Agente de IA</text>
+      <path d="M345 258 C470 240 480 70 352 46" fill="none" stroke="#5ce8e6" stroke-width="2.5" marker-end="url(#ml6a)"/>
+      <rect x="430" y="132" width="116" height="34" rx="7" fill="#e5383b"/><text x="488" y="154" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Acción</text>
+      <path d="M215 46 C90 70 80 240 208 258" fill="none" stroke="#5ce8e6" stroke-width="2.5" marker-end="url(#ml6a)"/>
+      <rect x="10" y="118" width="140" height="56" rx="7" fill="#f08c00"/><text x="80" y="142" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Recompensa</text><text x="80" y="160" text-anchor="middle" fill="#fff" font-size="11">+ nuevo estado</text>
+      <text x="280" y="140" text-anchor="middle" fill="#b8f36b" font-size="13" font-weight="700">El agente aprende qué</text>
+      <text x="280" y="160" text-anchor="middle" fill="#b8f36b" font-size="13" font-weight="700">acciones dan más recompensa</text>
+    </svg>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Elemento</th><th>Qué es</th><th>Ejemplo: robot aspirador</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Agente</strong></td><td>El que decide y actúa</td><td>El robot</td></tr>
+        <tr><td><strong>Ambiente</strong></td><td>El mundo en el que actúa</td><td>La casa, con muebles y suciedad</td></tr>
+        <tr><td><strong>Acción</strong></td><td>Lo que puede hacer</td><td>Avanzar, girar, aspirar, volver a la base</td></tr>
+        <tr><td><strong>Recompensa</strong></td><td>Puntuación que recibe tras actuar</td><td>+1 por zona limpia, −5 por chocar, −10 si se queda sin batería</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tip">🎮 Ejemplos reales: AlphaGo, que venció al campeón mundial de Go en 2016; robots que aprenden a caminar; agentes que aprenden a jugar a videojuegos.</div>
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (refuerzo)</summary><img src="img/s06/refuerzo.webp" alt="Aprendizaje por refuerzo" loading="lazy"></details>
+  </div>
+</section>
+
+<!-- ══════════ 06 ══════════ -->
+<section class="ficha-section" id="s6-6">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="ficha-h2">Aprendizaje profundo y redes neuronales</span>
+    <span class="section-time">15 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">El <strong>Deep Learning</strong> o aprendizaje profundo es un subconjunto del Machine Learning basado en <strong>redes neuronales artificiales</strong>, inspiradas de forma muy simplificada en las neuronas del cerebro.</p>
+    <svg class="ml6-svg" viewBox="0 0 560 230" role="img" aria-label="Red neuronal con capa de entrada, dos capas ocultas y capa de salida">
+      <rect width="560" height="230" rx="14" fill="#06240e"/>
+      <g stroke="rgba(184,243,107,.35)" stroke-width="1.2" id="ml6-links"></g>
+      <g id="ml6-nodes"></g>
+      <text x="80" y="220" text-anchor="middle" fill="#b8f36b" font-size="12" font-weight="700">Entrada</text>
+      <text x="230" y="220" text-anchor="middle" fill="#cfe9d4" font-size="12" font-weight="700">Oculta 1</text>
+      <text x="350" y="220" text-anchor="middle" fill="#cfe9d4" font-size="12" font-weight="700">Oculta 2</text>
+      <text x="480" y="220" text-anchor="middle" fill="#5ce8e6" font-size="12" font-weight="700">Salida</text>
+    </svg>
+    <div class="ml6-grid">
+      <div class="ml6-card"><span class="n">01</span><h4>Estructura de una red neuronal</h4>
+        <p>Neuronas organizadas en <strong>capas</strong>: una de entrada (recibe las características), una o varias <strong>ocultas</strong> y una de salida (da la predicción). Cada conexión tiene un <strong>peso</strong> que se ajusta al aprender.</p></div>
+      <div class="ml6-card"><span class="n c">02</span><h4>Forward propagation</h4>
+        <p>Los datos viajan <strong>hacia delante</strong>, de la entrada a la salida. Cada neurona multiplica sus entradas por los pesos, las suma y aplica una <strong>función de activación</strong>. El resultado es la predicción.</p></div>
+      <div class="ml6-card"><span class="n">03</span><h4>Backpropagation</h4>
+        <p>Se compara la predicción con el valor real (el <strong>error</strong>) y ese error se propaga <strong>hacia atrás</strong> para corregir los pesos. Repetido miles de veces, la red aprende. La describió <strong>Paul Werbos en 1974</strong>.</p></div>
+    </div>
+    <div class="ml6-dark">
+      <strong>Su aplicación práctica</strong>: la retropropagación se popularizó en 1986 gracias al trabajo de Rumelhart, <span class="hl">Geoffrey Hinton</span> y Williams. Hinton recibió, junto con John Hopfield, el <strong>Premio Nobel de Física 2024</strong> por los descubrimientos que hicieron posible el aprendizaje automático con redes neuronales artificiales.
+    </div>
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (deep learning)</summary><img src="img/s06/deep-learning.webp" alt="Aprendizaje profundo y redes neuronales" loading="lazy"></details>
+  </div>
+</section>
+
+<!-- ══════════ 07 ══════════ -->
+<section class="ficha-section" id="s6-7">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <span class="ficha-h2">Workflow de un proyecto de Machine Learning</span>
+    <span class="section-time">20 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">Todo proyecto de ML, desde una <strong>regresión lineal</strong> (<code>LinearRegression</code>) hasta una red neuronal, sigue estas <strong>8 fases</strong>:</p>
+    <div class="ml6-wf">
+      <div class="ml6-step" style="--c:#14b89a"><div class="num">1</div><div class="ttl">Recolectar datos</div><p>Obtener los datos de las fuentes adecuadas (ficheros, sensores, bases de datos, Open Data…).</p><span class="lib">pandas · NumPy</span></div>
+      <div class="ml6-step" style="--c:#e0a800"><div class="num">2</div><div class="ttl">Preparar los datos</div><p>Limpiar, transformar y explorar: es el preprocesamiento (sección 08).</p><span class="lib">pandas · seaborn · matplotlib</span></div>
+      <div class="ml6-step" style="--c:#e8405f"><div class="num">3</div><div class="ttl">Elegir el modelo</div><p>Según el problema: ¿regresión o clasificación? ¿Qué algoritmo?</p><span class="lib">scikit-learn · statsmodels</span></div>
+      <div class="ml6-step" style="--c:#2b9fd6"><div class="num">4</div><div class="ttl">Entrenar el modelo</div><p>El algoritmo ajusta sus parámetros con los datos de entrenamiento (<code>fit</code>).</p><span class="lib">scikit-learn</span></div>
+      <div class="ml6-step" style="--c:#7b3fd0"><div class="num">5</div><div class="ttl">Predicción o inferencia</div><p>Usar el modelo con datos que no ha visto (<code>predict</code>).</p><span class="lib">scikit-learn</span></div>
+      <div class="ml6-step" style="--c:#d63aa6"><div class="num">6</div><div class="ttl">Evaluación del modelo</div><p>Medir cuánto acierta con los datos de test (error, precisión…).</p><span class="lib">scikit-learn · matplotlib</span></div>
+      <div class="ml6-step" style="--c:#c81414"><div class="num">7</div><div class="ttl">Interpretación</div><p>Explicar su funcionamiento o presentarlo de forma comprensible para las personas.</p><span class="lib">seaborn · matplotlib</span></div>
+      <div class="ml6-step" style="--c:#3a1fb0"><div class="num">8</div><div class="ttl">Desplegar el modelo</div><p>Guardarlo (p. ej. con <code>pickle</code>) y ponerlo a disposición de los usuarios en una app.</p><span class="lib">pickle · Streamlit</span></div>
+    </div>
+    <div class="tip">🔁 El proceso <strong>no es lineal</strong>: si la evaluación (6) es mala, volvemos a preparar los datos (2) o a elegir otro modelo (3).</div>
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (workflow)</summary><img src="img/s06/workflow.webp" alt="Workflow de un proyecto de machine learning" loading="lazy"></details>
+  </div>
+</section>
+
+<!-- ══════════ 08 ══════════ -->
+<section class="ficha-section" id="s6-8">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <span class="ficha-h2">Preprocesamiento de datos</span>
+    <span class="section-time">25 min</span>
+  </div>
+  <div class="section-body">
+    <a class="ml6-lab-link" href="#s6-lab">🧪 Practica el preprocesamiento en el laboratorio del péndulo ↑</a>
+    <div class="ml6-big">
+      <div class="ml6-bubble">Esta fase ocupa el 70-80 % del tiempo de desarrollo</div>
+      <div style="flex:1;min-width:240px">
+        <p class="ml6-sub" style="margin-top:0">▸ Operaciones a realizar</p>
+        <ol class="ml6-ol">
+          <li style="--c:#c2185b"><span class="k">1</span><div><b>Recolección de datos</b><small>¿De dónde vienen los datos? (ver lista abajo)</small></div></li>
+          <li style="--c:#7cb342"><span class="k">2</span><div><b>Limpieza de datos (data cleaning)</b><small>Valores vacíos, duplicados, errores de escritura</small></div></li>
+          <li style="--c:#ef6c00"><span class="k">3</span><div><b>Transformación de datos</b><small>Cambiar formatos, codificar categorías, escalar</small></div></li>
+          <li style="--c:#e53935"><span class="k">4</span><div><b>Reducción de datos</b><small>Quedarnos con lo que aporta información</small></div></li>
+          <li style="--c:#00897b"><span class="k">5</span><div><b>Integración de datos</b><small>Unir datos de varias fuentes en un único dataset</small></div></li>
+          <li style="--c:#8e0000"><span class="k">6</span><div><b>Discretización de datos</b><small>Convertir valores continuos en intervalos (p. ej. edad → franjas)</small></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <p class="ml6-sub">▸ ¿De dónde vienen todos los datos?</p>
+    <ul class="ml6-src">
+      <li>Usuarios y clientes de instituciones y empresas.</li>
+      <li>Transacciones: compras, transferencias…</li>
+      <li>Sensores: temperatura, humedad…</li>
+      <li>Redes sociales: textos, imágenes, vídeos…</li>
+      <li>Salud: historiales y pruebas médicas.</li>
+      <li>Geolocalización (GPS).</li>
+      <li>Logs: registros de accesos a páginas web.</li>
+      <li>Internet de las cosas (dispositivos IoT).</li>
+      <li>Genómica: secuenciación de genomas.</li>
+      <li>Meteorología: satélites y predicciones.</li>
+      <li>Cámaras: imágenes y vídeos.</li>
+      <li>Micrófonos: grabaciones de sonido.</li>
+      <li>RFID: identificación por radiofrecuencia.</li>
+      <li>Sectores energético e industrial.</li>
+      <li>Open Data: datos abiertos públicos y privados.</li>
+    </ul>
+
+    <p class="ml6-sub">▸ Nuestro preprocesamiento (el que haremos en clase)</p>
+    <ol class="ml6-ol">
+      <li style="--c:#c2185b"><span class="k">1</span><div><b>Importación de datos RAW</b><small>Cargar los datos «en bruto», tal y como llegan</small></div></li>
+      <li style="--c:#7cb342"><span class="k">2</span><div><b>Elegir variables de interés</b><small>Seleccionar las características para nuestro modelo</small></div></li>
+      <li style="--c:#ef6c00"><span class="k">3</span><div><b>Estudio estadístico: dispersión y centralización</b><small>Cálculos y visualización (EDA), como en la sesión 03</small></div></li>
+      <li style="--c:#e53935"><span class="k">4</span><div><b>Detección de NaN</b><small>Detectar valores nulos y corregirlos (eliminar fila o rellenar con media/mediana)</small></div></li>
+      <li style="--c:#00897b"><span class="k">5</span><div><b>Detección de outliers</b><small>Valores anómalos: detectarlos (p. ej. regla 1,5·IQR) y decidir cómo proceder</small></div></li>
+      <li style="--c:#8e0000"><span class="k">6</span><div><b>Split de datos</b><small>Separar en entrenamiento (train), validación y prueba (test), p. ej. 70 / 15 / 15 %</small></div></li>
+      <li style="--c:#546e7a"><span class="k">7</span><div><b>Escalado de características</b><small>Normalización o estandarización para modelos sensibles a la escala</small></div></li>
+      <li style="--c:#1e3a8a"><span class="k">8</span><div><b>Análisis de correlación</b><small>Detectar multicolinealidad; PCA para reducir dimensiones</small></div></li>
+    </ol>
+
+    <p class="ml6-sub">▸ EDA · Exploratory Data Analysis (análisis exploratorio)</p>
+    <div class="ml6-dark">
+      <ol style="margin:0;padding-left:20px;font-size:.84rem;line-height:1.7">
+        <li>Tener clara <span class="hl">la pregunta</span> que queremos responder.</li>
+        <li>Tener una idea general de nuestro dataset.</li>
+        <li>Definir los <span class="hl">tipos de datos</span> que tenemos.</li>
+        <li>Elegir el tipo de estadística descriptiva.</li>
+        <li><span class="hl">Visualizar</span> los datos.</li>
+        <li>Analizar las posibles interacciones entre las variables del dataset.</li>
+        <li>Extraer algunas <span class="hl">conclusiones</span> de todo este análisis.</li>
+      </ol>
+    </div>
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (operaciones de preprocesamiento)</summary><img src="img/s06/preproc-operaciones.webp" alt="Preprocesamiento de datos: operaciones a realizar" loading="lazy"></details>
+    <details class="ml6-slide"><summary>🖼 Ver diapositiva original (nuestro preprocesamiento)</summary><img src="img/s06/preproc-nuestro.webp" alt="Preprocesamiento de datos: nuestro preprocesamiento" loading="lazy"></details>
+  </div>
+</section>
+
+<!-- ══════════ EJERCICIOS ══════════ -->
+<section class="ficha-section" id="s6-ej">
+  <div class="section-header">
+    <span class="section-num" style="background:#16a34a">EJ</span>
+    <span class="ficha-h2">Ejercicios propuestos</span>
+    <span class="section-time">50 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">Pulsa <strong>«Ver enunciado»</strong> para desplegar cada ejercicio y <strong>⬇</strong> para descargarlo. Con el botón <em>⬇ Descargar ejercicios</em> de la barra superior te los llevas todos juntos.</p>
+
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">1</span><h4>¿Qué tipo de aprendizaje es?</h4></div>
+      <div class="act-body">
+        <p>Indica si cada situación corresponde a aprendizaje <strong>supervisado</strong>, <strong>no supervisado</strong> o <strong>por refuerzo</strong>, y justifica tu respuesta en una línea.</p>
+        <ol>
+          <li>Un banco agrupa a sus clientes en perfiles según sus movimientos, sin saber de antemano cuántos perfiles hay.</li>
+          <li>Una app predice la nota de selectividad a partir de las notas de 1.º y 2.º de Bachillerato de antiguos alumnos.</li>
+          <li>Un robot aprende a mantener el equilibrio recibiendo puntos cada segundo que no se cae.</li>
+          <li>Un filtro detecta correos de spam a partir de miles de correos marcados por los usuarios.</li>
+          <li>Una tienda online descubre qué productos se compran juntos con frecuencia.</li>
+          <li>Un programa aprende a jugar al ajedrez jugando millones de partidas contra sí mismo.</li>
+          <li>Un hospital clasifica radiografías como «neumonía» o «sana» usando imágenes ya diagnosticadas.</li>
+          <li>Se reducen 40 variables de un sensor a 4 combinaciones que conservan casi toda la información.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">2</span><h4>¿Regresión o clasificación? Features y target</h4></div>
+      <div class="act-body">
+        <p>Para cada problema de aprendizaje supervisado indica: (a) si es de <strong>regresión</strong> o de <strong>clasificación</strong>; (b) cuál es el <strong>target</strong>; (c) al menos tres <strong>features</strong> que usarías.</p>
+        <ol>
+          <li>Predecir el precio de alquiler de un piso en Plasencia.</li>
+          <li>Decidir si un alumno aprobará o suspenderá Matemáticas.</li>
+          <li>Estimar los kWh que consumirá el instituto mañana.</li>
+          <li>Identificar la especie de un pájaro a partir de su canto.</li>
+          <li>Predecir la cosecha de cereza (kg) de una finca del Valle del Jerte.</li>
+          <li>Detectar si una transacción con tarjeta es fraudulenta.</li>
+        </ol>
+        <p>¿Cuál de los modelos del curso (sección 03) probarías en cada caso?</p>
+      </div>
+    </div>
+
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">3</span><h4>Ordena el workflow</h4></div>
+      <div class="act-body">
+        <p>Un compañero ha anotado las fases de su proyecto «Predecir la temperatura de mañana con datos de AEMET», pero las ha desordenado. Ordénalas del 1 al 8 y escribe qué haría en cada una.</p>
+        <ul>
+          <li>Guardar el modelo y crear una app con Streamlit.</li>
+          <li>Comprobar el error medio sobre los días del conjunto de test.</li>
+          <li>Descargar los datos históricos de una estación meteorológica.</li>
+          <li>Ejecutar <code>model.fit(X_train, y_train)</code>.</li>
+          <li>Explicar a la clase qué variables influyen más en la predicción.</li>
+          <li>Eliminar días sin datos y detectar temperaturas imposibles.</li>
+          <li>Decidir usar una regresión lineal.</li>
+          <li>Predecir la temperatura de días que el modelo no ha visto.</li>
+        </ul>
+        <p>Pregunta extra: si el error del paso de evaluación es muy alto, ¿a qué fases volverías y por qué?</p>
+      </div>
+    </div>
+
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">4</span><h4>Fuentes de datos y preprocesamiento</h4></div>
+      <div class="act-body">
+        <p>Elige <strong>tres fuentes de datos</strong> de la lista de la sección 08. Para cada una:</p>
+        <ol>
+          <li>Propón un problema de ML que se podría resolver con esos datos.</li>
+          <li>Indica un posible problema de calidad (NaN, outliers, duplicados, errores…) y cómo lo tratarías.</li>
+          <li>Señala si hay algún riesgo de <strong>privacidad</strong> al usar esos datos y cómo lo reducirías (anonimizar, agregar…).</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">5</span><h4>Diseña un agente de refuerzo</h4></div>
+      <div class="act-body">
+        <p>Diseña un agente que aprenda por refuerzo para <strong>regar automáticamente un huerto</strong>. Completa:</p>
+        <ul>
+          <li><strong>Agente:</strong> …</li>
+          <li><strong>Ambiente:</strong> …</li>
+          <li><strong>Acciones posibles</strong> (al menos 3): …</li>
+          <li><strong>Recompensas</strong> positivas y negativas (al menos 4, con su valor numérico): …</li>
+          <li>¿Qué datos de sensores necesitaría? ¿Qué pasaría si la recompensa estuviera mal diseñada?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">6</span><h4>EDA con el dataset de la sesión 03</h4></div>
+      <div class="act-body">
+        <p>Retoma el dataset de alumnos de la práctica de estadística (sesión 03) y aplica los <strong>7 pasos del EDA</strong>:</p>
+        <ol>
+          <li>Formula una pregunta que un modelo de ML pudiera responder con esos datos (p. ej. «¿se puede predecir el peso a partir de la altura?»).</li>
+          <li>Indica cuántas filas y columnas tiene y de qué tipo es cada variable.</li>
+          <li>Calcula media, mediana y desviación típica de dos variables numéricas.</li>
+          <li>Localiza los NaN y los outliers y decide qué hacer con ellos.</li>
+          <li>Haz un gráfico de dispersión entre dos variables y comenta si parecen relacionadas.</li>
+          <li>Indica cuál sería el <strong>target</strong> y cuáles las <strong>features</strong>, y si el problema es de regresión o de clasificación.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">7</span><h4>🧪 Laboratorio del péndulo: de los datos sucios a g</h4></div>
+      <div class="act-body">
+        <p>Abre el <a href="#s6-lab">laboratorio interactivo</a> y recorre sus 9 estaciones. Entrega un documento breve (PDF) o tu script <code>.py</code> con:</p>
+        <ol>
+          <li>Los ensayos con NaN y los dos outliers detectados con la regla de Tukey (Q1, Q3, IQR y vallas).</li>
+          <li>Tu estrategia de imputación y de outliers, <strong>justificada</strong> (¿error de medida o dato real?).</li>
+          <li>Qué par de variables eliges para la regresión (L→T, √L→T o L→T²) y qué condiciones del checklist cumple.</li>
+          <li>La ecuación ŷ = β₀ + β₁·x, el MSE y el RMSE, con datos crudos y con datos tratados.</li>
+          <li>La <em>g</em> estimada en cada caso y qué decisión de limpieza la acerca más a 9,81 m/s².</li>
+        </ol>
+        <p>Formato: <code>S06_lab_usuario.pdf</code> o <code>S06_lab_usuario.py</code>. Súbelo con el botón 📤 de este ejercicio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TARJETAS ══════════ -->
+<section id="tarjetas" style="margin:32px 0">
+  <div class="fc-header"><h2 class="fc-title">🃏 Tarjetas de autoevaluación — Machine Learning</h2></div>
+  <p class="fc-desc">20 tarjetas de repaso. Haz clic en cada tarjeta para ver la respuesta y marca las que dominas.</p>
+  <div class="fc-controls">
+    <button class="fc-ctrl-btn" onclick="fcFlipAll(this)">👁 Mostrar todas</button>
+    <button class="fc-ctrl-btn" onclick="fcReset()">🔄 Reiniciar</button>
+    <span id="fc-score">0 / 20 dominadas</span>
+  </div>
+  <div class="fc-grid" id="ml6-fc-grid"></div>
+</section>
+
+<!-- ══════════ ENTREGA FINAL ══════════ -->
+<section class="ficha-section" id="s6-entrega">
+  <div class="section-header">
+    <span class="section-num" style="background:#16a34a">📨</span>
+    <span class="ficha-h2">Actividad de entrega final: «Mi proyecto de Machine Learning»</span>
+    <span class="section-time">Entrega: 1 semana</span>
+  </div>
+  <div class="section-body">
+    <div class="ml6-task">
+      <div class="top">
+        <h3>🧠 Diseña (sobre el papel) un proyecto de ML completo</h3>
+        <div class="badges"><span>📄 PDF o infografía</span><span>👤 Individual</span><span>⏱ 2–3 páginas</span><span>⭐ 10 puntos</span></div>
+      </div>
+      <div class="in">
+        <p>Elige un <strong>problema real</strong> de tu entorno (instituto, Valle del Jerte, deporte, salud, música…) que se pueda resolver con Machine Learning y documenta tu propuesta siguiendo estos apartados:</p>
+        <ol>
+          <li><strong>El problema:</strong> qué quieres predecir o descubrir y por qué es útil.</li>
+          <li><strong>Tipo de aprendizaje:</strong> supervisado, no supervisado o por refuerzo, justificado. Si es supervisado, indica si es de regresión o de clasificación.</li>
+          <li><strong>Los datos:</strong> fuente(s) de datos, <em>features</em> y <em>target</em>, y un ejemplo de 5 filas inventadas del dataset.</li>
+          <li><strong>Preprocesamiento:</strong> qué problemas esperas encontrar (NaN, outliers, escalas distintas…) y cómo los resolverías.</li>
+          <li><strong>Workflow:</strong> describe brevemente qué harías en cada una de las 8 fases. Incluye qué modelo del curso elegirías.</li>
+          <li><strong>Mapa conceptual:</strong> un esquema de los 4 tipos de aprendizaje que sitúe tu proyecto.</li>
+          <li><strong>Ética y privacidad:</strong> un riesgo de tu proyecto y cómo lo minimizarías.</li>
+        </ol>
+        <p><strong>Formato del archivo:</strong> <code>S06_usuario.pdf</code> (por ejemplo <code>S06_ia_07.pdf</code>). También se admite PNG/JPG si haces una infografía.</p>
+        <table class="ml6-rub">
+          <thead><tr><th>Criterio</th><th>Se valora</th><th>Puntos</th></tr></thead>
+          <tbody>
+            <tr><td>Problema y tipo de aprendizaje</td><td>El problema es realista y el tipo de aprendizaje está bien justificado</td><td>2</td></tr>
+            <tr><td>Datos: features y target</td><td>Variables bien identificadas, coherentes con el problema, con ejemplo de dataset</td><td>2</td></tr>
+            <tr><td>Preprocesamiento</td><td>Anticipa problemas de calidad de datos y propone soluciones concretas</td><td>2</td></tr>
+            <tr><td>Workflow completo</td><td>Las 8 fases aparecen en orden y aplicadas al proyecto, con modelo elegido</td><td>2</td></tr>
+            <tr><td>Mapa conceptual y ética</td><td>Esquema claro de los tipos de aprendizaje y reflexión ética razonada</td><td>1</td></tr>
+            <tr><td>Presentación</td><td>Orden, claridad, ortografía y uso correcto del vocabulario técnico</td><td>1</td></tr>
+          </tbody>
+        </table>
+        <button type="button" class="ml6-send" onclick="openSubmit()">📨 Entregar mi proyecto</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ AUTOEVALUACIÓN ══════════ -->
+<section class="ficha-section" id="s6-ae">
+  <div class="section-header">
+    <span class="section-num" style="background:#7c3aed">AE</span>
+    <span class="ficha-h2">Autoevaluación</span>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+    <p class="ml6-lead">Marca tu nivel en cada competencia de la sesión.</p>
+    <div class="ml6-ae" id="ml6-ae"></div>
+    <div class="ml6-ae-res" id="ml6-ae-res"></div>
+  </div>
+</section>
+
+<script>
+(function(){
+  /* ── Red neuronal (dibujo) ── */
+  var layers=[[80,[50,95,140,185]],[230,[40,80,120,160,200]],[350,[40,80,120,160,200]],[480,[90,140]]];
+  var links=document.getElementById('ml6-links'),nodes=document.getElementById('ml6-nodes');
+  if(links&&nodes){
+    var NS='http://www.w3.org/2000/svg',L='',N='';
+    for(var i=0;i<layers.length-1;i++){layers[i][1].forEach(function(y1){layers[i+1][1].forEach(function(y2){L+='<line x1="'+layers[i][0]+'" y1="'+y1+'" x2="'+layers[i+1][0]+'" y2="'+y2+'"/>';});});}
+    layers.forEach(function(l,k){var col=k===0?'#b8f36b':k===layers.length-1?'#5ce8e6':'#e9f7ec';l[1].forEach(function(y){N+='<circle cx="'+l[0]+'" cy="'+y+'" r="11" fill="#06240e" stroke="'+col+'" stroke-width="2.5"/>';});});
+    links.innerHTML=L;nodes.innerHTML=N;
+  }
+
+  /* ── Tarjetas ── */
+  var FC=[
+    ['¿Qué es el Machine Learning?','Rama de la IA en la que los algoritmos aprenden a partir de datos a tomar decisiones o hacer predicciones, sin programar explícitamente cada regla.'],
+    ['Programación clásica vs. ML','Clásica: reglas + datos → respuestas. ML: datos + respuestas → reglas (el modelo).'],
+    ['Relación entre IA, ML y DL','IA ⊃ Machine Learning ⊃ Deep Learning. El DL es un subconjunto del ML basado en redes neuronales multicapa.'],
+    ['¿Qué caracteriza al aprendizaje supervisado?','Aprende de datos de entrada y salida: el dataset está previamente etiquetado (sabemos la respuesta correcta de cada ejemplo).'],
+    ['¿Y al no supervisado?','Solo usa datos de entrada, sin etiquetas. Busca por sí mismo estructura o grupos en los datos.'],
+    ['Aprendizaje por refuerzo','Un agente realiza acciones en un ambiente y aprende a maximizar una recompensa por prueba y error.'],
+    ['Features y target','Features (X): variables de entrada que describen cada ejemplo. Target (y): la etiqueta que queremos predecir.'],
+    ['Regresión','Problema supervisado en el que la etiqueta es un número continuo (precio, temperatura…). Puede ser de una variable o multivariable.'],
+    ['Clasificación','Problema supervisado en el que la etiqueta es una categoría o clase (spam/no spam, especie, aprobado/suspenso).'],
+    ['¿La regresión logística es de regresión?','No: a pesar de su nombre, la regresión logística es un modelo de CLASIFICACIÓN.'],
+    ['Modelos de regresión del curso','Regresión lineal, Máquinas de Vectores Soporte (SVR) y redes neuronales.'],
+    ['Modelos de clasificación del curso','Regresión logística, Máquinas de Vectores Soporte (SVC) y árboles de decisión.'],
+    ['Clustering','Técnica no supervisada que agrupa los datos según la similitud de sus características.'],
+    ['Reducción de la dimensionalidad','Eliminar o combinar características poco determinantes para simplificar el modelo. Ejemplo: PCA.'],
+    ['Forward propagation','Los datos viajan de la capa de entrada a la de salida; cada neurona pondera sus entradas, las suma y aplica una función de activación.'],
+    ['Backpropagation','El error de la predicción se propaga hacia atrás para ajustar los pesos de la red. Paul Werbos, 1974; popularizada en 1986 (Rumelhart, Hinton y Williams).'],
+    ['Las 8 fases del workflow de ML','1 Recolectar · 2 Preparar · 3 Elegir modelo · 4 Entrenar · 5 Predicción · 6 Evaluación · 7 Interpretación · 8 Despliegue.'],
+    ['¿Cuánto tiempo ocupa el preprocesamiento?','Entre el 70 y el 80 % del tiempo de desarrollo de un proyecto de ML.'],
+    ['¿Qué es el split de datos?','Separar el dataset en entrenamiento (train), validación y prueba (test), para evaluar el modelo con datos que no ha visto.'],
+    ['¿Qué es el EDA?','Exploratory Data Analysis: análisis exploratorio (pregunta, tipos de datos, estadística descriptiva, visualización, relaciones y conclusiones) antes de modelizar.']
+  ];
+  var g=document.getElementById('ml6-fc-grid');
+  if(g){
+    var h='';
+    FC.forEach(function(c,i){var id='fc'+(i+1);
+      h+='<div class="fc-card" id="'+id+'" onclick="fcFlip(this)" title="Haz clic para ver la respuesta"><div class="fc-inner">'
+        +'<div class="fc-front"><span class="fc-num">'+(i+1)+'/'+FC.length+'</span><p class="fc-q">'+c[0]+'</p><span class="fc-hint">👆 Haz clic para responder</span></div>'
+        +'<div class="fc-back"><p class="fc-a">'+c[1]+'</p><div class="fc-btns" onclick="event.stopPropagation()">'
+        +'<button class="fc-btn fc-btn-no" onclick="fcMark(\''+id+'\',0)">❌ No lo sé</button>'
+        +'<button class="fc-btn fc-btn-yes" onclick="fcMark(\''+id+'\',1)">✅ Lo domino</button></div></div></div></div>';});
+    g.innerHTML=h;
+  }
+
+  /* ── Autoevaluación ── */
+  var AE=['Explico qué es el Machine Learning y en qué se diferencia de la programación clásica',
+    'Distingo los cuatro tipos de aprendizaje y pongo un ejemplo de cada uno',
+    'Identifico features y target, y si un problema es de regresión o de clasificación',
+    'Nombro los modelos de regresión y clasificación que veremos en el curso',
+    'Explico el bucle agente–acción–ambiente–recompensa del aprendizaje por refuerzo',
+    'Describo la estructura de una red neuronal, la forward propagation y la backpropagation',
+    'Ordeno y explico las 8 fases del workflow de un proyecto de ML',
+    'Enumero los pasos del preprocesamiento (NaN, outliers, split, escalado…) y del EDA'];
+  var LV=['❌ No logrado','⚠️ En proceso','✅ Logrado','⭐ Excelente'];
+  var box=document.getElementById('ml6-ae');
+  if(box){
+    var a='';
+    AE.forEach(function(t,i){a+='<div class="it"><p>'+t+'</p><div class="lv">';
+      LV.forEach(function(l,v){var id='ml6ae'+i+'-'+v;a+='<input type="radio" name="ml6ae'+i+'" id="'+id+'" value="'+v+'"><label for="'+id+'">'+l+'</label>';});
+      a+='</div></div>';});
+    box.innerHTML=a;
+    box.addEventListener('change',function(){
+      var sum=0,n=0;
+      for(var i=0;i<AE.length;i++){var c=box.querySelector('input[name="ml6ae'+i+'"]:checked');if(c){sum+=+c.value;n++;}}
+      document.getElementById('ml6-ae-res').textContent=n?('Has valorado '+n+' de '+AE.length+' competencias · nivel medio: '+(sum/n).toFixed(1)+' / 3'):'';
+    });
+  }
+})();
+
+/* ── Laboratorio EDA + regresión: se carga solo al abrirlo ── */
+window.ml6Lab=function(){
+  var f=document.getElementById('ml6-lab-frame'),b=document.getElementById('ml6-lab-btn');if(!f)return;
+  if(f.hidden){
+    if(!f.firstChild)f.innerHTML='<iframe src="laboratorios/eda-regresion/index.html" title="Laboratorio del péndulo: EDA y regresión lineal" loading="lazy"></iframe>';
+    f.hidden=false;b.textContent='✕ Cerrar el laboratorio';f.scrollIntoView({behavior:'smooth',block:'start'});
+  }else{f.hidden=true;b.textContent='▶ Abrir el laboratorio aquí';}
+};
+
+/* ── Reto rápido: tipo de aprendizaje ── */
+var ML6_Q=[
+  ['Un modelo aprende a detectar spam a partir de correos marcados como «spam» o «no spam».','sup'],
+  ['Una app agrupa canciones parecidas sin saber de antemano sus géneros.','nosup'],
+  ['Un dron aprende a aterrizar recibiendo puntos cuando lo hace suavemente.','ref'],
+  ['Predecir el precio de una casa a partir de casas vendidas con su precio.','sup'],
+  ['Reducir 30 variables de un sensor a 3 componentes principales (PCA).','nosup'],
+  ['Una IA aprende a jugar al Go jugando millones de partidas contra sí misma.','ref'],
+  ['Diagnosticar fruta en mal estado usando fotos ya clasificadas por expertos.','sup'],
+  ['Una tienda segmenta a sus clientes según sus compras, sin grupos predefinidos.','nosup']
+];
+var ML6_N={sup:'Supervisado',nosup:'No supervisado',ref:'Por refuerzo'};
+var ml6i=0,ml6ok=0,ml6order=[];
+function ml6Start(){ml6i=0;ml6ok=0;ml6order=ML6_Q.map(function(_,i){return i;}).sort(function(){return Math.random()-.5;});ml6Show();}
+function ml6Show(){
+  var q=document.getElementById('ml6-q'),o=document.getElementById('ml6-opts'),fb=document.getElementById('ml6-fb'),bar=document.getElementById('ml6-bar');
+  if(!q)return;
+  bar.style.width=(ml6i/ML6_Q.length*100)+'%';
+  if(ml6i>=ML6_Q.length){
+    q.textContent='¡Terminado! Has acertado '+ml6ok+' de '+ML6_Q.length+'.';
+    fb.textContent=ml6ok===ML6_Q.length?'🏆 ¡Perfecto!':ml6ok>=6?'👍 Muy bien. Repasa las que fallaste.':'📚 Vuelve a leer la sección 02 e inténtalo de nuevo.';
+    o.innerHTML='<button type="button" onclick="ml6Start()">🔄 Repetir</button>';return;
+  }
+  var it=ML6_Q[ml6order[ml6i]];
+  q.textContent=(ml6i+1)+'/'+ML6_Q.length+' · '+it[0];fb.textContent='';
+  o.innerHTML=Object.keys(ML6_N).map(function(k){return '<button type="button" onclick="ml6Ans(\''+k+'\')">'+ML6_N[k]+'</button>';}).join('');
+}
+function ml6Ans(k){
+  var it=ML6_Q[ml6order[ml6i]],fb=document.getElementById('ml6-fb');
+  if(k===it[1]){ml6ok++;fb.innerHTML='<span style="color:#16a34a;font-weight:800">✔ Correcto</span>';}
+  else fb.innerHTML='<span style="color:#dc2626;font-weight:800">✘ Era: '+ML6_N[it[1]]+'</span>';
+  document.querySelectorAll('#ml6-opts button').forEach(function(b){b.disabled=true;});
+  ml6i++;setTimeout(ml6Show,1100);
+}
+</script>

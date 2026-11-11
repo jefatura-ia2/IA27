@@ -1,0 +1,16 @@
+{
+  "name": "ia-bachillerato-ivjp",
+  "version": "1.0.0",
+  "description": "Inteligencia Artificial 1º Bachillerato — IES Valle del Jerte, Plasencia · Curso 2026-27",
+  "author": "José I. Sánchez <jisanchezc01@educarex.es>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "npx serve frontend -l 3000",
+    "build": "echo 'Static site — no build step needed'",
+    "lint": "node scripts/lint-fichas.js",
+    "zip": "node scripts/zip-dist.js"
+  },
+  "devDependencies": {
+    "serve": "^14.2.3"
+  }
+}

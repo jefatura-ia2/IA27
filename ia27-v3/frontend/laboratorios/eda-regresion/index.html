@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Laboratorio del péndulo · EDA y regresión</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --paper:#f7f5ef; --sheet:#ffffff; --grid:#e8e4d8; --ink:#1b2330; --muted:#5b6474;
+  --navy:#1d3557; --navy-soft:#e3e9f3; --coral:#d1495b; --coral-soft:#fbe7e9;
+  --green:#2f7d4f; --green-soft:#e2f2e8; --gold:#a26b00; --gold-soft:#fbf1d8; --gold-line:#d4a017;
+  --border:#d9d4c5; --radius:12px;
+  --mono:ui-monospace,"Cascadia Code","Fira Code",Menlo,Consolas,monospace;
+  --sans:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+h1,h2,h3,h4{color:var(--navy);line-height:1.25}
+h2{font-size:1.25rem;margin:0 0 6px}
+h3{font-size:1rem;margin:18px 0 8px}
+p{margin:.45em 0}
+code,.mono{font-family:var(--mono);font-size:.86em}
+code{background:var(--navy-soft);padding:.08em .35em;border-radius:5px}
+a{color:var(--navy)}
+button,select,input{font:inherit}
+/* ── layout ── */
+.top{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top .ttl{font-weight:800;font-size:1rem}
+.top .ttl small{display:block;font-weight:500;font-size:.72rem;opacity:.8}
+.top .sp{flex:1}
+.srcsw{display:inline-flex;background:rgba(255,255,255,.12);border-radius:999px;padding:3px;gap:2px}
+.srcsw button{border:0;background:transparent;color:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer}
+.srcsw button.on{background:#fff;color:var(--navy)}
+.top a.full{color:#fff;font-size:.78rem;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:5px 12px}
+.wrap{display:grid;grid-template-columns:230px 1fr;max-width:1240px;margin:0 auto;gap:18px;padding:16px}
+nav.st{position:sticky;top:70px;align-self:start;display:flex;flex-direction:column;gap:4px}
+nav.st button{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid transparent;background:transparent;border-radius:10px;padding:8px 10px;cursor:pointer;color:var(--ink);font-weight:600;font-size:.86rem}
+nav.st button .n{width:24px;height:24px;border-radius:7px;background:var(--navy-soft);color:var(--navy);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0}
+nav.st button:hover{background:var(--sheet);border-color:var(--border)}
+nav.st button.on{background:var(--sheet);border-color:var(--navy);color:var(--navy)}
+nav.st button.on .n{background:var(--navy);color:#fff}
+main{min-width:0}
+.card{background:var(--sheet);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(29,53,87,.05)}
+.kicker{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:.98rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.box{border-radius:10px;padding:12px 14px;border:1px solid var(--border);background:var(--paper)}
+.box.obs{border-left:5px solid var(--navy);background:var(--navy-soft)}
+.box.act{border-left:5px solid var(--green);background:var(--green-soft)}
+.box.wrn{border-left:5px solid var(--gold-line);background:var(--gold-soft)}
+.box.bad{border-left:5px solid var(--coral);background:var(--coral-soft)}
+.box h4{margin:0 0 4px;font-size:.86rem}
+.box p,.box li{font-size:.88rem}
+.box ul,.box ol{margin:4px 0;padding-left:20px}
+.badge{display:inline-block;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 9px;background:var(--navy-soft);color:var(--navy);white-space:nowrap}
+.badge.raw{background:var(--gold-soft);color:var(--gold)}
+.badge.work{background:var(--green-soft);color:var(--green)}
+.badge.own{background:#efe7fb;color:#5b2ca0}
+.badge.bad{background:var(--coral-soft);color:var(--coral)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+label.ctl{display:inline-flex;flex-direction:column;gap:3px;font-size:.74rem;font-weight:700;color:var(--muted)}
+select,input[type=text],input[type=number]{border:1px solid var(--border);border-radius:8px;padding:7px 9px;background:#fff;color:var(--ink);min-width:0}
+select:focus,input:focus,button:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+.btn{border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:9px;padding:7px 14px;font-weight:700;font-size:.84rem;cursor:pointer}
+.btn.sec{background:#fff;color:var(--navy)}
+.btn.sm{padding:4px 10px;font-size:.76rem}
+.btn.coral{background:var(--coral);border-color:var(--coral)}
+.btn:hover{filter:brightness(1.08)}
+.next{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.stat{background:var(--paper);border:1px solid var(--border);border-radius:9px;padding:8px 10px}
+.stat b{display:block;font-family:var(--mono);font-size:1rem;color:var(--navy)}
+.stat span{font-size:.7rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.formula{font-family:var(--mono);background:var(--navy);color:#eef3fb;border-radius:9px;padding:10px 14px;font-size:.86rem;overflow-x:auto;white-space:pre}
+/* tablas */
+.tw{overflow:auto;max-height:440px;border:1px solid var(--border);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{padding:6px 9px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{position:sticky;top:0;background:var(--navy-soft);color:var(--navy);font-size:.74rem;cursor:default;z-index:1}
+thead th.sort{cursor:pointer}
+thead th.sort:hover{text-decoration:underline}
+td.nan{color:var(--muted);font-style:italic}
+td.nan span{background:#eee;border-radius:5px;padding:0 6px}
+td.imp{background:var(--gold-soft);color:var(--gold);font-weight:700}
+td.out{background:var(--coral-soft);color:var(--coral);font-weight:800}
+td.win{background:var(--green-soft);color:var(--green);font-weight:700}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.74rem;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+/* radios */
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;cursor:pointer;background:#fff}
+.opt input{margin-top:4px}
+.opt.on{border-color:var(--navy);background:var(--navy-soft)}
+.opt b{font-size:.88rem}
+.opt small{display:block;color:var(--muted);font-size:.78rem}
+/* svg */
+svg.ch{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--border);border-radius:10px}
+svg.ch text{font-family:var(--sans);font-size:11px;fill:var(--muted)}
+svg.ch .ax{stroke:#9aa3b2;stroke-width:1}
+svg.ch .gl{stroke:#eef0f4;stroke-width:1}
+svg.ch .lbl{fill:var(--navy);font-weight:700;font-size:12px}
+svg.ch .olbl{fill:var(--coral);font-weight:800;font-size:11px}
+/* checklist */
+.chk{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.chk li{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:8px 12px;background:#fff;font-size:.86rem}
+.chk .ic{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;color:#fff}
+.chk .ok .ic,.chk li.ok .ic{background:var(--green)}
+.chk li.warn .ic{background:var(--gold-line)}
+.chk li.info .ic{background:var(--navy)}
+.chk li.bad .ic{background:var(--coral)}
+.chk small{display:block;color:var(--muted)}
+/* sliders */
+input[type=range]{width:100%;accent-color:var(--navy)}
+.eq{font-family:var(--mono);font-size:1.15rem;font-weight:700;color:var(--navy);background:var(--navy-soft);border-radius:10px;padding:10px 14px;display:inline-block}
+/* herramientas */
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{border:1.5px solid var(--border);background:#fff;border-radius:9px;padding:6px 14px;font-weight:700;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+pre.code{background:#0f1b2d;color:#e5ecf6;border-radius:10px;padding:14px;overflow-x:auto;font-size:.8rem;line-height:1.55;margin:6px 0 4px;position:relative}
+.cp{float:right}
+/* live */
+.live td input{width:100%;min-width:70px;text-align:right}
+.msg{font-weight:700;color:var(--coral);font-size:.86rem}
+.hide{display:none!important}
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:10px}
+  nav.st{position:sticky;top:56px;z-index:10;flex-direction:row;overflow-x:auto;background:var(--paper);padding:6px 0;margin:-4px 0 4px}
+  nav.st button{flex-shrink:0;padding:6px 9px}
+  nav.st button .t{display:none}
+  nav.st button.on .t{display:inline}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .card{padding:14px}
+  .top .ttl small{display:none}
+}
+@media(prefers-reduced-motion:no-preference){.opt,nav.st button,.btn{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="ttl">🧪 Laboratorio del péndulo<small>EDA y regresión lineal · IA 1º Bachillerato · IES Valle del Jerte</small></div>
+  <div class="sp"></div>
+  <div class="srcsw" role="group" aria-label="Datos que usan las estaciones 4 a 7">
+    <button id="src-raw" type="button">Datos crudos</button>
+    <button id="src-work" type="button">Datos tratados</button>
+  </div>
+  <a class="full hide" id="fullLink" href="index.html" target="_blank" rel="noopener">⤢ Pantalla completa</a>
+</header>
+<div class="wrap">
+  <nav class="st" id="nav" aria-label="Estaciones"></nav>
+  <main id="main"></main>
+</div>
+
+<script>
+'use strict';
+/* ══════════════════════════════════════════════════════════════
+   DATOS · 40 ensayos con un péndulo simple (copia cruda INMUTABLE)
+   Generados con semilla 2627: T = 2π·√(L/g)·(1 + θ²/16) + ruido
+   ══════════════════════════════════════════════════════════════ */
+const DATA = [{"ensayo": "P-01", "longitud_m": 1.485, "masa_g": 370.0, "angulo_deg": 5.1, "temperatura_C": 23.3, "periodo_s": 2.426}, {"ensayo": "P-02", "longitud_m": 0.738, "masa_g": 270.0, "angulo_deg": 21.5, "temperatura_C": 25.5, "periodo_s": 1.764}, {"ensayo": "P-03", "longitud_m": 1.4, "masa_g": 460.0, "angulo_deg": 29.6, "temperatura_C": 18.4, "periodo_s": 2.369}, {"ensayo": "P-04", "longitud_m": 0.86, "masa_g": 140.0, "angulo_deg": 28.9, "temperatura_C": 18.9, "periodo_s": 1.933}, {"ensayo": "P-05", "longitud_m": 0.46, "masa_g": null, "angulo_deg": 9.7, "temperatura_C": 22.3, "periodo_s": 1.381}, {"ensayo": "P-06", "longitud_m": 1.108, "masa_g": 260.0, "angulo_deg": 19.6, "temperatura_C": 20.6, "periodo_s": 2.13}, {"ensayo": "P-07", "longitud_m": 1.308, "masa_g": 270.0, "angulo_deg": 6.3, "temperatura_C": 20.6, "periodo_s": 2.257}, {"ensayo": "P-08", "longitud_m": 1.461, "masa_g": 370.0, "angulo_deg": 29.3, "temperatura_C": 22.3, "periodo_s": null}, {"ensayo": "P-09", "longitud_m": 1.479, "masa_g": 380.0, "angulo_deg": 20.8, "temperatura_C": 25.4, "periodo_s": 2.466}, {"ensayo": "P-10", "longitud_m": 0.428, "masa_g": 240.0, "angulo_deg": null, "temperatura_C": 18.0, "periodo_s": 1.275}, {"ensayo": "P-11", "longitud_m": 0.684, "masa_g": 90.0, "angulo_deg": 28.3, "temperatura_C": 23.6, "periodo_s": 1.665}, {"ensayo": "P-12", "longitud_m": 0.763, "masa_g": 350.0, "angulo_deg": 6.5, "temperatura_C": 18.7, "periodo_s": 1.762}, {"ensayo": "P-13", "longitud_m": 1.393, "masa_g": 420.0, "angulo_deg": 10.7, "temperatura_C": 24.6, "periodo_s": 2.391}, {"ensayo": "P-14", "longitud_m": 0.427, "masa_g": 2000.0, "angulo_deg": 24.1, "temperatura_C": 23.3, "periodo_s": 1.318}, {"ensayo": "P-15", "longitud_m": 0.497, "masa_g": 50.0, "angulo_deg": 26.4, "temperatura_C": 24.2, "periodo_s": 1.426}, {"ensayo": "P-16", "longitud_m": 1.466, "masa_g": 240.0, "angulo_deg": 28.2, "temperatura_C": null, "periodo_s": 2.476}, {"ensayo": "P-17", "longitud_m": 0.57, "masa_g": 500.0, "angulo_deg": 29.6, "temperatura_C": 21.5, "periodo_s": 1.509}, {"ensayo": "P-18", "longitud_m": 0.892, "masa_g": 300.0, "angulo_deg": 14.3, "temperatura_C": 25.4, "periodo_s": 1.869}, {"ensayo": "P-19", "longitud_m": 1.331, "masa_g": null, "angulo_deg": 15.8, "temperatura_C": 25.5, "periodo_s": 2.335}, {"ensayo": "P-20", "longitud_m": 0.956, "masa_g": 230.0, "angulo_deg": 5.4, "temperatura_C": 19.3, "periodo_s": 1.951}, {"ensayo": "P-21", "longitud_m": 0.896, "masa_g": 440.0, "angulo_deg": 22.4, "temperatura_C": 18.7, "periodo_s": 1.901}, {"ensayo": "P-22", "longitud_m": 0.524, "masa_g": 170.0, "angulo_deg": 26.8, "temperatura_C": 25.8, "periodo_s": 1.453}, {"ensayo": "P-23", "longitud_m": 0.588, "masa_g": 250.0, "angulo_deg": 6.2, "temperatura_C": 19.2, "periodo_s": null}, {"ensayo": "P-24", "longitud_m": 0.779, "masa_g": 160.0, "angulo_deg": 27.7, "temperatura_C": 19.2, "periodo_s": 1.817}, {"ensayo": "P-25", "longitud_m": 0.252, "masa_g": 370.0, "angulo_deg": 21.5, "temperatura_C": 18.3, "periodo_s": 1.012}, {"ensayo": "P-26", "longitud_m": 0.851, "masa_g": 260.0, "angulo_deg": 14.8, "temperatura_C": 21.7, "periodo_s": 1.873}, {"ensayo": "P-27", "longitud_m": 0.8, "masa_g": 190.0, "angulo_deg": 19.9, "temperatura_C": 21.7, "periodo_s": 3.912}, {"ensayo": "P-28", "longitud_m": 0.524, "masa_g": 340.0, "angulo_deg": 20.3, "temperatura_C": 25.5, "periodo_s": 1.463}, {"ensayo": "P-29", "longitud_m": 1.125, "masa_g": 350.0, "angulo_deg": 24.3, "temperatura_C": 24.9, "periodo_s": 2.165}, {"ensayo": "P-30", "longitud_m": 1.214, "masa_g": 190.0, "angulo_deg": null, "temperatura_C": 25.1, "periodo_s": 2.218}, {"ensayo": "P-31", "longitud_m": 0.22, "masa_g": 270.0, "angulo_deg": 11.8, "temperatura_C": 20.9, "periodo_s": 0.936}, {"ensayo": "P-32", "longitud_m": 0.282, "masa_g": 240.0, "angulo_deg": 27.5, "temperatura_C": 23.8, "periodo_s": 1.08}, {"ensayo": "P-33", "longitud_m": 0.223, "masa_g": 120.0, "angulo_deg": 20.2, "temperatura_C": 22.9, "periodo_s": 0.972}, {"ensayo": "P-34", "longitud_m": 0.751, "masa_g": null, "angulo_deg": 17.3, "temperatura_C": 25.9, "periodo_s": 1.715}, {"ensayo": "P-35", "longitud_m": 1.033, "masa_g": 140.0, "angulo_deg": 26.8, "temperatura_C": 23.5, "periodo_s": 2.055}, {"ensayo": "P-36", "longitud_m": 0.964, "masa_g": 170.0, "angulo_deg": 10.1, "temperatura_C": 18.7, "periodo_s": 1.942}, {"ensayo": "P-37", "longitud_m": null, "masa_g": 280.0, "angulo_deg": 7.3, "temperatura_C": 24.3, "periodo_s": 2.263}, {"ensayo": "P-38", "longitud_m": 1.433, "masa_g": 450.0, "angulo_deg": 13.4, "temperatura_C": 18.8, "periodo_s": 2.416}, {"ensayo": "P-39", "longitud_m": 1.188, "masa_g": 80.0, "angulo_deg": 25.9, "temperatura_C": 20.4, "periodo_s": 2.172}, {"ensayo": "P-40", "longitud_m": 1.437, "masa_g": 190.0, "angulo_deg": 25.8, "temperatura_C": 20.1, "periodo_s": 2.473}];
+function deepFreeze(o){Object.values(o).forEach(v=>{if(v&&typeof v==='object')deepFreeze(v);});return Object.freeze(o);}
+const RAW = deepFreeze(DATA);
+const G = 9.81;
+const NUM = ['longitud_m','masa_g','angulo_deg','temperatura_C','periodo_s'];
+const META = {
+  ensayo:{label:'Ensayo',unit:'',dec:0},
+  longitud_m:{label:'Longitud',unit:'m',dec:3,desc:'Longitud del hilo, del punto de suspensión al centro de la masa'},
+  masa_g:{label:'Masa',unit:'g',dec:1,desc:'Masa de la pesa colgada'},
+  angulo_deg:{label:'Ángulo inicial',unit:'°',dec:1,desc:'Ángulo con el que se suelta el péndulo'},
+  temperatura_C:{label:'Temperatura',unit:'°C',dec:1,desc:'Temperatura del aula durante el ensayo'},
+  periodo_s:{label:'Periodo',unit:'s',dec:3,desc:'Tiempo de una oscilación completa (10 oscilaciones cronometradas ÷ 10)'},
+  raiz_longitud:{label:'√Longitud',unit:'√m',dec:3,src:['longitud_m'],f:r=>isNum(r.longitud_m)?Math.sqrt(r.longitud_m):null},
+  periodo2_s2:{label:'Periodo²',unit:'s²',dec:3,src:['periodo_s'],f:r=>isNum(r.periodo_s)?r.periodo_s*r.periodo_s:null}
+};
+const PREDICTORS = ['longitud_m','raiz_longitud','masa_g','angulo_deg','temperatura_C'];
+const OUTCOMES = ['periodo_s','periodo2_s2'];
+const STATIONS = [
+  ['Pregunta','❓'],['Inspección','🔍'],['Calidad','🧹'],['Transformaciones','📐'],
+  ['Univariante','📊'],['Relaciones','🔗'],['Regresión','📈'],['Práctica en vivo','✍️'],['Python y Sheets','🐍']
+];
+
+/* ══════════════ FUNCIONES ESTADÍSTICAS PURAS ══════════════ */
+const isNum = v => typeof v==='number' && isFinite(v);
+const clean = a => a.filter(isNum);
+const round = (x,d) => isNum(x) ? Math.round(x*10**d)/10**d : x;
+function mean(a){a=clean(a);return a.length?a.reduce((s,x)=>s+x,0)/a.length:NaN;}
+function quantile(a,p){a=clean(a).slice().sort((x,y)=>x-y);if(!a.length)return NaN;const i=(a.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);return a[lo]+(a[hi]-a[lo])*(i-lo);}
+const median = a => quantile(a,.5);
+function sd(a){a=clean(a);if(a.length<2)return NaN;const m=mean(a);return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-1));}
+function tukey(a){const q1=quantile(a,.25),q3=quantile(a,.75),iqr=q3-q1;return{q1,q3,iqr,lo:q1-1.5*iqr,hi:q3+1.5*iqr,med:median(a)};}
+function corr(xs,ys){const mx=mean(xs),my=mean(ys);let sxy=0,sxx=0,syy=0;for(let i=0;i<xs.length;i++){sxy+=(xs[i]-mx)*(ys[i]-my);sxx+=(xs[i]-mx)**2;syy+=(ys[i]-my)**2;}return sxy/Math.sqrt(sxx*syy);}
+function linreg(xs,ys){
+  const n=xs.length;if(n<2)return null;
+  const mx=mean(xs),my=mean(ys);let sxy=0,sxx=0,syy=0;
+  for(let i=0;i<n;i++){sxy+=(xs[i]-mx)*(ys[i]-my);sxx+=(xs[i]-mx)**2;syy+=(ys[i]-my)**2;}
+  if(sxx===0)return null;
+  const b1=sxy/sxx,b0=my-b1*mx;
+  const yhat=xs.map(x=>b0+b1*x),e=ys.map((y,i)=>y-yhat[i]);
+  const sse=e.reduce((s,v)=>s+v*v,0),mse=sse/n;
+  return {n,mx,my,sxx,sxy,b0,b1,yhat,e,sse,mse,rmse:Math.sqrt(mse),r2:syy?1-sse/syy:NaN,r:syy?sxy/Math.sqrt(sxx*syy):NaN};
+}
+const sseFor = (xs,ys,b0,b1) => xs.reduce((s,x,i)=>s+(ys[i]-(b0+b1*x))**2,0);
+const fmt = (v,d=3) => isNum(v) ? (+v.toFixed(d)).toLocaleString('es-ES',{maximumFractionDigits:d}) : '—';
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const lab = c => META[c].label+(META[c].unit?' ('+META[c].unit+')':'');
+function val(r,c){return META[c]&&META[c].f?META[c].f(r):r[c];}
+function srcCols(c){return META[c].src||[c];}
+
+/* ══════════════ ESTADO ══════════════ */
+const LSKEY='ia27_lab_pendulo';
+const S = Object.assign({st:0,src:'raw',imp:'none',outAct:'keep',boxCol:'masa_g',trCol:'masa_g',uniCol:'periodo_s',
+  x:'longitud_m',y:'periodo_s',sort:'ensayo',dir:1,q:'',flt:'all',tool:'py',b0:null,b1:null},(()=>{try{return JSON.parse(localStorage.getItem(LSKEY))||{};}catch(e){return{};}})());
+S.b0=null;S.b1=null;S.st=Math.max(0,Math.min(8,+S.st||0));if(!['raw','work'].includes(S.src))S.src='raw';
+function save(){try{const {st,src,imp,outAct,boxCol,trCol,uniCol,x,y,tool}=S;localStorage.setItem(LSKEY,JSON.stringify({st,src,imp,outAct,boxCol,trCol,uniCol,x,y,tool}));}catch(e){}}
+const LIVE0=[[1,2.1],[2,3.9],[3,6.2],[4,7.8],[5,10.3]];
+let LIVE=LIVE0.map(p=>p.slice());
+
+/* ══════════════ COPIA DE TRABAJO (nunca toca RAW) ══════════════ */
+function flagOutliers(rows){
+  const info={};
+  NUM.forEach(c=>{const t=tukey(rows.map(r=>r[c]));info[c]=t;rows.forEach(r=>{if(isNum(r[c])&&(r[c]<t.lo||r[c]>t.hi))r._out[c]=true;});});
+  return info;
+}
+function rawView(){
+  const rows=RAW.map(r=>Object.assign({},r,{_imp:{},_out:{},_win:{}}));
+  const outInfo=flagOutliers(rows);
+  return {rows,outInfo,impInfo:{},kind:'raw'};
+}
+function buildWork(){
+  let rows=RAW.map(r=>Object.assign({},r,{_imp:{},_out:{},_win:{}}));
+  const impInfo={};
+  if(S.imp==='drop'){
+    rows=rows.filter(r=>NUM.every(c=>isNum(r[c])));
+  }else if(S.imp!=='none'){
+    NUM.forEach(c=>{
+      const col=RAW.map(r=>r[c]);
+      let method=S.imp;
+      if(S.imp==='theory')method=(c==='periodo_s'||c==='longitud_m')?'theory':'median';
+      const v=method==='mean'?mean(col):median(col);
+      impInfo[c]={method,value:v};
+      rows.forEach(r=>{
+        if(isNum(r[c]))return;
+        let nv=v;
+        if(method==='theory'){
+          if(c==='periodo_s'&&isNum(r.longitud_m))nv=2*Math.PI*Math.sqrt(r.longitud_m/G);
+          else if(c==='longitud_m'&&isNum(r.periodo_s))nv=G*(r.periodo_s/(2*Math.PI))**2;
+          else nv=median(col);
+        }
+        r[c]=round(nv,META[c].dec);r._imp[c]=method;
+      });
+    });
+  }
+  const outInfo=flagOutliers(rows);
+  if(S.outAct==='drop')rows=rows.filter(r=>!Object.keys(r._out).length);
+  else if(S.outAct==='winsor')rows.forEach(r=>Object.keys(r._out).forEach(c=>{const t=outInfo[c];r._win[c]=r[c];r[c]=round(Math.min(Math.max(r[c],t.lo),t.hi),META[c].dec);}));
+  return {rows,outInfo,impInfo,kind:'work'};
+}
+let RAWV=rawView(),WORK=buildWork();
+const DS=()=>S.src==='raw'?RAWV:WORK;
+const srcBadge=(k)=>(k||S.src)==='raw'?'<span class="badge raw">Datos crudos</span>':'<span class="badge work">Datos tratados</span>';
+function decisionText(){
+  const imp={none:'sin imputar (los NaN se omiten en cada cálculo)',mean:'NaN imputados con la media de cada columna',median:'NaN imputados con la mediana de cada columna',drop:'filas incompletas eliminadas',theory:'NaN de periodo/longitud con la fórmula del péndulo; resto con la mediana'}[S.imp];
+  const out={keep:'anomalías mantenidas',drop:'filas con anomalías eliminadas',winsor:'anomalías recortadas a la valla de Tukey (winsorización)'}[S.outAct];
+  return imp+' · '+out+' · '+WORK.rows.length+' filas';
+}
+function pairs(ds,x,y){
+  const P=[];let omit=0;
+  ds.rows.forEach(r=>{const a=val(r,x),b=val(r,y);if(isNum(a)&&isNum(b))P.push({x:a,y:b,id:r.ensayo,out:srcCols(x).concat(srcCols(y)).some(c=>r._out[c])});else omit++;});
+  return {P,omit};
+}
+
+/* ══════════════ GRÁFICOS SVG ══════════════ */
+function ticks(min,max,n){
+  if(!isNum(min)||!isNum(max))return[0,1];
+  if(min===max){min-=1;max+=1;}
+  const raw=(max-min)/(n||5),mag=10**Math.floor(Math.log10(raw)),e=raw/mag;
+  const step=(e>=7.5?10:e>=3.5?5:e>=1.5?2:1)*mag;const t=[];
+  for(let v=Math.ceil(min/step)*step;v<=max+step*1e-9;v+=step)t.push(+v.toFixed(10));
+  return t;
+}
+function pad(min,max,f){const s=(max-min)||Math.abs(max)||1;return[min-s*(f||.06),max+s*(f||.06)];}
+function axes(o){ // o: W,H,xd,yd,xl,yl,m
+  const m=o.m||{l:58,r:16,t:16,b:44},W=o.W,H=o.H;
+  const sx=v=>m.l+(v-o.xd[0])/(o.xd[1]-o.xd[0])*(W-m.l-m.r);
+  const sy=v=>H-m.b-(v-o.yd[0])/(o.yd[1]-o.yd[0])*(H-m.t-m.b);
+  let g='';
+  if(!o.noY)ticks(o.yd[0],o.yd[1],5).forEach(t=>{if(t<o.yd[0]||t>o.yd[1])return;g+=`<line class="gl" x1="${m.l}" x2="${W-m.r}" y1="${sy(t)}" y2="${sy(t)}"/><text x="${m.l-6}" y="${sy(t)+4}" text-anchor="end">${fmt(t,4)}</text>`;});
+  ticks(o.xd[0],o.xd[1],o.xn||6).forEach(t=>{if(t<o.xd[0]||t>o.xd[1])return;g+=`<line class="gl" y1="${m.t}" y2="${H-m.b}" x1="${sx(t)}" x2="${sx(t)}"/><text x="${sx(t)}" y="${H-m.b+16}" text-anchor="middle">${fmt(t,4)}</text>`;});
+  g+=`<line class="ax" x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}"/>`;
+  if(!o.noY)g+=`<line class="ax" x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${H-m.b}"/>`;
+  if(o.xl)g+=`<text class="lbl" x="${(m.l+W-m.r)/2}" y="${H-8}" text-anchor="middle">${esc(o.xl)}</text>`;
+  if(o.yl)g+=`<text class="lbl" transform="translate(14,${(m.t+H-m.b)/2}) rotate(-90)" text-anchor="middle">${esc(o.yl)}</text>`;
+  return {sx,sy,g,m};
+}
+const svg=(W,H,inner,label)=>`<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label||'gráfico')}">${inner}</svg>`;
+
+function boxplotSVG(items,col,title){ // items: [{id,v}]
+  const vs=items.map(i=>i.v).filter(isNum);if(!vs.length)return '<p class="msg">Sin datos.</p>';
+  const t=tukey(vs),W=640,H=150;
+  const inl=vs.filter(v=>v>=t.lo&&v<=t.hi),wl=Math.min(...inl),wh=Math.max(...inl);
+  const xd=pad(Math.min(...vs,t.lo),Math.max(...vs,t.hi),.08);
+  const a=axes({W,H,xd,yd:[0,1],xl:lab(col),noY:true,m:{l:20,r:20,t:14,b:44}});
+  const y=a.sy(.55),h=34;let g=a.g;
+  [['lo',t.lo],['hi',t.hi]].forEach(([k,v])=>{if(v>=xd[0]&&v<=xd[1])g+=`<line x1="${a.sx(v)}" x2="${a.sx(v)}" y1="14" y2="${H-44}" stroke="var(--gold-line)" stroke-dasharray="5 4" stroke-width="1.5"/><text x="${a.sx(v)}" y="24" text-anchor="middle" style="fill:var(--gold);font-weight:700">valla ${k==='lo'?'inf.':'sup.'} ${fmt(v,3)}</text>`;});
+  g+=`<line x1="${a.sx(wl)}" x2="${a.sx(t.q1)}" y1="${y}" y2="${y}" stroke="var(--navy)" stroke-width="1.5"/><line x1="${a.sx(t.q3)}" x2="${a.sx(wh)}" y1="${y}" y2="${y}" stroke="var(--navy)" stroke-width="1.5"/>`;
+  g+=`<line x1="${a.sx(wl)}" x2="${a.sx(wl)}" y1="${y-10}" y2="${y+10}" stroke="var(--navy)" stroke-width="1.5"/><line x1="${a.sx(wh)}" x2="${a.sx(wh)}" y1="${y-10}" y2="${y+10}" stroke="var(--navy)" stroke-width="1.5"/>`;
+  g+=`<rect x="${a.sx(t.q1)}" y="${y-h/2}" width="${Math.max(1,a.sx(t.q3)-a.sx(t.q1))}" height="${h}" fill="var(--navy-soft)" stroke="var(--navy)" stroke-width="1.5" rx="3"><title>Q1 ${fmt(t.q1)} · Q3 ${fmt(t.q3)}</title></rect>`;
+  g+=`<line x1="${a.sx(t.med)}" x2="${a.sx(t.med)}" y1="${y-h/2}" y2="${y+h/2}" stroke="var(--green)" stroke-width="3"><title>Mediana ${fmt(t.med)}</title></line>`;
+  items.forEach(it=>{if(!isNum(it.v))return;const o=it.v<t.lo||it.v>t.hi;
+    g+=`<circle cx="${a.sx(it.v)}" cy="${o?y:y+h/2+12}" r="${o?6:3}" fill="${o?'var(--coral)':'rgba(29,53,87,.35)'}" stroke="${o?'#fff':'none'}" stroke-width="1.5"><title>${esc(it.id)}: ${fmt(it.v)}</title></circle>`;
+    if(o)g+=`<text class="olbl" x="${a.sx(it.v)}" y="${y-h/2-6}" text-anchor="${a.sx(it.v)>W-90?'end':'middle'}">${esc(it.id)} · ${fmt(it.v)}</text>`;});
+  return svg(W,H,g,title||('Diagrama de caja de '+lab(col)));
+}
+function histSVG(vs,col){
+  vs=clean(vs);if(!vs.length)return '<p class="msg">Sin datos.</p>';
+  const k=Math.ceil(Math.log2(vs.length)+1),mn=Math.min(...vs),mx=Math.max(...vs),w=(mx-mn)/k||1;
+  const bins=Array.from({length:k},(_,i)=>({a:mn+i*w,b:mn+(i+1)*w,n:0}));
+  vs.forEach(v=>{let i=Math.min(k-1,Math.floor((v-mn)/w));bins[i].n++;});
+  const W=640,H=260,top=Math.max(...bins.map(b=>b.n));
+  const a=axes({W,H,xd:[mn-w*.2,mx+w*.2],yd:[0,top*1.15],xl:lab(col),yl:'Frecuencia'});
+  let g=a.g;
+  bins.forEach(b=>{g+=`<rect x="${a.sx(b.a)+1}" y="${a.sy(b.n)}" width="${Math.max(1,a.sx(b.b)-a.sx(b.a)-2)}" height="${a.sy(0)-a.sy(b.n)}" fill="var(--navy)" opacity=".78"><title>[${fmt(b.a)}, ${fmt(b.b)}): ${b.n}</title></rect>`;});
+  const m=mean(vs),md=median(vs);
+  g+=`<line x1="${a.sx(m)}" x2="${a.sx(m)}" y1="16" y2="${H-44}" stroke="var(--coral)" stroke-width="2.5"/><text x="${a.sx(m)+4}" y="28" style="fill:var(--coral);font-weight:800">media ${fmt(m)}</text>`;
+  g+=`<line x1="${a.sx(md)}" x2="${a.sx(md)}" y1="16" y2="${H-44}" stroke="var(--green)" stroke-width="2.5" stroke-dasharray="6 4"/><text x="${a.sx(md)+4}" y="44" style="fill:var(--green);font-weight:800">mediana ${fmt(md)}</text>`;
+  return svg(W,H,g,'Histograma de '+lab(col));
+}
+function scatterSVG(P,x,y,o){ // o: {line:{b0,b1,dash,color,label}, line2, resid:bool}
+  o=o||{};const W=640,H=360;
+  if(!P.length)return '<p class="msg">No hay pares válidos.</p>';
+  const xs=P.map(p=>p.x),ys=P.map(p=>p.y);
+  const a=axes({W,H,xd:pad(Math.min(...xs),Math.max(...xs)),yd:pad(Math.min(...ys),Math.max(...ys),.1),xl:lab(x),yl:lab(y)});
+  let g=a.g;
+  const xd=pad(Math.min(...xs),Math.max(...xs));
+  const drawLine=(L)=>{if(!L||!isNum(L.b1))return'';return `<line x1="${a.sx(xd[0])}" y1="${a.sy(L.b0+L.b1*xd[0])}" x2="${a.sx(xd[1])}" y2="${a.sy(L.b0+L.b1*xd[1])}" stroke="${L.color||'var(--navy)'}" stroke-width="2.5" ${L.dash?'stroke-dasharray="7 5"':''}/>`;};
+  g+=`<clipPath id="clp"><rect x="${a.m.l}" y="${a.m.t}" width="${W-a.m.l-a.m.r}" height="${H-a.m.t-a.m.b}"/></clipPath><g clip-path="url(#clp)">`;
+  if(o.resid&&o.line)P.forEach(p=>{const yh=o.line.b0+o.line.b1*p.x;g+=`<line x1="${a.sx(p.x)}" x2="${a.sx(p.x)}" y1="${a.sy(p.y)}" y2="${a.sy(yh)}" stroke="${p.y>=yh?'var(--green)':'var(--coral)'}" stroke-width="1.5" opacity=".75"/>`;});
+  g+=drawLine(o.line2)+drawLine(o.line)+'</g>';
+  P.forEach(p=>{g+=`<circle cx="${a.sx(p.x)}" cy="${a.sy(p.y)}" r="${p.out?6.5:4.5}" fill="${p.out?'var(--coral)':'var(--navy)'}" fill-opacity="${p.out?1:.72}" stroke="#fff" stroke-width="1.2"><title>${esc(p.id)}: (${fmt(p.x)}, ${fmt(p.y)})</title></circle>`;
+    if(p.out)g+=`<text class="olbl" x="${a.sx(p.x)+(a.sx(p.x)>W-110?-9:9)}" y="${a.sy(p.y)+4}" text-anchor="${a.sx(p.x)>W-110?'end':'start'}">${esc(p.id)}</text>`;});
+  let ly=24;[o.line,o.line2].forEach(L=>{if(L&&L.label){g+=`<line x1="${W-200}" x2="${W-176}" y1="${ly-4}" y2="${ly-4}" stroke="${L.color||'var(--navy)'}" stroke-width="2.5" ${L.dash?'stroke-dasharray="7 5"':''}/><text x="${W-170}" y="${ly}" style="fill:var(--ink)">${esc(L.label)}</text>`;ly+=16;}});
+  return svg(W,H,g,'Dispersión de '+lab(y)+' frente a '+lab(x));
+}
+function residSVG(P,R,x){
+  const W=640,H=220,xs=P.map(p=>p.x),m=Math.max(...R.e.map(Math.abs))||1;
+  const a=axes({W,H,xd:pad(Math.min(...xs),Math.max(...xs)),yd:[-m*1.2,m*1.2],xl:lab(x),yl:'Residuo eᵢ'});
+  let g=a.g+`<line x1="${a.m.l}" x2="${W-a.m.r}" y1="${a.sy(0)}" y2="${a.sy(0)}" stroke="var(--ink)" stroke-width="1.3"/>`;
+  P.forEach((p,i)=>{const e=R.e[i];g+=`<circle cx="${a.sx(p.x)}" cy="${a.sy(e)}" r="${p.out?6:4}" fill="${e>=0?'var(--green)':'var(--coral)'}" stroke="#fff"><title>${esc(p.id)}: e = ${fmt(e,4)}</title></circle>`;if(p.out)g+=`<text class="olbl" x="${a.sx(p.x)+8}" y="${a.sy(e)+4}">${esc(p.id)}</text>`;});
+  return svg(W,H,g,'Residuos frente a '+lab(x));
+}
+function residBarsSVG(ids,e){
+  const W=640,H=200,n=e.length;if(!n)return'';const m=Math.max(...e.map(Math.abs))||1;
+  const a=axes({W,H,xd:[0,n],yd:[-m*1.15,m*1.15],yl:'eᵢ',xn:2,m:{l:58,r:16,t:12,b:30}});
+  let g=a.g.replace(/<text[^>]*text-anchor="middle">[^<]*<\/text>/g,'');
+  const bw=(W-a.m.l-a.m.r)/n;
+  e.forEach((v,i)=>{g+=`<rect x="${a.sx(i)+bw*.12}" width="${bw*.76}" y="${Math.min(a.sy(v),a.sy(0))}" height="${Math.max(1,Math.abs(a.sy(v)-a.sy(0)))}" fill="${v>=0?'var(--green)':'var(--coral)'}"><title>${esc(ids[i])}: ${fmt(v,4)}</title></rect>`;});
+  g+=`<line x1="${a.m.l}" x2="${W-a.m.r}" y1="${a.sy(0)}" y2="${a.sy(0)}" stroke="var(--ink)"/>`;
+  if(n<=16)ids.forEach((id,i)=>{g+=`<text x="${a.sx(i)+bw/2}" y="${H-12}" text-anchor="middle">${esc(id)}</text>`;});
+  return svg(W,H,g,'Barras de residuos');
+}
+function errorCurveSVG(xs,ys,R,b1cur){
+  const W=640,H=230,span=Math.max(Math.abs(R.b1)*1.5,1e-3),lo=R.b1-span,hi=R.b1+span,N=80,pts=[];
+  for(let i=0;i<=N;i++){const b1=lo+(hi-lo)*i/N,b0=R.my-b1*R.mx;pts.push([b1,sseFor(xs,ys,b0,b1)]);}
+  const ymax=Math.max(...pts.map(p=>p[1]));
+  const a=axes({W,H,xd:[lo,hi],yd:[0,ymax*1.08],xl:'β₁ (con β₀ = ȳ − β₁·x̄)',yl:'SSE'});
+  let g=a.g+`<polyline fill="none" stroke="var(--navy)" stroke-width="2.5" points="${pts.map(p=>a.sx(p[0])+','+a.sy(p[1])).join(' ')}"/>`;
+  g+=`<circle cx="${a.sx(R.b1)}" cy="${a.sy(R.sse)}" r="6" fill="var(--green)"><title>Mínimo: β₁ = ${fmt(R.b1,4)}, SSE = ${fmt(R.sse,4)}</title></circle><text x="${a.sx(R.b1)}" y="${a.sy(R.sse)-10}" text-anchor="middle" style="fill:var(--green);font-weight:800">mínimo</text>`;
+  if(isNum(b1cur)&&b1cur>=lo&&b1cur<=hi){const s=sseFor(xs,ys,R.my-b1cur*R.mx,b1cur);g+=`<circle cx="${a.sx(b1cur)}" cy="${a.sy(s)}" r="6" fill="var(--coral)"/><text x="${a.sx(b1cur)+8}" y="${a.sy(s)-8}" style="fill:var(--coral);font-weight:800">tu β₁</text>`;}
+  return svg(W,H,g,'Función de error SSE según β₁');
+}
+
+/* ══════════════ UI COMÚN ══════════════ */
+function sel(id,opts,cur,label){return `<label class="ctl">${label}<select id="${id}">${opts.map(c=>`<option value="${c}"${c===cur?' selected':''}>${esc(lab(c))}</option>`).join('')}</select></label>`;}
+function nextBar(i){return `<div class="next">${i>0?`<button class="btn sec" data-go="${i-1}">← ${STATIONS[i-1][0]}</button>`:'<span></span>'}${i<STATIONS.length-1?`<button class="btn" data-go="${i+1}">Siguiente: ${STATIONS[i+1][0]} →</button>`:''}</div>`;}
+function obsAct(obs,act){return `<div class="grid2" style="margin-top:12px"><div class="box obs"><h4>👀 Qué observar</h4>${obs}</div><div class="box act"><h4>✋ Tu acción</h4>${act}</div></div>`;}
+function statsCards(vs,unit){const t=tukey(vs);return `<div class="stats">${[['n',clean(vs).length,0],['NaN',vs.length-clean(vs).length,0],['Media',mean(vs)],['Mediana',t.med],['Desv. típica',sd(vs)],['Mín',Math.min(...clean(vs))],['Máx',Math.max(...clean(vs))],['Q1',t.q1],['Q3',t.q3],['IQR',t.iqr]].map(s=>`<div class="stat"><span>${s[0]}</span><b>${fmt(s[1],s[2]===0?0:3)}</b></div>`).join('')}</div>`;}
+function download(name,txt){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+txt],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove();}
+function toCSV(rows){const cols=['ensayo'].concat(NUM);return cols.join(',')+'\n'+rows.map(r=>cols.map(c=>isNum(r[c])||c==='ensayo'?r[c]:'').join(',')).join('\n')+'\n';}
+
+/* ══════════════ ESTACIONES ══════════════ */
+const R={};
+R[0]=()=>{
+  const nN=NUM.reduce((s,c)=>s+RAW.filter(r=>!isNum(r[c])).length,0);
+  return `<div class="card"><div class="kicker">Estación 1 · Pregunta</div><h2>¿Podemos predecir el periodo de un péndulo?</h2>
+  <p class="lead">En el laboratorio de Física se han hecho <b>${RAW.length} ensayos</b> con un péndulo simple. En cada uno se cambió la longitud del hilo, la masa o el ángulo inicial y se cronometraron 10 oscilaciones. Antes de entrenar un modelo hay que <b>explorar y limpiar</b> los datos: este laboratorio te guía paso a paso.</p>
+  <div class="grid2" style="margin-top:12px">
+    <div class="box obs"><h4>🎯 Pregunta de investigación</h4><p>¿Se puede predecir el <b>periodo</b> <code>periodo_s</code> (outcome) a partir de la <b>longitud</b> <code>longitud_m</code> (predictor inicial)? ¿Influyen la masa, el ángulo o la temperatura?</p></div>
+    <div class="box wrn"><h4>💭 Hipótesis</h4><p>A más longitud, más periodo. La masa y la temperatura no deberían influir. Un ángulo grande alarga un poco el periodo.</p></div>
+  </div>
+  <h3>📚 Teoría (lo que esperamos)</h3>
+  <div class="formula">T = 2π · √(L / g)          (oscilaciones pequeñas, g ≈ ${G} m/s²)
+T² = (4π² / g) · L        →  T² frente a L es una RECTA</div>
+  <p class="small">La teoría <b>no es evidencia</b>: es una predicción. La evidencia está en los datos, y los datos reales tienen huecos, errores y ruido. Al final compararemos lo que dicen ambos.</p>
+  <h3>🗂 Diccionario de variables</h3>
+  <div class="tw"><table><thead><tr><th>Columna</th><th style="text-align:left">Significado</th><th>Unidad</th><th>Papel</th></tr></thead><tbody>
+  <tr><td><code>ensayo</code></td><td style="text-align:left;white-space:normal">Identificador del ensayo (P-01 … P-${RAW.length})</td><td>—</td><td>ID</td></tr>
+  ${NUM.map(c=>`<tr><td><code>${c}</code></td><td style="text-align:left;white-space:normal">${esc(META[c].desc)}</td><td>${META[c].unit}</td><td>${c==='periodo_s'?'<span class="badge work">outcome (y)</span>':c==='longitud_m'?'<span class="badge">predictor inicial (x)</span>':'<span class="badge raw">atributo candidato</span>'}</td></tr>`).join('')}
+  </tbody></table></div>
+  ${obsAct(`<p>El dataset tiene ${RAW.length} filas y ${NUM.length} columnas numéricas con <b>${nN} valores ausentes (NaN)</b> repartidos en varias columnas, y al menos un valor sospechoso. No están marcados: tendrás que encontrarlos.</p>`,`<p>Escribe en tu cuaderno: ¿qué relación esperas entre L y T? ¿Será una recta? ¿Qué variables crees que <b>no</b> sirven para predecir T?</p>`)}
+  </div>${nextBar(0)}`;
+};
+R[1]=()=>{
+  const ds=DS();
+  let rows=ds.rows.filter(r=>{
+    if(S.q&&!r.ensayo.toLowerCase().includes(S.q.toLowerCase()))return false;
+    if(S.flt==='nan')return NUM.some(c=>!isNum(r[c]));
+    if(S.flt==='out')return Object.keys(r._out).length>0;
+    if(S.flt==='imp')return Object.keys(r._imp).length>0;
+    return true;});
+  rows=rows.slice().sort((a,b)=>{const x=a[S.sort],y=b[S.sort];if(!isNum(x)&&!isNum(y)&&S.sort!=='ensayo')return 0;if(S.sort!=='ensayo'){if(!isNum(x))return 1;if(!isNum(y))return -1;}return (x>y?1:x<y?-1:0)*S.dir;});
+  const cols=['ensayo'].concat(NUM);
+  const cell=(r,c)=>{const v=r[c];if(c==='ensayo')return `<td><b>${esc(v)}</b></td>`;
+    if(!isNum(v))return '<td class="nan"><span>NaN</span></td>';
+    if(r._win[c]!=null)return `<td class="win" title="Winsorizado: antes ${fmt(r._win[c])}">${fmt(v,META[c].dec)} ✂</td>`;
+    if(r._imp[c])return `<td class="imp" title="Imputado (${r._imp[c]})">${fmt(v,META[c].dec)}*</td>`;
+    if(r._out[c])return `<td class="out" title="Fuera de las vallas de Tukey">${fmt(v,META[c].dec)} ⚠</td>`;
+    return `<td>${fmt(v,META[c].dec)}</td>`;};
+  const summ=NUM.map(c=>{const vs=ds.rows.map(r=>r[c]),cl=clean(vs),nanIds=ds.rows.filter(r=>!isNum(r[c])).map(r=>r.ensayo);
+    return `<tr><td><code>${c}</code></td><td>float (numérico)</td><td>${cl.length}</td><td>${vs.length-cl.length}${nanIds.length?` <small class="mono" style="color:var(--muted)">(${nanIds.join(', ')})</small>`:''}</td><td>${fmt(Math.min(...cl))}</td><td>${fmt(Math.max(...cl))}</td><td>${fmt(mean(vs))}</td></tr>`;}).join('');
+  return `<div class="card"><div class="kicker">Estación 2 · Inspección ${srcBadge()}</div><h2>Mira los datos antes de calcular nada</h2>
+  <p>Ordena pulsando en la cabecera, busca un ensayo o filtra las filas problemáticas. Usa el interruptor superior para ver la versión <b>cruda</b> o la <b>tratada</b>.</p>
+  <h3>Resumen por columna (${ds.rows.length} filas · ${cols.length} columnas)</h3>
+  <div class="tw"><table><thead><tr><th>Columna</th><th>Tipo</th><th>Válidos</th><th>NaN</th><th>Mín</th><th>Máx</th><th>Media</th></tr></thead><tbody>
+  <tr><td><code>ensayo</code></td><td>texto (ID)</td><td>${ds.rows.length}</td><td>0</td><td>${esc(ds.rows[0]?ds.rows[0].ensayo:'')}</td><td>${esc(ds.rows.length?ds.rows[ds.rows.length-1].ensayo:'')}</td><td>—</td></tr>${summ}</tbody></table></div>
+  <h3>Tabla de ensayos</h3>
+  <div class="row" style="margin-bottom:8px">
+    <label class="ctl">Buscar ensayo<input type="text" id="q" value="${esc(S.q)}" placeholder="P-1…" style="width:120px"></label>
+    <label class="ctl">Mostrar<select id="flt">${[['all','Todas las filas'],['nan','Solo con NaN'],['out','Solo con anomalías'],['imp','Solo imputadas']].map(o=>`<option value="${o[0]}"${S.flt===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select></label>
+    <span class="sp"></span><span class="small" style="color:var(--muted)">${rows.length} de ${ds.rows.length} filas</span>
+    <button class="btn sec sm" id="dlRaw">⬇ CSV crudo</button><button class="btn sm" id="dlWork">⬇ CSV tratado</button>
+  </div>
+  <div class="tw"><table><thead><tr>${cols.map(c=>`<th class="sort" data-sort="${c}">${esc(c)}${S.sort===c?(S.dir>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>'<tr>'+cols.map(c=>cell(r,c)).join('')+'</tr>').join('')||'<tr><td colspan="6">Sin filas</td></tr>'}</tbody></table></div>
+  <div class="legend"><span><i style="background:#eee"></i>NaN (valor ausente)</span><span><i style="background:var(--coral-soft);border:1px solid var(--coral)"></i>⚠ fuera de las vallas de Tukey</span><span><i style="background:var(--gold-soft);border:1px solid var(--gold-line)"></i>* imputado</span><span><i style="background:var(--green-soft);border:1px solid var(--green)"></i>✂ winsorizado</span></div>
+  ${obsAct('<p>¿Qué columnas tienen NaN y en qué ensayos? Ordena <code>masa_g</code> y <code>periodo_s</code> de mayor a menor: ¿hay algún valor que no encaje con el resto?</p>','<p>Anota los ensayos sospechosos y por qué te lo parecen. <b>No los borres todavía</b>: un valor raro no es automáticamente un error.</p>')}
+  </div>${nextBar(1)}`;
+};
+R[2]=()=>{
+  const nanRows=NUM.map(c=>{const col=RAW.map(r=>r[c]),ids=RAW.filter(r=>!isNum(r[c])).map(r=>r.ensayo);
+    const used=WORK.impInfo[c];
+    return `<tr><td><code>${c}</code></td><td>${ids.length}</td><td class="mono" style="text-align:left">${ids.join(', ')||'—'}</td><td>${fmt(mean(col))}</td><td>${fmt(median(col))}</td><td>${S.imp==='none'?'—':S.imp==='drop'?(ids.length?'fila eliminada':'—'):!ids.length?'—':used.method==='theory'?'fórmula del péndulo':fmt(used.value)+' ('+used.method.replace('mean','media').replace('median','mediana')+')'}</td></tr>`;}).join('');
+  const IMP=[['none','No imputar','Los NaN se quedan; cada cálculo omite las filas incompletas para esa columna.'],
+    ['mean','Media de la columna','Rápido, pero la media se deja arrastrar por los valores extremos (mira la masa).'],
+    ['median','Mediana de la columna','Robusta frente a outliers: el valor central no cambia aunque haya un dato enorme.'],
+    ['drop','Eliminar filas incompletas','Datos 100 % reales, pero pierdes ensayos (y la información de sus otras columnas).'],
+    ['theory','Contextual (física del péndulo)','Periodo ↔ longitud se rellenan con T = 2π√(L/g); el resto con la mediana. Solo vale porque conocemos la ley física.']];
+  const OUT=[['keep','Mantener','El dato se queda tal cual. Correcto si es una medida real (aunque rara).'],
+    ['drop','Eliminar la fila','Si estás seguro de que es un error de medida o de tecleo.'],
+    ['winsor','Winsorizar','Recorta el valor hasta la valla de Tukey más cercana: conserva la fila pero limita su influencia.']];
+  const t=tukey(RAWV.rows.map(r=>r[S.boxCol]));
+  const anom=[];NUM.forEach(c=>{const ti=RAWV.outInfo[c];RAWV.rows.forEach(r=>{if(r._out[c])anom.push(`<li><b>${r.ensayo}</b> · <code>${c}</code> = <b>${fmt(r[c])}</b> ${META[c].unit} → ${r[c]>ti.hi?'por encima de la valla superior ('+fmt(ti.hi)+')':'por debajo de la valla inferior ('+fmt(ti.lo)+')'}</li>`);});});
+  const cmp=(vs,ws)=>[['n',clean(vs).length,clean(ws).length,0],['Media',mean(vs),mean(ws)],['Mediana',median(vs),median(ws)],['Desv. típica',sd(vs),sd(ws)],['Mín',Math.min(...clean(vs)),Math.min(...clean(ws))],['Máx',Math.max(...clean(vs)),Math.max(...clean(ws))]];
+  const bc=S.boxCol,rv=RAW.map(r=>r[bc]),wv=WORK.rows.map(r=>r[bc]);
+  return `<div class="card"><div class="kicker">Estación 3 · Calidad de los datos</div><h2>Decide qué hacer con los huecos y los valores extremos</h2>
+  <p>Aquí <b>no se modifica nunca</b> la copia cruda: tus decisiones generan una <b>copia de trabajo</b> (datos tratados).</p>
+  <h3>1 · Valores ausentes (NaN)</h3>
+  <div class="tw"><table><thead><tr><th>Columna</th><th>NaN</th><th style="text-align:left">Ensayos</th><th>Media (cruda)</th><th>Mediana (cruda)</th><th>Valor que se usará</th></tr></thead><tbody>${nanRows}</tbody></table></div>
+  <p class="small" style="color:var(--muted)">Media y mediana se calculan con los valores presentes de la copia cruda. Fíjate en <code>masa_g</code>: la media es mayor que la mediana porque incluye un valor extremo.</p>
+  <div class="opts" id="impOpts">${IMP.map(o=>`<label class="opt${S.imp===o[0]?' on':''}"><input type="radio" name="imp" value="${o[0]}"${S.imp===o[0]?' checked':''}><span><b>${o[1]}</b><small>${o[2]}</small></span></label>`).join('')}</div>
+  <h3>2 · Valores extremos: regla de Tukey</h3>
+  <div class="formula">IQR = Q3 − Q1      anomalía si  x &lt; Q1 − 1,5·IQR   o   x &gt; Q3 + 1,5·IQR</div>
+  <div class="box bad" style="margin-top:10px"><h4>⚠ Anomalías detectadas en la copia cruda (${anom.length})</h4><ul>${anom.join('')||'<li>Ninguna</li>'}</ul><p>¿Error de tecleo (¿200 g con un cero de más?), fallo al cronometrar… o una medida real? Un outlier <b>no es automáticamente un error</b>: hay que justificar la decisión.</p></div>
+  <div class="row" style="margin:12px 0 8px">${sel('boxCol',NUM,S.boxCol,'Columna del diagrama de caja')}</div>
+  <div class="stats" style="margin-bottom:8px">${[['Q1',t.q1],['Q3',t.q3],['IQR',t.iqr],['Valla inferior',t.lo],['Valla superior',t.hi]].map(s=>`<div class="stat"><span>${s[0]}</span><b>${fmt(s[1])}</b></div>`).join('')}</div>
+  <p class="small"><span class="badge raw">Antes · crudos</span></p>${boxplotSVG(RAW.map(r=>({id:r.ensayo,v:r[bc]})),bc)}
+  <p class="small" style="margin-top:10px"><span class="badge work">Después · tratados</span></p>${boxplotSVG(WORK.rows.map(r=>({id:r.ensayo,v:r[bc]})),bc,'Diagrama de caja tratado')}
+  <div class="opts" id="outOpts" style="margin-top:12px">${OUT.map(o=>`<label class="opt${S.outAct===o[0]?' on':''}"><input type="radio" name="outAct" value="${o[0]}"${S.outAct===o[0]?' checked':''}><span><b>${o[1]}</b><small>${o[2]}</small></span></label>`).join('')}</div>
+  <h3>3 · Comparación antes / después · <code>${bc}</code></h3>
+  <div class="tw"><table><thead><tr><th>Estadístico</th><th>Crudos</th><th>Tratados</th><th>Cambio</th></tr></thead><tbody>${cmp(rv,wv).map(c=>`<tr><td>${c[0]}</td><td>${fmt(c[1],c[3]===0?0:3)}</td><td>${fmt(c[2],c[3]===0?0:3)}</td><td>${isNum(c[1])&&isNum(c[2])?(c[2]-c[1]>=0?'+':'')+fmt(c[2]-c[1],3):'—'}</td></tr>`).join('')}</tbody></table></div>
+  <div class="box act" style="margin-top:12px"><h4>📝 Registro de decisiones</h4><p>${esc(decisionText())}</p><button class="btn sm" id="useWork">Usar los datos tratados en las siguientes estaciones →</button></div>
+  ${obsAct('<p>Cambia entre <b>media</b> y <b>mediana</b> y mira la columna «Valor que se usará» de <code>masa_g</code>. Luego prueba las tres acciones con los outliers y compara la desviación típica antes y después.</p>','<p>Elige una estrategia y <b>justifícala por escrito</b> (2–3 líneas). Exporta el CSV tratado en la estación 2 si lo necesitas para Python o Sheets.</p>')}
+  </div>${nextBar(2)}`;
+};
+R[3]=()=>{
+  const ds=DS(),c=S.trCol,vs=ds.rows.map(r=>r[c]),cl=clean(vs),mu=mean(vs),sg=sd(vs),mn=Math.min(...cl),mx=Math.max(...cl);
+  const rng=NUM.map(k=>{const v=clean(ds.rows.map(r=>r[k])),m=mean(v),s=sd(v),a=Math.min(...v),b=Math.max(...v);return `<tr><td><code>${k}</code></td><td>${fmt(a)} … ${fmt(b)}</td><td>${fmt((a-m)/s,2)} … ${fmt((b-m)/s,2)}</td><td>0 … 1</td></tr>`;}).join('');
+  const W=640,H=170,strips=[['Original',cl,[mn,mx]],['Estandarizada z',cl.map(v=>(v-mu)/sg),null],['Min–max',cl.map(v=>(v-mn)/(mx-mn)),[0,1]]];
+  let g='';strips.forEach((s,i)=>{const a=Math.min(...s[1]),b=Math.max(...s[1]),y=34+i*48,X=v=>150+(v-a)/((b-a)||1)*(W-180);
+    g+=`<text x="10" y="${y+4}" style="fill:var(--navy);font-weight:700">${s[0]}</text><line x1="150" x2="${W-30}" y1="${y}" y2="${y}" stroke="#ccd"/>`;
+    s[1].forEach(v=>{g+=`<circle cx="${X(v)}" cy="${y}" r="4" fill="var(--navy)" opacity=".55"/>`;});
+    g+=`<text x="150" y="${y+18}">${fmt(a,2)}</text><text x="${W-30}" y="${y+18}" text-anchor="end">${fmt(b,2)}</text>`;});
+  return `<div class="card"><div class="kicker">Estación 4 · Transformaciones ${srcBadge()}</div><h2>Pon las variables en la misma escala</h2>
+  <p>La masa se mide en cientos de gramos y la longitud en décimas de metro. Muchos modelos (redes neuronales, SVM, k-vecinos…) se confunden si las escalas son tan distintas.</p>
+  <div class="grid2"><div class="formula">Estandarización:  z = (x − μ) / σ
+→ media 0, desviación 1</div><div class="formula">Normalización min–max:
+x' = (x − mín) / (máx − mín)  → [0, 1]</div></div>
+  <div class="row" style="margin:12px 0">${sel('trCol',NUM,c,'Columna')}<span class="sp"></span>
+  <span class="small mono">μ = ${fmt(mu)} · σ = ${fmt(sg)} · mín = ${fmt(mn)} · máx = ${fmt(mx)} · n = ${cl.length}</span></div>
+  ${svg(W,H,g,'Comparación de escalas')}
+  <h3>Valores transformados</h3>
+  <div class="tw" style="max-height:300px"><table><thead><tr><th>Ensayo</th><th>${esc(c)}</th><th>z</th><th>min–max</th></tr></thead><tbody>${ds.rows.map(r=>`<tr><td>${r.ensayo}</td>${isNum(r[c])?`<td>${fmt(r[c])}</td><td>${fmt((r[c]-mu)/sg,3)}</td><td>${fmt((r[c]-mn)/(mx-mn),3)}</td>`:'<td class="nan"><span>NaN</span></td><td class="nan">—</td><td class="nan">—</td>'}</tr>`).join('')}</tbody></table></div>
+  <h3>Rangos de todas las columnas</h3>
+  <div class="tw"><table><thead><tr><th>Columna</th><th>Original</th><th>z</th><th>min–max</th></tr></thead><tbody>${rng}</tbody></table></div>
+  ${obsAct('<p>Elige <code>masa_g</code> con datos <b>crudos</b> y luego <b>tratados</b>: con el outlier, la normalización min–max aplasta casi todos los valores cerca de 0. La estandarización también se ve afectada (el outlier infla σ).</p>','<p>Explica por qué conviene tratar los outliers <b>antes</b> de escalar. ¿Qué transformación usarías para la masa?</p>')}
+  </div>${nextBar(3)}`;
+};
+R[4]=()=>{
+  const ds=DS(),c=S.uniCol,vs=ds.rows.map(r=>r[c]);
+  return `<div class="card"><div class="kicker">Estación 5 · Análisis univariante ${srcBadge()}</div><h2>Cómo se reparte cada variable</h2>
+  <div class="row" style="margin-bottom:10px">${sel('uniCol',NUM,c,'Variable')}</div>
+  ${statsCards(vs)}
+  <div style="margin-top:12px">${histSVG(vs,c)}</div>
+  <div style="margin-top:10px">${boxplotSVG(ds.rows.map(r=>({id:r.ensayo,v:r[c]})),c)}</div>
+  ${obsAct('<p>Si media y mediana están lejos, la distribución es asimétrica o hay valores extremos. Compara <code>masa_g</code> y <code>periodo_s</code> con datos crudos y tratados.</p>','<p>Para cada variable anota: forma (simétrica / asimétrica), centro (media o mediana: ¿cuál es más representativa?) y dispersión.</p>')}
+  </div>${nextBar(4)}`;
+};
+R[5]=()=>{
+  const ds=DS(),{P,omit}=pairs(ds,S.x,S.y),xs=P.map(p=>p.x),ys=P.map(p=>p.y),L=linreg(xs,ys);
+  const cors=PREDICTORS.map(p=>{const q=pairs(ds,p,S.y).P;return [p,q.length>2?corr(q.map(a=>a.x),q.map(a=>a.y)):NaN,q.length];});
+  return `<div class="card"><div class="kicker">Estación 6 · Relaciones ${srcBadge()}</div><h2>¿Qué atributo se relaciona con el periodo?</h2>
+  <div class="row" style="margin-bottom:10px">${sel('x',PREDICTORS,S.x,'Predictor (x)')}${sel('y',OUTCOMES,S.y,'Outcome (y)')}<span class="sp"></span>
+  <span class="small"><b>${P.length}</b> pares válidos · ${omit} omitidos por NaN · r = <b class="mono">${fmt(L?L.r:NaN,3)}</b></span></div>
+  ${scatterSVG(P,S.x,S.y,{line:L?{b0:L.b0,b1:L.b1,dash:true,color:'var(--gold-line)',label:'tendencia orientativa'}:null})}
+  <h3>Correlación de Pearson de cada predictor con ${esc(lab(S.y))}</h3>
+  <div class="tw"><table><thead><tr><th>Predictor</th><th>Pares</th><th>r</th><th style="text-align:left">Fuerza</th></tr></thead><tbody>${cors.map(c=>`<tr${c[0]===S.x?' style="background:var(--navy-soft)"':''}><td>${esc(lab(c[0]))}</td><td>${c[2]}</td><td class="mono">${fmt(c[1],3)}</td><td style="text-align:left"><span style="display:inline-block;height:9px;width:${Math.round(Math.abs(c[1]||0)*120)}px;background:${(c[1]||0)>=0?'var(--navy)':'var(--coral)'};border-radius:4px"></span></td></tr>`).join('')}</tbody></table></div>
+  <p class="small" style="color:var(--muted)">La línea discontinua es solo orientativa. <b>Correlación no implica causalidad</b>: dos variables pueden moverse juntas por casualidad o por una tercera causa.</p>
+  ${obsAct('<p>Los puntos coral son ensayos marcados como anomalía. Cambia el predictor: ¿qué variables no muestran ninguna relación? Prueba <b>√Longitud</b> frente a Periodo y <b>Longitud</b> frente a <b>Periodo²</b>: ¿se parecen más a una recta?</p>','<p>Elige el par (x, y) que usarías para el modelo lineal y justifica la elección con el gráfico y con r.</p>')}
+  </div>${nextBar(5)}`;
+};
+function checklist(P,R,ds){
+  const n=P.length,items=[];
+  items.push(['ok','Predictor y outcome cuantitativos',`${lab(S.x)} y ${lab(S.y)} son numéricos continuos.`]);
+  const xs=P.map(p=>p.x),cv=corr(xs.map(x=>(x-R.mx)**2),R.e);
+  items.push([Math.abs(cv)>.3?'warn':'ok','Relación aproximadamente lineal',Math.abs(cv)>.3?`Los residuos muestran curvatura (corr. con (x−x̄)² = ${fmt(cv,2)}). Prueba otra transformación (√L o T²).`:`Sin curvatura clara en los residuos (corr. con (x−x̄)² = ${fmt(cv,2)}).`]);
+  items.push(['info','Observaciones independientes','Se asume por diseño: cada ensayo es un montaje distinto. No se puede comprobar con los números.']);
+  const ord=P.map((p,i)=>[p.x,R.e[i]]).sort((a,b)=>a[0]-b[0]),h=Math.floor(n/2),s1=sd(ord.slice(0,h).map(a=>a[1])),s2=sd(ord.slice(h).map(a=>a[1])),rat=Math.max(s1,s2)/Math.min(s1,s2);
+  items.push([rat>2?'warn':'ok','Homocedasticidad',`Desv. de residuos: mitad izquierda ${fmt(s1,4)} · mitad derecha ${fmt(s2,4)} (cociente ${fmt(rat,2)}${rat>2?' > 2: la dispersión cambia':' ≤ 2'}).`]);
+  const se=Math.sqrt(R.sse/(n-2)),big=P.filter((p,i)=>Math.abs(R.e[i]/se)>3).map(p=>p.id),mid=P.filter((p,i)=>Math.abs(R.e[i]/se)>2).length;
+  items.push([big.length?'bad':mid>Math.ceil(n*.1)?'warn':'ok','Residuos aproximadamente normales',`${mid} residuos estandarizados fuera de ±2 (se esperan ~${Math.round(n*.05)})${big.length?'; fuera de ±3: '+big.join(', '):''}.`]);
+  let maxD=0,maxId='';P.forEach((p,i)=>{const hh=1/n+(p.x-R.mx)**2/R.sxx,D=R.e[i]**2/(2*se*se)*hh/(1-hh)**2;if(D>maxD){maxD=D;maxId=p.id;}});
+  items.push([maxD>4/n?(maxD>1?'bad':'warn'):'ok','Sin observaciones influyentes desproporcionadas',`Distancia de Cook máxima: ${maxId} = ${fmt(maxD,3)} (umbral orientativo 4/n = ${fmt(4/n,3)}).`]);
+  const nanTot=ds.rows.filter(r=>srcCols(S.x).concat(srcCols(S.y)).some(c=>!isNum(r[c]))).length;
+  items.push([ds.kind==='raw'?(nanTot?'warn':'ok'):'ok','NaN tratados y decisiones documentadas',ds.kind==='raw'?`Datos crudos: se han omitido ${nanTot} filas con NaN sin documentar la decisión.`:'Datos tratados: '+decisionText()+'.']);
+  const icon={ok:'✓',warn:'!',info:'i',bad:'✕'};
+  return `<ul class="chk">${items.map(it=>`<li class="${it[0]}"><span class="ic">${icon[it[0]]}</span><span><b>${it[1]}</b><small>${esc(it[2])}</small></span></li>`).join('')}</ul>`;
+}
+let CTX7=null;
+function manualHTML(){
+  const {P,xs,ys,L}=CTX7,sseM=sseFor(xs,ys,S.b0,S.b1),mseM=sseM/L.n;
+  return `<div class="row" style="margin:8px 0"><span class="small">Tu recta: ŷ = ${fmt(S.b0,4)} ${S.b1>=0?'+':'−'} ${fmt(Math.abs(S.b1),4)}·x · SSE = <b class="mono">${fmt(sseM,4)}</b> · MSE = <b class="mono">${fmt(mseM,4)}</b> · ${sseM<=L.sse*1.0005?'<span class="badge work">¡mínimo!</span>':'<span class="badge raw">+'+fmt((sseM/L.sse-1)*100,1)+' % sobre el mínimo</span>'}</span><span class="sp"></span><button class="btn sm" id="fit">Ajustar por mínimos cuadrados</button></div>
+  ${scatterSVG(P,S.x,S.y,{line:{b0:S.b0,b1:S.b1,color:'var(--coral)',label:'tu recta (residuos)'},line2:{b0:L.b0,b1:L.b1,color:'var(--navy)',dash:true,label:'mínimos cuadrados'},resid:true})}`;
+}
+R[6]=()=>{
+  const ds=DS(),{P,omit}=pairs(ds,S.x,S.y),xs=P.map(p=>p.x),ys=P.map(p=>p.y),L=linreg(xs,ys);
+  if(!L)return `<div class="card"><h2>Regresión</h2><p class="msg">Se necesitan al menos dos pares válidos con x distintos.</p></div>${nextBar(6)}`;
+  if(S.b0==null){S.b0=round(L.b0,4);S.b1=round(L.b1,4);}
+  const span1=Math.max(Math.abs(L.b1),.1)*1.2,span0=Math.max(Math.abs(L.b0),Math.abs(L.my),.1)*1.5;
+  CTX7={P,xs,ys,L};
+  let phys='';
+  if(S.x==='longitud_m'&&S.y==='periodo2_s2')phys=`g estimada = 4π² / β₁ = <b>${fmt(4*Math.PI**2/L.b1,3)} m/s²</b> (valor real ≈ 9,81)`;
+  if(S.x==='raiz_longitud'&&S.y==='periodo_s')phys=`g estimada = (2π / β₁)² = <b>${fmt((2*Math.PI/L.b1)**2,3)} m/s²</b> (valor real ≈ 9,81)`;
+  const xsym=S.x==='raiz_longitud'?'√L':S.x==='longitud_m'?'L':S.x,ysym=S.y==='periodo2_s2'?'T²':'T';
+  return `<div class="card"><div class="kicker">Estación 7 · Regresión lineal simple ${srcBadge()}</div><h2>Ajusta la recta que mejor explica los datos</h2>
+  <div class="row" style="margin-bottom:10px">${sel('x',PREDICTORS,S.x,'Predictor (x)')}${sel('y',OUTCOMES,S.y,'Outcome (y)')}<span class="sp"></span><span class="small"><b>${L.n}</b> pares · ${omit} omitidos</span></div>
+  <h3>Antes de interpretar: comprobaciones</h3>
+  ${checklist(P,L,ds)}
+  <p class="small" style="color:var(--muted)">El modelo se puede calcular aunque falle alguna condición, pero entonces su interpretación queda limitada: prueba una transformación, compara muestras o usa otro modelo.</p>
+  <h3>Modelo por mínimos cuadrados</h3>
+  <div class="formula">β₁ = Σ(xᵢ − x̄)(yᵢ − ȳ) / Σ(xᵢ − x̄)²      β₀ = ȳ − β₁·x̄
+ŷᵢ = β₀ + β₁·xᵢ     eᵢ = yᵢ − ŷᵢ     SSE = Σeᵢ²     MSE = SSE / n     RMSE = √MSE</div>
+  <p style="margin-top:10px"><span class="eq">ŷ = ${fmt(L.b0,4)} ${L.b1>=0?'+':'−'} ${fmt(Math.abs(L.b1),4)} · x</span> <span class="small" style="color:var(--muted)">con y = ${ysym}, x = ${esc(xsym)}</span></p>
+  <div class="stats" style="margin-top:8px">${[['x̄',L.mx],['ȳ',L.my],['β₀',L.b0],['β₁',L.b1],['SSE',L.sse],['MSE',L.mse],['RMSE',L.rmse],['R²',L.r2]].map(s=>`<div class="stat"><span>${s[0]}</span><b>${fmt(s[1],4)}</b></div>`).join('')}</div>
+  ${phys?`<div class="box act" style="margin-top:10px"><h4>🔭 Conexión con la física</h4><p>${phys}. Compara este valor con datos crudos y tratados: ¿qué decisión de limpieza lo acerca más a la realidad?</p></div>`:''}
+  <h3>Laboratorio: mueve tu propia recta</h3>
+  <div class="grid2"><label class="ctl">β₀ (ordenada) = <span class="mono" id="b0v">${fmt(S.b0,4)}</span><input type="range" id="b0" min="${L.b0-span0}" max="${L.b0+span0}" step="${span0/200}" value="${S.b0}"></label>
+  <label class="ctl">β₁ (pendiente) = <span class="mono" id="b1v">${fmt(S.b1,4)}</span><input type="range" id="b1" min="${L.b1-span1}" max="${L.b1+span1}" step="${span1/200}" value="${S.b1}"></label></div>
+  <div id="manualZone">${manualHTML()}</div>
+  <div class="grid2" style="margin-top:10px"><div><p class="small"><b>Función de error</b>: SSE para cada pendiente (β₀ = ȳ − β₁·x̄)</p><div id="errZone">${errorCurveSVG(xs,ys,L,S.b1)}</div></div><div><p class="small"><b>Residuos del modelo MCO</b> frente a x</p>${residSVG(P,L,S.x)}</div></div>
+  <p class="small" style="margin-top:10px"><b>Residuos por ensayo</b> (verde: el dato está por encima de la recta; coral: por debajo)</p>${residBarsSVG(P.map(p=>p.id),L.e)}
+  <div class="box wrn" style="margin-top:10px"><h4>⚖️ Recuerda</h4><p>La recta MCO es la que <b>minimiza la suma de errores al cuadrado</b>. Un MSE menor indica mejor ajuste a <i>estos</i> datos, pero no prueba causalidad ni garantiza buenas predicciones con datos nuevos.</p></div>
+  ${obsAct('<p>Compara L→T con L→T² y √L→T: ¿cuál cumple mejor las condiciones? ¿Qué le pasa a β₁, al RMSE y a la distancia de Cook al pasar de datos crudos a tratados (P-27)?</p>','<p>Intenta acercarte al mínimo moviendo los deslizadores antes de pulsar «Ajustar». Escribe la ecuación final de tu modelo y la g estimada.</p>')}
+  </div>${nextBar(6)}`;
+};
+R[7]=()=>{
+  return `<div class="card"><div class="kicker">Estación 8 · Práctica en vivo <span class="badge own">Datos personalizados</span></div><h2>Calcula una regresión con tus propios datos</h2>
+  <p>Esta tabla es <b>independiente</b> del dataset del péndulo. Escribe tus pares (x, y): el modelo se recalcula al instante.</p>
+  <div class="grid2"><div><div class="tw" style="max-height:none"><table class="live"><thead><tr><th>#</th><th>X</th><th>Y</th><th></th></tr></thead><tbody id="liveBody"></tbody></table></div>
+  <div class="row" style="margin-top:8px"><button class="btn sm" id="liveAdd">+ Añadir fila</button><button class="btn sec sm" id="liveReset">↺ Restablecer ejemplo</button></div></div>
+  <div id="liveOut"></div></div>
+  ${obsAct('<p>Mueve un solo punto muy lejos de los demás: ¿cuánto cambian β₁ y el RMSE? Así se comporta un outlier influyente.</p>','<p>Introduce 6 medidas de un experimento propio (p. ej. tiempo de estudio y nota) y escribe la ecuación obtenida.</p>')}
+  </div>${nextBar(7)}`;
+};
+function liveRender(){
+  const body=document.getElementById('liveBody');if(!body)return;
+  body.innerHTML=LIVE.map((p,i)=>`<tr><td>${i+1}</td><td><input type="number" step="any" data-i="${i}" data-k="0" value="${p[0]}" aria-label="X ${i+1}"></td><td><input type="number" step="any" data-i="${i}" data-k="1" value="${p[1]}" aria-label="Y ${i+1}"></td><td><button class="btn sec sm" data-del="${i}" title="Eliminar fila" aria-label="Eliminar fila ${i+1}">✕</button></td></tr>`).join('');
+  liveCalc();
+}
+function liveCalc(){
+  const out=document.getElementById('liveOut');if(!out)return;
+  const V=LIVE.map((p,i)=>({x:parseFloat(p[0]),y:parseFloat(p[1]),id:'#'+(i+1)})).filter(p=>isNum(p.x)&&isNum(p.y));
+  const L=V.length>=2?linreg(V.map(p=>p.x),V.map(p=>p.y)):null;
+  if(!L){out.innerHTML='<p class="msg">Necesitas al menos dos pares válidos (con X distintos) para calcular la recta.</p>';return;}
+  out.innerHTML=`<p><span class="eq">ŷ = ${fmt(L.b0,4)} ${L.b1>=0?'+':'−'} ${fmt(Math.abs(L.b1),4)} · x</span></p>
+  <div class="stats">${[['Pares',L.n,0],['β₀',L.b0],['β₁',L.b1],['MSE',L.mse],['RMSE',L.rmse],['R²',L.r2]].map(s=>`<div class="stat"><span>${s[0]}</span><b>${fmt(s[1],s[2]===0?0:4)}</b></div>`).join('')}</div>
+  <div style="margin-top:8px">${scatterSVG(V.map(p=>({x:p.x,y:p.y,id:p.id,out:false})),'x','y',{line:{b0:L.b0,b1:L.b1,label:'recta MCO'},resid:true}).replace(/X \(\)|Y \(\)/g,'')}</div>
+  <div style="margin-top:8px">${residBarsSVG(V.map(p=>p.id),L.e)}</div>`;
+}
+META.x={label:'X',unit:'',dec:3};META.y={label:'Y',unit:'',dec:3};
+R[8]=()=>{
+  const py=`import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
+# 1. Carga (la copia cruda no se toca)
+raw = pd.read_csv("pendulo_raw.csv")
+df = raw.copy()
+print(df.shape, df.dtypes, df.isna().sum(), sep="\\n")
+print(df.describe())
+
+# 2. Imputación (elige una)
+df["masa_g"] = df["masa_g"].fillna(df["masa_g"].median())
+# df = df.dropna()                                   # eliminar filas incompletas
+falta = df["periodo_s"].isna()
+df.loc[falta, "periodo_s"] = 2*np.pi*np.sqrt(df.loc[falta, "longitud_m"]/9.81)
+
+# 3. Outliers con la regla de Tukey
+def vallas(s):
+    q1, q3 = s.quantile([.25, .75]); iqr = q3 - q1
+    return q1 - 1.5*iqr, q3 + 1.5*iqr
+lo, hi = vallas(df["periodo_s"])
+print(df[(df.periodo_s < lo) | (df.periodo_s > hi)])
+df.boxplot(column=["periodo_s"]); plt.show()
+
+# 4. Escalado
+z = StandardScaler().fit_transform(df[["longitud_m", "masa_g"]])
+mm = MinMaxScaler().fit_transform(df[["longitud_m", "masa_g"]])
+
+# 5. Relación y regresión  (T² frente a L)
+d = df.dropna(subset=["longitud_m", "periodo_s"])
+X = d[["longitud_m"]]; y = d["periodo_s"]**2
+modelo = LinearRegression().fit(X, y)
+b0, b1 = modelo.intercept_, modelo.coef_[0]
+res = y - modelo.predict(X)
+mse = (res**2).mean()
+print(f"T² = {b0:.4f} + {b1:.4f}·L   MSE={mse:.4f}  RMSE={mse**.5:.4f}")
+print("g estimada =", 4*np.pi**2/b1)
+plt.scatter(X, y); plt.plot(X, modelo.predict(X), "r"); plt.show()`;
+  const sh=[['Media / mediana','=PROMEDIO(C2:C41)   ·   =MEDIANA(C2:C41)','Las celdas vacías (NaN) se ignoran.'],
+    ['Cuartiles e IQR','=CUARTIL(F2:F41;1)   =CUARTIL(F2:F41;3)   =H3-H2','También =PERCENTIL(F2:F41;0,25).'],
+    ['Vallas de Tukey','=H2-1,5*H4   ·   =H3+1,5*H4',''],
+    ['Marcar anomalía','=SI(O(F2<$H$5;F2>$H$6);"⚠ outlier";"")','Arrastra hacia abajo.'],
+    ['Imputar con la mediana','=SI(ESBLANCO(C2);MEDIANA(C$2:C$41);C2)','En una columna nueva: la original no se toca.'],
+    ['Estandarizar / min–max','=(C2-PROMEDIO(C$2:C$41))/DESVEST(C$2:C$41)   ·   =(C2-MIN(C$2:C$41))/(MAX(C$2:C$41)-MIN(C$2:C$41))',''],
+    ['Correlación','=CORREL(B2:B41;F2:F41)','Usa columnas sin huecos (filtradas o imputadas).'],
+    ['β₁ y β₀','=PENDIENTE(F2:F41;B2:B41)   ·   =INTERSECCION.EJE(F2:F41;B2:B41)','Primero la y, luego la x.'],
+    ['Predicción y residuo','=$K$2+$K$1*B2   ·   =F2-G2',''],
+    ['SSE, MSE, RMSE','=SUMA.CUADRADOS(H2:H41)   ·   =K3/CONTAR(H2:H41)   ·   =RAIZ(K4)','']];
+  return `<div class="card"><div class="kicker">Estación 9 · Herramientas</div><h2>Repite el análisis con Python o Google Sheets</h2>
+  <div class="row" style="margin-bottom:10px"><button class="btn sec sm" id="dlRaw2">⬇ pendulo_raw.csv (crudo)</button><button class="btn sm" id="dlWork2">⬇ pendulo_tratado.csv</button><span class="small" style="color:var(--muted)">${esc(decisionText())}</span></div>
+  <div class="tabs"><button data-tool="py" class="${S.tool==='py'?'on':''}">🐍 Python</button><button data-tool="sh" class="${S.tool==='sh'?'on':''}">📗 Google Sheets</button></div>
+  <div class="${S.tool==='py'?'':'hide'}"><p>Con <code>pandas</code>, <code>numpy</code>, <code>matplotlib</code> y <code>scikit-learn</code> (VSCode o Google Colab). Pon el CSV en la misma carpeta que el script.</p>
+  <button class="btn sec sm cp" data-copy="py">📋 Copiar</button><pre class="code" id="code-py">${esc(py)}</pre></div>
+  <div class="${S.tool==='sh'?'':'hide'}"><p>Importa el CSV en una hoja nueva (Archivo → Importar). Columnas: A ensayo · B longitud_m · C masa_g · D angulo_deg · E temperatura_C · F periodo_s. Configuración regional española: separador <code>;</code> y coma decimal.</p>
+  <div class="tw" style="max-height:none"><table><thead><tr><th>Paso</th><th style="text-align:left">Fórmula</th><th style="text-align:left">Nota</th></tr></thead><tbody>${sh.map(s=>`<tr><td>${s[0]}</td><td style="text-align:left" class="mono">${esc(s[1])}</td><td style="text-align:left;white-space:normal">${esc(s[2])}</td></tr>`).join('')}</tbody></table></div></div>
+  ${obsAct('<p>Comprueba que β₀, β₁ y el MSE que obtienes en Python o Sheets coinciden con los de la estación 7 cuando usas los mismos datos y las mismas decisiones.</p>','<p>Sube tu script <code>.py</code> o tu hoja (PDF/captura) con el botón 📤 del ejercicio del laboratorio en la ficha.</p>')}
+  </div>${nextBar(8)}`;
+};
+
+/* ══════════════ RENDER Y EVENTOS ══════════════ */
+const main=document.getElementById('main'),nav=document.getElementById('nav');
+function renderNav(){nav.innerHTML=STATIONS.map((s,i)=>`<button type="button" data-go="${i}" class="${i===S.st?'on':''}" ${i===S.st?'aria-current="step"':''}><span class="n">${i+1}</span><span class="t">${s[1]} ${s[0]}</span></button>`).join('');}
+function render(keepScroll){
+  const y=window.scrollY;
+  document.getElementById('src-raw').classList.toggle('on',S.src==='raw');
+  document.getElementById('src-work').classList.toggle('on',S.src==='work');
+  renderNav();main.innerHTML=R[S.st]();if(S.st===7)liveRender();
+  save();if(keepScroll)window.scrollTo(0,y);
+}
+function go(i){S.st=Math.max(0,Math.min(STATIONS.length-1,+i));render();window.scrollTo(0,0);const b=nav.querySelector('.on');if(b&&b.scrollIntoView)b.scrollIntoView({block:'nearest',inline:'center'});}
+function recompute(){WORK=buildWork();S.b0=null;S.b1=null;}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.go!=null)return go(t.dataset.go);
+  if(t.id==='src-raw'||t.id==='src-work'){S.src=t.id==='src-raw'?'raw':'work';S.b0=null;S.b1=null;return render(true);}
+  if(t.dataset.sort){S.dir=S.sort===t.dataset.sort?-S.dir:1;S.sort=t.dataset.sort;return render(true);}
+  if(t.id==='dlRaw'||t.id==='dlRaw2')return download('pendulo_raw.csv',toCSV(RAW));
+  if(t.id==='dlWork'||t.id==='dlWork2')return download('pendulo_tratado.csv',toCSV(WORK.rows));
+  if(t.id==='useWork'){S.src='work';S.b0=null;S.b1=null;return go(3);}
+  if(t.id==='fit'){S.b0=null;S.b1=null;return render(true);}
+  if(t.dataset.tool){S.tool=t.dataset.tool;return render(true);}
+  if(t.dataset.copy){const txt=document.getElementById('code-'+t.dataset.copy).textContent;(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{t.textContent='✓ Copiado';},()=>{t.textContent='Selecciona y copia';});return;}
+  if(t.id==='liveAdd'){const l=LIVE[LIVE.length-1]||[0,0];LIVE.push([+l[0]+1,'']);return liveRender();}
+  if(t.id==='liveReset'){LIVE=LIVE0.map(p=>p.slice());return liveRender();}
+  if(t.dataset.del!=null){LIVE.splice(+t.dataset.del,1);return liveRender();}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.name==='imp'){S.imp=t.value;recompute();return render(true);}
+  if(t.name==='outAct'){S.outAct=t.value;recompute();return render(true);}
+  if(['boxCol','trCol','uniCol','flt'].includes(t.id)){S[t.id]=t.value;return render(true);}
+  if(t.id==='x'||t.id==='y'){S[t.id]=t.value;S.b0=null;S.b1=null;return render(true);}
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='q'){S.q=t.value;render(true);const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length);return;}
+  if(t.id==='b0'||t.id==='b1'){S[t.id]=+t.value;document.getElementById(t.id+'v').textContent=fmt(S[t.id],4);
+    document.getElementById('manualZone').innerHTML=manualHTML();
+    document.getElementById('errZone').innerHTML=errorCurveSVG(CTX7.xs,CTX7.ys,CTX7.L,S.b1);return;}
+  if(t.dataset.k!=null){LIVE[+t.dataset.i][+t.dataset.k]=t.value;liveCalc();}
+});
+if(window.self!==window.top){document.getElementById('fullLink').classList.remove('hide');}
+render();
+</script>
+</body>
+</html>

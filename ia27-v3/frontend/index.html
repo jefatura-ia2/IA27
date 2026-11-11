@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IA · 1º Bachillerato 2026-27 · IES Valle del Jerte</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root{
+  --ink:var(--text);
+  --green:#15803d;
+  --red:#b42318;
+  --accent:#1a4fa0;
+  --bg:#f4f6f9; --surface:#fff; --surface2:#eef1f6;
+  --border:#dde2ea; --text:#1b2330; --muted:#5d6878;
+  --primary:#1a4fa0; --primary-soft:#dce8fb; --primary-ink:#fff;
+  --accent:#c9200e; --accent-soft:#fde8e8;
+  --ok:#15803d; --ok-soft:#dcf5e4;
+  --warn:#a15c00; --warn-soft:#fff1d6;
+  --radius:12px;
+  --shadow:0 1px 2px rgba(16,24,40,.06),0 2px 8px rgba(16,24,40,.05);
+  --mono:ui-monospace,"Cascadia Code","Fira Code","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#0d1219; --surface:#151c26; --surface2:#1c2531;
+    --border:#2a3442; --text:#e6ebf2; --muted:#97a3b4;
+    --primary:#4a90d9; --primary-soft:#11264a; --primary-ink:#04102d;
+    --accent:#f87171; --accent-soft:#3a1717;
+    --ok:#4ade80; --ok-soft:#12301d;
+    --warn:#fbbf24; --warn-soft:#362810;
+    color-scheme:dark;
+  }
+}
+/* ─── RESET ──────────────────────────────────────────────── */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--primary)}
+h1{font-size:1.7rem;line-height:1.2;margin:.8em 0 .4em}
+h2{font-size:1.3rem;line-height:1.2;margin:1.2em 0 .5em}
+h3{font-size:1.1rem;line-height:1.2;margin:1em 0 .4em}
+h4{font-size:.95rem;margin:.8em 0 .3em}
+code{font-family:var(--mono);font-size:.87em;background:var(--surface2);padding:.1em .35em;border-radius:5px}
+pre{background:#0f1722;color:#e3e8f0;padding:14px 16px;border-radius:10px;overflow-x:auto;font-size:.85rem;line-height:1.55}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.9rem}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface2);font-weight:600}
+blockquote{margin:12px 0;padding:8px 14px;border-left:4px solid var(--warn);background:var(--warn-soft);border-radius:0 8px 8px 0}
+img{max-width:100%;border-radius:8px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#aaa;border-radius:3px}
+/* ─── LAYOUT UTILS ───────────────────────────────────────── */
+.container{max-width:1080px;margin:0 auto;padding:0 16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.mt{margin-top:16px}.mb{margin-bottom:16px}.mt4{margin-top:4px}
+.muted{color:var(--muted)}.small{font-size:.87rem}.bold{font-weight:700}
+/* ─── CARD ───────────────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+/* ─── BUTTONS ────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:600;font-size:.92rem;padding:9px 16px;border-radius:9px;border:1px solid transparent;background:var(--primary);color:var(--primary-ink);cursor:pointer;text-decoration:none;transition:filter .15s,transform .05s}
+.btn:hover{filter:brightness(1.1)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.secondary{background:var(--surface);color:var(--text);border-color:var(--border)}
+.btn.secondary:hover{border-color:var(--primary);color:var(--primary)}
+.btn.danger{background:var(--accent);color:#fff}
+.btn.sm{padding:5px 11px;font-size:.82rem}
+.btn.ghost{background:transparent;color:var(--primary);padding:6px 10px;border:none}
+.btn.full{width:100%;justify-content:center}
+/* ─── FORM ───────────────────────────────────────────────── */
+input,select,textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 11px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);outline-offset:1px}
+label{display:block;font-weight:600;font-size:.9rem;margin:10px 0 4px}
+/* ─── BADGE ──────────────────────────────────────────────── */
+.badge{display:inline-block;font-size:.73rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+.badge.warn{background:var(--warn-soft);color:var(--warn)}
+.badge.bad{background:var(--accent-soft);color:var(--accent)}
+.badge.primary{background:var(--primary-soft);color:var(--primary)}
+/* ─── ALERT ──────────────────────────────────────────────── */
+.alert{padding:10px 14px;border-radius:9px;margin:10px 0;font-size:.9rem}
+.alert.ok{background:var(--ok-soft);color:var(--ok)}
+.alert.bad{background:var(--accent-soft);color:var(--accent)}
+.alert.warn{background:var(--warn-soft);color:var(--warn)}
+.alert.info{background:var(--primary-soft);color:var(--text)}
+/* ─── TOPBAR ─────────────────────────────────────────────── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar .container{min-height:58px;padding-top:6px;padding-bottom:6px;display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column;line-height:1.2;color:var(--text);text-decoration:none;white-space:nowrap}
+.brand-main{font-weight:800;font-size:1.05rem}
+.brand-sub{font-size:.74rem;font-weight:500;color:var(--muted)}
+.nav{display:flex;gap:2px;flex-wrap:wrap}
+.nav a{color:var(--muted);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:8px;font-size:.9rem;transition:all .12s}
+.nav a:hover{color:var(--text);background:var(--surface2)}
+.nav a.active{color:var(--primary);background:var(--primary-soft)}
+.topbar-user{display:flex;align-items:center;gap:8px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--primary);color:var(--primary-ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0}
+.user-name{font-weight:600;font-size:.88rem}
+@media(max-width:600px){.user-name{display:none}.nav a{padding:5px 7px;font-size:.82rem}.brand-sub{display:none}}
+/* ─── PAGE ───────────────────────────────────────────────── */
+#page{min-height:calc(100vh - 130px);padding-top:24px;padding-bottom:40px}
+.page-hidden{display:none!important}
+/* ─── LOGIN ──────────────────────────────────────────────── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg)}
+.login-box{width:100%;max-width:420px}
+.login-hero{text-align:center;margin-bottom:20px}
+.login-icon{font-size:3rem;line-height:1}
+.login-hero h1{margin:.3em 0 .1em;font-size:1.6rem;color:var(--primary)}
+.login-hero .school{font-size:.82rem;color:var(--muted);font-weight:600}
+.login-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.login-tab{flex:1;padding:10px;font:inherit;font-weight:600;font-size:.9rem;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:2.5px solid transparent;transition:all .15s}
+.login-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.login-hint{font-size:.76rem;color:var(--muted);background:var(--surface2);border-radius:8px;padding:8px 12px;margin-top:12px;text-align:center}
+/* ─── HOME ───────────────────────────────────────────────── */
+.page-head{margin-bottom:24px}
+.page-head h1{margin:0 0 4px;font-size:1.5rem}
+.progress-bar{height:6px;background:var(--surface2);border-radius:3px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s}
+/* ─── SESSION CARDS ──────────────────────────────────────── */
+.session-card{cursor:pointer;transition:all .15s;text-decoration:none;color:inherit;display:block}
+.session-card:hover{transform:translateY(-2px);box-shadow:0 4px 18px rgba(0,0,0,.12);border-color:var(--primary)}
+.card-num{font-family:var(--mono);font-size:.7rem;font-weight:600;background:var(--primary);color:var(--primary-ink);padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:8px}
+.card-title{font-size:1rem;font-weight:700;margin:0 0 6px;line-height:1.3}
+.card-desc{font-size:.82rem;color:var(--muted);line-height:1.5;margin:0 0 12px}
+.card-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.card-date{font-size:.74rem;color:var(--muted)}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap}
+.tag{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--surface2);color:var(--muted)}
+.tag.concept{background:var(--primary-soft);color:var(--primary)}
+.tag.practice{background:var(--ok-soft);color:var(--ok)}
+/* ─── SESSION / FICHA VIEW ───────────────────────────────── */
+.ficha-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 58px);align-items:start}
+@media(max-width:720px){.ficha-layout{grid-template-columns:1fr}.ficha-sidebar{display:none}}
+.ficha-sidebar{border-right:1px solid var(--border);position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;padding:12px 0;background:var(--surface)}
+.sidebar-label{font-size:.68rem;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;padding:8px 14px 4px}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;transition:background .12s;border-left:3px solid transparent;color:var(--text);text-decoration:none;font-size:.85rem;font-weight:500}
+.sidebar-item:hover{background:var(--surface2)}
+.sidebar-item.active{border-left-color:var(--primary);background:var(--primary-soft);color:var(--primary);font-weight:700}
+.sidebar-item.done .snum{background:var(--primary);color:var(--primary-ink)}
+.snum{width:22px;height:22px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;font-family:var(--mono);flex-shrink:0}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-left:auto}
+.dot-done{background:var(--ok)}
+.dot-plan{background:var(--warn)}
+.dot-upcoming{background:var(--muted)}
+.ficha-main{padding:0}
+.ficha-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:58px;z-index:10}
+.ficha-bar-title{font-weight:700;font-size:.92rem;flex:1}
+/* ─── FICHA CONTENT (imported HTML) ─────────────────────── */
+.ficha-content{padding:0 20px 40px}
+.ficha-content h1{font-size:1.6rem;color:var(--primary)}
+.ficha-content h2{color:var(--primary);border-bottom:1px solid var(--border);padding-bottom:6px}
+.ficha-content .ficha-section{border:1px solid var(--border);border-radius:10px;margin:14px 0;overflow:hidden}
+.ficha-content .section-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surface2);cursor:pointer;user-select:none;transition:background .15s}
+.ficha-content .section-header:hover{background:var(--primary-soft)}
+.ficha-content .section-header h2,.ficha-content .ficha-h2{font-size:.97rem;font-weight:800;margin:0;color:var(--primary);flex:1;border:none;padding:0}
+.ficha-content .section-num{background:var(--primary);color:#fff;border-radius:6px;padding:2px 8px;font-size:.75rem;font-weight:800;flex-shrink:0}
+.ficha-content .section-time{font-size:.72rem;color:var(--muted);font-weight:600;white-space:nowrap}
+.ficha-content .sec-toggle{font-size:.8rem;color:var(--primary);font-weight:700;transition:transform .25s;flex-shrink:0}
+.ficha-content .section-body{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.ficha-content .ficha-section.open .section-body{max-height:9999px;padding:16px}
+.ficha-content .ficha-section.open .sec-toggle{transform:rotate(90deg)}
+.ficha-content .task-list{list-style:none;padding:0;margin:12px 0}
+.ficha-content .task-list li{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:7px;margin-bottom:6px;background:var(--bg);border:1px solid var(--border)}
+.ficha-content .task-num{background:var(--primary);color:#fff;border-radius:5px;padding:1px 7px;font-size:.72rem;font-weight:800;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.ficha-content .header{background:var(--primary);color:#fff;padding:10px 16px;margin:-0px -20px 16px;border-radius:0;display:flex;align-items:center;gap:12px}
+.ficha-content .header-text{flex:1;min-width:0}
+.ficha-content .header-logo{width:36px;height:36px;object-fit:contain;flex-shrink:0;opacity:.92}
+.ficha-content .session-num{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.75;margin:0}
+.ficha-content .ficha-h1{font-size:1.05rem;font-weight:800;color:#fff;margin:2px 0 0;line-height:1.2}
+.ficha-content .ficha-h1 em{font-style:normal;opacity:.85}
+.ficha-content .meta{font-size:.72rem;opacity:.7;margin:2px 0 0}
+.ficha-content .header h1{color:#fff;margin:0}
+.ficha-content .header p{opacity:.8;margin:.4em 0 0;font-size:.9rem}
+.ficha-content .tip{background:var(--ok-soft);border-left:4px solid var(--ok);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.88rem;color:#0f5f2e}
+.ficha-content .warn{background:var(--warn-soft);border-left:4px solid var(--warn);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.88rem}
+.ficha-content .activity-block{background:var(--primary-soft);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
+.ficha-content .activity-block h4{color:var(--primary);margin:0}
+.ficha-content .act-header{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none}
+.ficha-content .act-header:hover{background:rgba(26,79,160,.06)}
+.ficha-content .act-toggle{margin-left:auto;font-size:.8rem;color:var(--primary);font-weight:700;transition:transform .2s}
+.ficha-content .act-body{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s}
+.ficha-content .activity-block.open .act-body{max-height:2000px;padding:4px 16px 14px}
+.ficha-content .activity-block.open .act-toggle{transform:rotate(90deg)}
+.ficha-content .act-num{background:var(--primary);color:#fff;border-radius:50%;width:22px;height:22px;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ficha-content .act-btn{margin-left:auto;transform:none!important;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:4px 12px;font:inherit;font-size:.74rem;font-weight:700;cursor:pointer}
+.ficha-content .act-dl{background:var(--surface);color:var(--primary);border:1px solid var(--border);border-radius:999px;width:28px;height:28px;font-size:.8rem;cursor:pointer;flex-shrink:0}
+.ficha-content .act-dl:hover{background:var(--primary-soft)}
+
+.ent-pend td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+#ent-table .fb-in,#ent-table .nota-in{padding:5px 8px;font-size:.8rem;margin:0}
+/* ─── Ejercicios con código (fichas 04-05) ─── */
+.ficha-content .ex-btn-up{background:#15803d;color:#fff;border:none;border-radius:8px;padding:7px 14px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+.ficha-content .ex-btn-up:hover{filter:brightness(1.1)}
+.ficha-content .ex-btn-up:disabled{opacity:.7;cursor:wait}
+.ficha-content .ex-block{border:1.5px solid var(--border);border-radius:12px;margin:18px 0;overflow:hidden;background:var(--surface)}
+.ficha-content .ex-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:var(--primary);color:#fff;cursor:pointer;font-weight:800;font-size:.9rem;user-select:none}
+.ficha-content .ex-hdr-r{display:flex;align-items:center;gap:10px}
+.ficha-content .ex-badge{background:rgba(255,255,255,.2);border-radius:999px;padding:2px 10px;font-size:.72rem;font-weight:700}
+.ficha-content .ex-chev{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--primary);border-radius:999px;padding:3px 12px;font-size:.74rem;font-weight:800;transition:transform .2s}
+.ficha-content .ex-chev::before{content:"Ver ejercicios"}
+.ficha-content .ex-chev.open::before{content:"Ocultar"}
+.ficha-content .ex-body{display:none;padding:14px 16px}
+.ficha-content .ex-body.open{display:block}
+.ficha-content .ex-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.ficha-content .ex-tab{border:1.5px solid var(--border);background:var(--surface2);color:var(--text);border-radius:8px;padding:5px 12px;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer}
+.ficha-content .ex-tab.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.ficha-content .ex-panel{display:none}
+.ficha-content .ex-panel.on{display:block}
+.ficha-content .ex-card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ficha-content .ex-card-h h4{margin:0;font-size:.95rem;color:var(--primary)}
+.ficha-content .diff-basic,.ficha-content .diff-medium,.ficha-content .diff-hard{font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 10px}
+.ficha-content .diff-basic{background:var(--ok-soft);color:var(--ok)}
+.ficha-content .diff-medium{background:var(--warn-soft);color:var(--warn)}
+.ficha-content .diff-hard{background:var(--accent-soft);color:var(--accent)}
+.ficha-content .ex-desc{font-size:.86rem;line-height:1.6;margin:8px 0 10px}
+.ficha-content .ex-code{width:100%;min-height:260px;resize:vertical;background:#0f172a;color:#e2e8f0;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:.8rem;line-height:1.55;tab-size:4;white-space:pre;box-sizing:border-box}
+.ficha-content .ex-btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.ficha-content .ex-btn-dl,.ficha-content .ex-btn-all{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:7px 14px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+.ficha-content .ex-btn-dl:hover,.ficha-content .ex-btn-all:hover{filter:brightness(1.1)}
+.ficha-content .ex-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding:10px 12px;border-radius:10px;background:var(--surface2);font-size:.82rem;font-weight:700}
+.ficha-content .ex-btn-profe{display:none!important}
+#ficha-content .fc-front{background:var(--surface)!important}
+#ficha-content .fc-back{background:var(--surface2)!important}
+#ficha-content .fc-ctrl-btn{background:var(--surface)!important;border-color:var(--border)!important;color:var(--text)!important}
+#ficha-content #fc-score{background:var(--bg)!important;border-color:var(--border)!important;color:var(--text)!important}
+#ficha-content .fc-q,#ficha-content .fc-a{color:var(--text)!important}
+#ficha-content .fc-desc{color:var(--muted)!important}
+#ficha-content .fc-title{color:var(--text)!important}
+#ficha-content .fc-num{color:var(--primary)!important}
+#ficha-content .fc-hint{color:var(--muted)!important}
+/* ─── SUBMIT MODAL ───────────────────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:500;padding:16px}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;max-height:90vh}
+.modal-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);font-size:1rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.modal-close{margin-left:auto;background:none;border:none;font-size:1.2rem;color:var(--muted);cursor:pointer;padding:0 4px}
+.modal-body{padding:18px 22px;overflow-y:auto;flex:1}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.drop-zone{border:2px dashed var(--border);border-radius:10px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .15s;background:var(--surface2)}
+.drop-zone:hover,.drop-zone.over{border-color:var(--primary);background:var(--primary-soft)}
+.drop-zone-icon{font-size:2rem;margin-bottom:6px}
+.drop-zone-lbl{font-size:.88rem;font-weight:600;color:var(--muted)}
+.file-pill{display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);font-size:.82rem}
+.file-pill-name{flex:1;font-weight:600;word-break:break-all}
+.file-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.95rem}
+.upload-progress{height:4px;background:var(--border);border-radius:2px;margin-top:8px;display:none;overflow:hidden}
+.upload-fill{height:100%;background:var(--primary);border-radius:2px;transition:width .3s;width:0}
+/* ─── TEACHER PANEL ──────────────────────────────────────── */
+.panel-tabs{display:flex;border-bottom:1px solid var(--border);padding:0;background:var(--surface2)}
+.ptab{padding:12px 18px;font:inherit;font-size:.85rem;font-weight:700;background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;color:var(--muted);transition:all .15s}
+.ptab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.ptab-body{display:none;padding:18px 22px}
+.ptab-body.active{display:block}
+.data-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.data-table th{background:var(--surface2);padding:8px 10px;text-align:left;font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--border)}
+.data-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--surface2)}
+.act-btn{font-size:.72rem;padding:3px 9px;border-radius:6px;border:1.5px solid;cursor:pointer;font-family:inherit;font-weight:600;background:var(--surface);transition:all .12s}
+/* ─── CONFIG ─────────────────────────────────────────────── */
+.cfg-group{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px}
+.cfg-group h4{margin:0 0 12px;font-size:.9rem;font-weight:800}
+.cfg-note{font-size:.76rem;color:var(--muted);line-height:1.5;background:var(--surface);border-radius:8px;padding:8px 12px;margin-top:8px}
+/* ─── QUICK LINKS (home) ─────────────────────────────────── */
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:24px}
+.quick-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;cursor:pointer;transition:all .15s;text-decoration:none;color:var(--text);display:flex;align-items:center;gap:12px}
+.quick-card:hover{border-color:var(--primary);background:var(--primary-soft)}
+.quick-icon{font-size:1.6rem;flex-shrink:0}
+.quick-label{font-weight:700;font-size:.9rem}
+.quick-desc{font-size:.76rem;color:var(--muted);margin-top:2px}
+/* ─── FOOTER ─────────────────────────────────────────────── */
+.footer{padding:18px 16px 28px;text-align:center;font-size:.8rem;color:var(--muted);border-top:1px solid var(--border)}
+/* ─── TOAST ──────────────────────────────────────────────── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:9px 20px;border-radius:10px;font-size:.85rem;font-weight:600;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ─── RECURSOS ───────────────────────────────────────────── */
+.recurso-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.recurso-item:last-child{border-bottom:none}
+.r-icon{font-size:1.5rem;flex-shrink:0}
+.r-info{flex:1}
+.r-title{font-weight:700;font-size:.92rem}
+.r-desc{font-size:.78rem;color:var(--muted);margin-top:2px}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+</head>
+<body>
+
+<!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
+<div id="login-wrap" class="login-wrap">
+  <div class="login-box card">
+    <div class="login-hero">
+      <div class="login-icon">🧠</div>
+      <h1>IA · 1º Bachillerato</h1>
+      <p class="school">IES Valle del Jerte (Plasencia) · 2026-27</p>
+      <p class="muted small" style="margin-top:6px">Autor: José I. Sánchez Castaño</p>
+    </div>
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="showLoginTab('login',this)">Entrar</button>
+      <button class="login-tab" onclick="showLoginTab('register',this)">Crear cuenta</button>
+    </div>
+    <div id="lt-login">
+      <label for="lu">Usuario</label>
+      <input id="lu" autocomplete="username" autocapitalize="off" placeholder="al01 … profesor">
+      <label for="lp">Contraseña</label>
+      <input id="lp" type="password" autocomplete="current-password" placeholder="Contraseña">
+      <p id="lerr" class="alert bad mt4" style="display:none"></p>
+      <button class="btn full mt" onclick="doLogin()">Entrar →</button>
+    </div>
+    <div id="lt-register" style="display:none">
+      <label for="ru">Usuario nuevo</label>
+      <input id="ru" autocomplete="username" autocapitalize="off" placeholder="p. ej. ia_dragon7" maxlength="20">
+      <p class="muted small" style="margin:4px 0 0">Solo minúsculas, números y _ (3–20). <b>No uses tu nombre ni apellidos.</b></p>
+      <label for="rp">Contraseña</label>
+      <input id="rp" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+      <label for="rp2">Repite la contraseña</label>
+      <input id="rp2" type="password" autocomplete="new-password">
+      <label for="rcode">Código de clase</label>
+      <input id="rcode" autocapitalize="off" placeholder="Te lo da tu profesor/a">
+      <p id="rerr" class="alert bad mt4" style="display:none"></p>
+      <button class="btn full mt" id="rbtn" onclick="doRegister()">Crear cuenta →</button>
+    </div>
+    <div class="login-hint">¿No tienes cuenta? Créala en <b>Crear cuenta</b> con el código de clase.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ APP ═══════════════════════════════ -->
+<div id="app-shell" style="display:none">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="container">
+      <a href="#/" class="brand" onclick="navigate('home')">
+        <span class="brand-main">🧠 IA · 1º Bach</span>
+        <span class="brand-sub">IES Valle del Jerte · 26-27</span>
+      </a>
+      <nav class="nav" id="main-nav">
+        <a href="#/" id="nav-home" onclick="navigate('home')" class="active">Inicio</a>
+        <a href="#/sandbox" id="nav-sandbox" onclick="navigate('sandbox')">🐍 Python</a>
+        <a href="#/recursos" id="nav-recursos" onclick="navigate('recursos')">📦 Recursos</a>
+        <a href="#/profesor" id="nav-prof" class="nav-teacher" style="display:none" onclick="navigate('profesor')">👩‍🏫 Profesor</a>
+      </nav>
+      <div class="spacer"></div>
+      <div class="topbar-user row">
+        <div class="avatar" id="top-avatar">?</div>
+        <span class="user-name" id="top-name"></span>
+        <button class="btn sm secondary" id="top-folder" style="display:none" onclick="openFolderModal(false)" title="Carpeta de Drive donde se guardan tus actividades">📁 Mi carpeta</button>
+        <button class="btn sm secondary" onclick="doLogout()">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGES -->
+  <div id="p-home" class="page-hidden">
+    <!-- home injected by JS -->
+  </div>
+
+  <!-- SESION VIEW (fullwidth with sidebar) -->
+  <div id="p-sesion" class="page-hidden">
+    <div class="ficha-layout">
+      <aside class="ficha-sidebar">
+        <div class="sidebar-label">Sesiones</div>
+        <div id="sidebar-items"></div>
+      </aside>
+      <div class="ficha-main">
+        <div class="ficha-bar">
+          <button class="btn sm secondary" onclick="navigate('home')">← Inicio</button>
+          <span class="ficha-bar-title" id="ficha-bar-title"></span>
+          <div id="ficha-dl-bar" style="display:flex;align-items:center;gap:6px"></div>
+          <button class="btn sm" onclick="openSubmit()">📨 Entregar</button>
+        </div>
+        <div class="ficha-content" id="ficha-content">
+          <p class="muted" style="padding:40px;text-align:center">Cargando ficha…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="p-sandbox" class="page-hidden">
+    <div class="container" style="padding-top:24px;padding-bottom:40px">
+      <div class="page-head">
+        <h1>🐍 Sandbox Python</h1>
+        <p class="muted small">Ejecuta código Python directamente en el navegador (sin servidor)</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+        <iframe src="sandbox/index.html" style="width:100%;height:600px;border:none;display:block" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div id="p-recursos" class="page-hidden">
+    <div class="container" style="padding-top:24px;padding-bottom:40px">
+      <div class="page-head">
+        <h1>📦 Recursos</h1>
+        <p class="muted small">Materiales descargables para las sesiones</p>
+      </div>
+      <div class="card" id="recursos-list">
+        <div class="recurso-item" style="background:var(--warn-soft);border-radius:10px;padding:12px;border:1.5px solid #d4a017;margin-bottom:6px">
+          <span class="r-icon">🧪</span>
+          <div class="r-info">
+            <div class="r-title">Laboratorio interactivo: EDA y regresión lineal (péndulo)</div>
+            <div class="r-desc">NaN, outliers, Tukey, escalado, regresión y residuos · Sesión 06</div>
+          </div>
+          <a href="#/sesion/06" class="btn sm" onclick="navigate('sesion','06');setTimeout(function(){var e=document.getElementById('s6-lab');if(e)e.scrollIntoView({behavior:'smooth'});},600);return false">Abrir en la ficha</a>
+          <a href="laboratorios/eda-regresion/index.html" target="_blank" rel="noopener" class="btn sm secondary">⤢</a>
+        </div>
+        <div class="recurso-item">
+          <span class="r-icon">📊</span>
+          <div class="r-info">
+            <div class="r-title">Dataset del péndulo (40 ensayos, con NaN y outliers)</div>
+            <div class="r-desc">pendulo_raw.csv · para Python o Google Sheets · Sesión 06</div>
+          </div>
+          <a href="descargas/s06/pendulo_raw.csv" class="btn sm secondary" download>⬇ Descargar</a>
+        </div>
+        <div class="recurso-item">
+          <span class="r-icon">📄</span>
+          <div class="r-info">
+            <div class="r-title">Comandos esenciales CMD</div>
+            <div class="r-desc">Chuleta de referencia · Sesión 01</div>
+          </div>
+          <a href="descargas/chuleta-cmd.pdf" class="btn sm secondary" download>⬇ Descargar</a>
+        </div>
+        <div class="recurso-item">
+          <span class="r-icon">📄</span>
+          <div class="r-info">
+            <div class="r-title">PowerShell — Guía rápida</div>
+            <div class="r-desc">Chuleta de cmdlets y tuberías · Sesión 02</div>
+          </div>
+          <a href="descargas/chuleta-powershell.pdf" class="btn sm secondary" download>⬇ Descargar</a>
+        </div>
+        <div class="recurso-item">
+          <span class="r-icon">📊</span>
+          <div class="r-info">
+            <div class="r-title">Plantilla Excel — Estadística</div>
+            <div class="r-desc">Hoja de cálculo con funciones estadísticas · Sesión 03</div>
+          </div>
+          <a href="descargas/estadistica-plantilla.xlsx" class="btn sm secondary" download>⬇ Descargar</a>
+        </div>
+        <div class="recurso-item">
+          <span class="r-icon">🐍</span>
+          <div class="r-info">
+            <div class="r-title">Ejercicios Python básico</div>
+            <div class="r-desc">Colección de ejercicios resueltos · Sesión 04</div>
+          </div>
+          <a href="descargas/ejercicios-python-basico.py" class="btn sm secondary" download>⬇ Descargar</a>
+        </div>
+        <div class="recurso-item">
+          <span class="r-icon">🐍</span>
+          <div class="r-info">
+            <div class="r-title">Ejercicios Estructuras de Datos</div>
+            <div class="r-desc">Listas, tuplas, dicts, conjuntos · Sesión 05</div>
+          </div>
+          <a href="descargas/ejercicios-estructuras.py" class="btn sm secondary" download>⬇ Descargar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFESOR panel -->
+  <div id="p-profesor" class="page-hidden">
+    <div class="container" style="padding-top:24px;padding-bottom:40px">
+      <div class="page-head"><h1>👩‍🏫 Panel del Profesor</h1></div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="panel-tabs">
+          <button class="ptab active" onclick="switchPTab('entregas',this)">📁 Entregas</button>
+          <button class="ptab" onclick="switchPTab('notas',this)">🎓 Calificaciones</button>
+          <button class="ptab" onclick="switchPTab('usuarios',this)">👥 Usuarios</button>
+          <button class="ptab" onclick="switchPTab('fichas',this)">📄 Fichas</button>
+          <button class="ptab" onclick="switchPTab('drive',this)">⚙️ Configuración</button>
+        </div>
+        <!-- ENTREGAS -->
+        <div class="ptab-body active" id="ptab-entregas">
+          <div class="row mb" style="flex-wrap:wrap;gap:8px">
+            <span class="muted small" id="ent-count"></span>
+            <div class="spacer"></div>
+            <select id="ent-filter" onchange="renderEntregas()" style="max-width:180px"><option value="">Todas las sesiones</option></select>
+            <select id="ent-state" onchange="renderEntregas()" style="max-width:170px"><option value="">Todas</option><option value="pend">Sin corregir</option><option value="done">Corregidas</option></select>
+            <span class="small" id="ent-save" style="min-width:90px"></span>
+            <button class="btn sm secondary" onclick="loadEntregas()">🔄 Actualizar</button>
+            <button class="btn sm secondary" onclick="exportEntregas()">⬇ Exportar CSV</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table" id="ent-table">
+              <thead><tr><th>Fecha</th><th>Alumno</th><th>Sesión</th><th>Ejercicio</th><th>Archivo / Enlace</th><th>Comentario del alumno</th><th style="min-width:80px">Nota (0-10)</th><th style="min-width:180px">Comentario del profesor</th></tr></thead>
+              <tbody id="ent-tbody"></tbody>
+            </table>
+          </div>
+          <p class="muted small" style="margin-top:10px">Las entregas se guardan en la carpeta de Drive de cada alumno (subcarpetas S01, S02…) y quedan registradas en la pestaña <b>entregas</b> de tu hoja de cuentas.</p>
+        </div>
+        <!-- CALIFICACIONES -->
+        <div class="ptab-body" id="ptab-notas">
+          <div class="cfg-group">
+            <h4>⚖️ Ponderación de las actividades</h4>
+            <div class="cfg-note" style="margin-bottom:10px">Asigna un peso a cada actividad evaluable. La nota final de cada alumno es la <b>media ponderada</b> de sus notas: los pesos no tienen por qué sumar 100, se reparten en proporción. Peso 0 = la actividad no cuenta.</div>
+            <div class="row mb" style="flex-wrap:wrap;gap:8px">
+              <select id="pond-mode" onchange="renderNotas()" style="max-width:220px">
+                <option value="act">Por actividad (sesión · ejercicio)</option>
+                <option value="ses">Por sesión (todas sus actividades)</option>
+              </select>
+              <label style="display:flex;align-items:center;gap:6px;margin:0;font-weight:500"><input type="checkbox" id="pond-ceros" style="width:auto"> Las actividades no entregadas cuentan como 0</label>
+              <div class="spacer"></div>
+              <button class="btn sm secondary" onclick="pondEqual()">Repartir por igual</button>
+              <button class="btn sm" onclick="savePonderacion()">💾 Guardar ponderación</button>
+            </div>
+            <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Sesión</th><th>Actividad</th><th>Entregas</th><th>Corregidas</th><th style="width:110px">Peso</th><th>% sobre la nota</th></tr></thead><tbody id="pond-tbody"></tbody></table></div>
+            <p class="small" id="pond-msg" style="margin-top:8px"></p>
+          </div>
+          <div class="cfg-group" style="margin-top:16px">
+            <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:8px">
+              <h4 style="margin:0">🎓 Calificación final por alumno</h4>
+              <div class="spacer"></div>
+              <button class="btn sm secondary" onclick="exportNotas()">⬇ Exportar notas CSV</button>
+            </div>
+            <div style="overflow-x:auto"><table class="data-table" id="notas-table"><thead id="notas-thead"></thead><tbody id="notas-tbody"></tbody></table></div>
+            <p class="muted small" style="margin-top:8px">⏳ entregado sin corregir (no cuenta hasta que le pongas nota) · — no entregado. Si un alumno entrega varias veces la misma actividad, cuenta la última entrega corregida.</p>
+          </div>
+        </div>
+        <!-- USUARIOS -->
+        <div class="ptab-body" id="ptab-usuarios">
+          <div class="row mb" style="flex-wrap:wrap;gap:8px">
+            <span class="muted small" id="usr-count"></span>
+            <div class="spacer"></div>
+            <button class="btn sm secondary" onclick="openImportSheets()">📊 Importar desde Sheets</button>
+            <button class="btn sm" onclick="openAddUser()">+ Añadir</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Caduca</th><th></th></tr></thead>
+              <tbody id="usr-tbody"></tbody>
+            </table>
+          </div>
+          <div id="add-user-form" class="card mt" style="display:none;max-width:480px">
+            <h4 style="margin:0 0 12px">Nuevo usuario</h4>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div><label>Usuario</label><input id="nu-u" placeholder="al26"></div>
+              <div><label>Contraseña</label><input id="nu-p" type="password" placeholder="IA2627"></div>
+              <div><label>Nombre visible</label><input id="nu-n" placeholder="Alumno 26"></div>
+              <div><label>Rol</label><select id="nu-r"><option value="student">Alumno</option><option value="teacher">Profesor</option></select></div>
+            </div>
+            <label>Caduca</label><input id="nu-e" type="date" value="2027-06-30">
+            <p id="nu-err" class="alert bad mt4" style="display:none"></p>
+            <div class="row mt">
+              <button class="btn sm" onclick="addUser()">Crear</button>
+              <button class="btn sm secondary" onclick="document.getElementById('add-user-form').style.display='none'">Cancelar</button>
+            </div>
+          </div>
+        </div>
+        <!-- FICHAS -->
+        <div class="ptab-body" id="ptab-fichas">
+          <div class="cfg-group">
+            <h4>📄 Publicar una ficha nueva (o sustituir una existente)</h4>
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:10px">
+              <div><label>Nº sesión</label><input id="nf-id" placeholder="07" maxlength="2"></div>
+              <div><label>Título</label><input id="nf-title" placeholder="Regresión lineal con scikit-learn"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div><label>Fecha</label><input id="nf-date" placeholder="10 Nov"></div>
+              <div><label>Estado</label><select id="nf-status"><option value="active">▶ En curso</option><option value="plan">Planificada</option><option value="upcoming">Próximamente</option><option value="done">✓ Completada</option></select></div>
+            </div>
+            <label>Descripción corta (tarjeta de inicio)</label>
+            <input id="nf-desc" placeholder="Qué se trabaja en la sesión">
+            <label>Archivo HTML de la ficha</label>
+            <input id="nf-file" type="file" accept=".html,.htm">
+            <div class="cfg-note">
+              Usa la <a href="plantillas/ficha_plantilla.html" download>⬇ plantilla de ficha</a> para mantener el formato (cabecera, índice, secciones desplegables, ejercicios, tarjetas y entrega).
+              Si tu HTML no trae cabecera, la app añade la cabecera estándar con el logo y el título.
+            </div>
+            <div id="nf-msg" style="margin-top:8px"></div>
+            <div class="row mt">
+              <button class="btn sm secondary" onclick="previewFicha()">👁 Vista previa</button>
+              <button class="btn sm" id="nf-btn" onclick="uploadFicha()">⬆ Publicar ficha</button>
+            </div>
+          </div>
+          <div class="cfg-group" style="margin-top:16px">
+            <h4>Fichas publicadas desde el panel</h4>
+            <div id="nf-list" class="muted small">—</div>
+          </div>
+        </div>
+        <!-- DRIVE -->
+        <div class="ptab-body" id="ptab-drive">
+          <div class="cfg-group">
+            <h4>🔑 Clave de administrador</h4>
+            <label>Clave (la misma que <code>CLAVE_ADMIN</code> en tu Apps Script)</label>
+            <input id="adm-key" type="password" autocomplete="off" placeholder="Solo se guarda en este navegador">
+            <div class="row mt"><button class="btn sm" onclick="saveAdminKey()">Guardar clave</button></div>
+            <div class="cfg-note">Necesaria para ver las entregas y publicar fichas.</div>
+          </div>
+          <div class="cfg-group" style="margin-top:16px">
+            <h4>🗂 Google Apps Script</h4>
+            <label>URL de la Web App</label>
+            <input id="drive-url" placeholder="https://script.google.com/macros/s/.../exec">
+            <div class="cfg-note">
+              1. Abre <a href="https://script.google.com" target="_blank">script.google.com</a> → Nuevo proyecto<br>
+              2. Pega el código <code>backend/apps-script/upload.gs</code><br>
+              3. Implementar → Aplicación web → Ejecutar como: <b>Yo</b> · Acceso: <b>Cualquiera</b><br>
+              4. Copia la URL aquí
+            </div>
+            <div id="drive-msg" style="margin-top:8px"></div>
+            <div class="row mt">
+              <button class="btn sm" onclick="saveDriveUrl()">Guardar URL</button>
+              <button class="btn sm secondary" onclick="testDrive()">Probar</button>
+            </div>
+          </div>
+          <div class="cfg-group" style="margin-top:16px">
+            <h4>📌 Configuración permanente (para todos los dispositivos)</h4>
+            <div id="perm-status" class="cfg-note"></div>
+            <label>URL del Apps Script (/exec)</label>
+            <input id="perm-drive" placeholder="https://script.google.com/macros/s/.../exec">
+            <label style="margin-top:8px">URL hoja de usuarios (Google Sheets)</label>
+            <input id="perm-sheets" placeholder="https://docs.google.com/spreadsheets/d/.../edit">
+            <div class="cfg-note">
+              Estos valores se guardan en <code>frontend/config.json</code> del repositorio y no se pierden aunque se borre el navegador.
+              Pulsa <b>Descargar config.json</b>, sustituye el archivo en <code>frontend/</code> y súbelo a GitHub.
+              Seguirán activos hasta que tú vuelvas a cambiarlos.
+            </div>
+            <div id="perm-msg" style="margin-top:8px"></div>
+            <div class="row mt">
+              <button class="btn sm secondary" onclick="testSheetsPerm()">Probar hoja</button>
+              <button class="btn sm" onclick="downloadConfig()">⬇ Descargar config.json</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">IES Valle del Jerte (Plasencia) · Autor: José I. Sánchez Castaño · IA 1º Bachillerato 2026-27</footer>
+</div>
+
+<!-- ═══════ SUBMIT MODAL ═══════ -->
+<div class="overlay" id="submit-modal">
+  <div class="modal">
+    <div class="modal-head">📨 Entregar actividad <button class="modal-close" onclick="closeModal('submit-modal')">✕</button></div>
+    <div class="modal-body">
+      <div id="submit-storage-note"></div>
+      <label>📁 Archivo</label>
+      <div class="drop-zone" id="drop-zone"
+        onclick="document.getElementById('fi').click()"
+        ondragover="event.preventDefault();this.classList.add('over')"
+        ondragleave="this.classList.remove('over')"
+        ondrop="onDrop(event)">
+        <div class="drop-zone-icon">📂</div>
+        <div class="drop-zone-lbl">Haz clic o arrastra el archivo aquí</div>
+        <div class="muted small" style="margin-top:4px">.py .html .zip .mp4 .pdf (máx 50 MB)</div>
+      </div>
+      <input type="file" id="fi" style="display:none" accept=".py,.html,.htm,.zip,.mp4,.rar,.ipynb,.txt,.pdf" onchange="onFileChosen(this.files[0])">
+      <div class="file-pill" id="file-pill">
+        <span>📄</span><span class="file-pill-name" id="fp-name"></span>
+        <button class="file-clear" onclick="clearFile()">✕</button>
+      </div>
+      <div class="upload-progress" id="ubar"><div class="upload-fill" id="ufill"></div></div>
+      <label style="margin-top:12px">💬 Comentario (opcional)</label>
+      <input id="s-comment" placeholder="Lo que quieras añadir…">
+      <label style="margin-top:10px">🔗 O enlace (GitHub, Replit…)</label>
+      <input id="s-url" type="url" placeholder="https://…">
+      <p id="s-err" class="alert bad mt4" style="display:none"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn secondary" onclick="closeModal('submit-modal')">Cancelar</button>
+      <button class="btn" id="s-btn" onclick="doSubmit()">Entregar ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ CARPETA DEL ALUMNO ═══════ -->
+<div class="overlay" id="folder-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head">📁 Tu carpeta de actividades en Drive <button class="modal-close" id="f-close" onclick="closeModal('folder-modal')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:.88rem;line-height:1.6;margin-top:0">Todas tus actividades se guardarán en <b>tu propia carpeta de Google Drive</b>, organizadas en subcarpetas por sesión (<code>S01</code>, <code>S02</code>…). Solo tienes que hacerlo una vez:</p>
+      <ol style="font-size:.85rem;line-height:1.7;padding-left:20px">
+        <li>En tu Google Drive crea una carpeta, por ejemplo <b>IA27_ejercicios</b>.</li>
+        <li>Botón derecho → <b>Compartir</b> → añade a <b id="f-teacher">tu profesor/a</b> como <b>Editor</b>.</li>
+        <li>Abre la carpeta, copia la dirección del navegador y pégala aquí.</li>
+      </ol>
+      <label for="f-url">URL de tu carpeta</label>
+      <input id="f-url" placeholder="https://drive.google.com/drive/folders/…">
+      <p id="f-cur" class="muted small" style="margin:6px 0 0"></p>
+      <p id="f-err" class="alert bad mt4" style="display:none"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn secondary" id="f-later" onclick="closeModal('folder-modal')">Más tarde</button>
+      <button class="btn" id="f-btn" onclick="saveFolder()">Guardar carpeta ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT SHEETS MODAL -->
+<div class="overlay" id="sheets-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-head">📊 Importar alumnos desde Google Sheets <button class="modal-close" onclick="closeModal('sheets-modal')">✕</button></div>
+    <div style="padding:20px;overflow-y:auto;flex:1">
+
+      <div class="alert ok mb" style="font-size:.82rem">
+        <b>Formato esperado en Sheets (columnas A y B):</b><br>
+        <code style="display:block;margin-top:6px;background:var(--bg);padding:6px 10px;border-radius:6px">
+          usuario &nbsp;&nbsp; contraseña<br>
+          al01 &nbsp;&nbsp;&nbsp;&nbsp; IA2627<br>
+          al02 &nbsp;&nbsp;&nbsp;&nbsp; MiPass123
+        </code>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label>URL de Google Sheets <span style="font-size:.74rem;color:var(--muted)">(publicada como CSV o compartida)</span></label>
+        <div style="display:flex;gap:8px">
+          <input id="sheets-url" placeholder="https://docs.google.com/spreadsheets/d/..." style="flex:1">
+          <button class="btn sm" onclick="fetchSheets()">Cargar</button>
+        </div>
+        <p style="font-size:.74rem;color:var(--muted);margin-top:4px">
+          En Sheets: <b>Archivo → Compartir → Publicar en la web → CSV</b> y pega esa URL aquí.
+        </p>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label>O pega el CSV directamente <span style="font-size:.74rem;color:var(--muted)">(copia y pega desde Sheets)</span></label>
+        <textarea id="sheets-csv" rows="7" placeholder="usuario,contraseña&#10;al01,IA2627&#10;al02,MiPass456" style="font-family:monospace;font-size:.82rem"></textarea>
+      </div>
+
+      <div style="margin-bottom:6px">
+        <label>Caduca <span style="font-size:.74rem;color:var(--muted)">(para todos los importados)</span></label>
+        <input id="sheets-expires" type="date" value="2027-06-30" style="max-width:180px">
+      </div>
+
+      <div id="sheets-preview" style="display:none;margin-top:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <b style="font-size:.88rem">Vista previa</b>
+          <span id="sheets-count" class="badge ok"></span>
+        </div>
+        <div style="overflow-x:auto;max-height:200px;overflow-y:auto">
+          <table class="data-table"><thead><tr><th>Usuario</th><th>Contraseña</th><th>Estado</th></tr></thead>
+          <tbody id="sheets-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <p id="sheets-err" class="alert bad mt" style="display:none"></p>
+
+      <div class="row mt" style="justify-content:flex-end;gap:8px">
+        <button class="btn sm secondary" onclick="closeModal('sheets-modal')">Cancelar</button>
+        <button class="btn sm" id="sheets-import-btn" style="display:none" onclick="importSheets()">✓ Importar alumnos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="ex-fi" style="display:none">
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════════════
+var DRIVE_URL  = '';
+
+var AUTH_KEY   = 'ia27_auth';
+var USERS_KEY  = 'ia27_users';
+var ACTS_KEY   = 'ia27_acts';
+var CONF_KEY   = 'ia27_conf';
+var CUR        = null;        // current user object
+var CUR_FICHA  = null;        // currently open ficha id
+
+// ── CONFIGURACIÓN PERMANENTE (config.json en el repo) ──
+var REMOTE_CONF = {};          // contenido de config.json
+var SHEET_USERS = null;        // usuarios leídos de la hoja de Sheets (null = no configurada)
+var SHEET_CACHE_KEY = 'ia27_sheet_users';
+var _confReady = null;
+
+function sheetsCsvUrl(url){
+  if(!url)return '';
+  var m=url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(!m)return url; // ya es una URL CSV publicada
+  if(url.indexOf('/pub')>-1&&url.indexOf('output=csv')>-1)return url;
+  var gm=url.match(/gid=(\d+)/);
+  return 'https://docs.google.com/spreadsheets/d/'+m[1]+'/export?format=csv'+(gm?'&gid='+gm[1]:'');
+}
+function csvRows(text){
+  // Parser CSV con comillas; detecta separador , ; o tabulador
+  text=text.replace(/^﻿/,'');
+  var first=text.split(/\r?\n/)[0]||'';
+  var sep=(first.split('\t').length>first.split(',').length)?'\t':((first.split(';').length>first.split(',').length)?';':',');
+  var rows=[],row=[],cell='',q=false;
+  for(var i=0;i<text.length;i++){
+    var ch=text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){cell+='"';i++;} else q=false; } else cell+=ch; }
+    else if(ch==='"')q=true;
+    else if(ch===sep){row.push(cell);cell='';}
+    else if(ch==='\n'||ch==='\r'){ if(ch==='\r'&&text[i+1]==='\n')i++; row.push(cell);rows.push(row);row=[];cell=''; }
+    else cell+=ch;
+  }
+  if(cell||row.length){row.push(cell);rows.push(row);}
+  return rows.map(function(r){return r.map(function(s){return s.trim();});})
+             .filter(function(r){return r.some(function(s){return s;});});
+}
+function normH(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z]/g,'');}
+var _lastSheetDiag='';
+function parseUserCSV(text){
+  _lastSheetDiag='';
+  if(/^\s*<(!doctype|html)/i.test(text)){
+    _lastSheetDiag='Google devolvió una página web, no datos: la hoja no está compartida como “Cualquier persona con el enlace”.';
+    return [];
+  }
+  var rows=csvRows(text);
+  if(!rows.length){_lastSheetDiag='La hoja (pestaña indicada en gid) está vacía.';return [];}
+  // Buscar fila de cabecera en las 5 primeras filas
+  var hi=-1,cu=-1,cp=-1,ce=-1,cc=-1;
+  for(var r=0;r<Math.min(5,rows.length)&&hi<0;r++){
+    var h=rows[r].map(normH);
+    var u=h.findIndex(function(x){return /^(usuario|user|username|login|alumno|nick|id)$/.test(x)||x.indexOf('usuario')===0;});
+    var p=h.findIndex(function(x){return /^(contrasena|password|pass|clave|pwd|contrasenya)$/.test(x)||x.indexOf('contrasen')===0||x.indexOf('password')===0;});
+    if(u>-1&&p>-1){hi=r;cu=u;cp=p;ce=h.findIndex(function(x){return /^(caduca|expira|expires|vence|validohasta)$/.test(x);});cc=h.findIndex(function(x){return /^(carpeta|drive|folder)/.test(x);});}
+  }
+  if(hi<0){hi=-1;cu=0;cp=1;ce=2;}
+  var out=[],seen={};
+  for(var i=hi+1;i<rows.length;i++){
+    var u2=(rows[i][cu]||'').toLowerCase(), pw=rows[i][cp]||'';
+    if(!u2||!pw||seen[u2])continue; seen[u2]=1;
+    var exp=ce>-1?(rows[i][ce]||''):'';
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(exp))exp='2027-06-30';
+    var carp=cc>-1?(rows[i][cc]||''):'';
+    out.push({username:u2,password:pw,displayName:u2,role:'student',expires:exp,source:'sheets',carpeta:carp});
+  }
+  if(!out.length){
+    _lastSheetDiag='Se leyeron '+rows.length+' filas pero ninguna tiene usuario y contraseña. Primera fila recibida: «'+rows[0].join(' | ').slice(0,120)+'». Pon en la fila 1 las cabeceras “usuario” y “contraseña”.';
+  }
+  return out;
+}
+var BASE_SESSIONS=null;
+function normSession(s,src){return{id:String(s.id).padStart(2,'0'),status:s.status||'upcoming',title:s.title||('Sesión '+s.id),
+  date:s.date||'',tags:Array.isArray(s.tags)?s.tags:[],desc:s.desc||'',source:src};}
+async function loadSessions(force){
+  if(!BASE_SESSIONS){
+    try{
+      var r=await fetch('sesiones.json',{cache:'no-store'});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      var list=await r.json();
+      BASE_SESSIONS=(Array.isArray(list)&&list.length)?list.map(function(s){return normSession(s,'repo');}):SESSIONS.map(function(s){return normSession(s,'repo');});
+    }catch(e){console.warn('sesiones.json no disponible, uso la lista interna',e);BASE_SESSIONS=SESSIONS.map(function(s){return normSession(s,'repo');});}
+  }
+  REMOTE_FICHAS=[];
+  if(DRIVE_URL){
+    try{var j=await apiGet({accion:'fichas'});REMOTE_FICHAS=(j.fichas||[]).map(function(s){return normSession(s,'remote');});ss('ia27_remote_fichas',REMOTE_FICHAS);}
+    catch(e){console.warn('Fichas del panel no disponibles',e);REMOTE_FICHAS=ls('ia27_remote_fichas',[]);}
+  }
+  var map={};
+  BASE_SESSIONS.forEach(function(s){map[s.id]=s;});
+  REMOTE_FICHAS.forEach(function(s){map[s.id]=s;});   // las del panel sustituyen a las del repo
+  SESSIONS=Object.keys(map).sort().map(function(k){return map[k];});
+}
+async function loadRemoteConfig(){
+  try{
+    var r=await fetch('config.json',{cache:'no-store'});
+    if(r.ok)REMOTE_CONF=await r.json();
+  }catch(e){console.warn('config.json no disponible',e);}
+  if(REMOTE_CONF.driveUrl)DRIVE_URL=REMOTE_CONF.driveUrl;
+  else if(getConf().driveUrl)DRIVE_URL=getConf().driveUrl;
+  var pSheet=(async function(){
+    if(!REMOTE_CONF.sheetsUrl)return;
+    try{
+      var r2=await fetch(sheetsCsvUrl(REMOTE_CONF.sheetsUrl),{cache:'no-store'});
+      if(!r2.ok)throw new Error('HTTP '+r2.status);
+      SHEET_USERS=parseUserCSV(await r2.text());
+      ss(SHEET_CACHE_KEY,SHEET_USERS);
+    }catch(e){
+      console.warn('Hoja de usuarios no accesible, uso copia local',e);
+      SHEET_USERS=ls(SHEET_CACHE_KEY,null);
+    }
+  })();
+  await Promise.all([loadSessions(),pSheet]);
+}
+function ensureConfig(){if(!_confReady)_confReady=loadRemoteConfig();return _confReady;}
+// Usuarios válidos para iniciar sesión
+function getLoginUsers(){
+  var local=getUsers();
+  if(SHEET_USERS&&SHEET_USERS.length){
+    // Con hoja configurada: profesores locales + alumnos de la hoja
+    var teachers=local.filter(function(u){return u.role==='teacher';});
+    return teachers.concat(SHEET_USERS);
+  }
+  return local;
+}
+
+// ── DEFAULT USERS ──
+var DEFAULT_USERS = [{username:'profesor',password:'profIA2627',role:'teacher',displayName:'Profesor/a',expires:null}];
+(function(){for(var i=1;i<=25;i++){var n=i<10?'0'+i:''+i;DEFAULT_USERS.push({username:'al'+n,password:'IA2627',role:'student',displayName:'Alumno '+n,expires:'2027-06-30'});}})();
+
+// ── SESSIONS DATA ──
+var SESSIONS=[
+  {id:'01',status:'done',    title:'El Terminal de Windows (CMD)',                  date:'15 Sep',tags:['concept','practice'],desc:'Comandos básicos de CMD: rutas, cd, dir, copy, del. Filosofía CLI vs GUI.'},
+  {id:'02',status:'plan',    title:'PowerShell y Comandos Avanzados',               date:'22 Sep',tags:['concept','practice'],desc:'Variables, tuberías, aliases y scripting básico con PowerShell.'},
+  {id:'03',status:'plan',    title:'Conceptos Básicos de Estadística',              date:'29 Sep',tags:['concept','practice'],desc:'Media, mediana, varianza, desv. típica, histogramas y distribución normal con Excel.'},
+  {id:'04',status:'upcoming',title:'Python con VSCode: De Hola Mundo a Funciones', date:'13 Oct',tags:['concept','practice'],desc:'Entorno VSCode + Python, tipos, operadores, condicionales, bucles y funciones.'},
+  {id:'05',status:'upcoming',title:'Estructuras de Datos en Python',                date:'20 Oct',tags:['concept','practice'],desc:'Listas, tuplas, diccionarios y conjuntos: colecciones fundamentales de Python.'}
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STORAGE HELPERS
+// ══════════════════════════════════════════════════════════════
+function ls(k,def){try{var v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function getUsers(){return ls(USERS_KEY,DEFAULT_USERS);}
+function saveUsers(u){ss(USERS_KEY,u);}
+function getConf(){return ls(CONF_KEY,{});}
+function saveConf(c){ss(CONF_KEY,c);}
+
+// ══════════════════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════════════════
+function showLoginTab(tab,btn){
+  document.getElementById('lt-login').style.display=tab==='login'?'':'none';
+  document.getElementById('lt-register').style.display=tab==='register'?'':'none';
+  document.querySelectorAll('.login-tab').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+}
+
+async function doLogin(){
+  var u=document.getElementById('lu').value.trim().toLowerCase();
+  var p=document.getElementById('lp').value;
+  var err=document.getElementById('lerr');
+  err.style.display='none';
+  if(!u||!p){showErr(err,'Rellena usuario y contraseña.');return;}
+  await ensureConfig();
+  var users=getLoginUsers(),found=null;
+  for(var i=0;i<users.length;i++){if(users[i].username===u&&users[i].password===p){found=users[i];break;}}
+  if(!found){showErr(err,'Usuario o contraseña incorrectos.');return;}
+  if(found.expires){var d=new Date(found.expires);d.setHours(23,59,59);if(new Date()>d){showErr(err,'⏰ Acceso expirado. Contacta con tu profesor/a.');return;}}
+  CUR=found; ss(AUTH_KEY,{username:u,ts:Date.now()});
+  startApp();
+}
+
+async function doRegister(){
+  var u=document.getElementById('ru').value.trim().toLowerCase();
+  var p=document.getElementById('rp').value;
+  var p2=document.getElementById('rp2').value;
+  var code=document.getElementById('rcode').value.trim();
+  var err=document.getElementById('rerr'),btn=document.getElementById('rbtn');
+  err.style.display='none';
+  if(!/^[a-z0-9_]{3,20}$/.test(u)){showErr(err,'Usuario: 3–20 caracteres, solo minúsculas, números y _.');return;}
+  if(p.length<6){showErr(err,'La contraseña debe tener al menos 6 caracteres.');return;}
+  if(p!==p2){showErr(err,'Las contraseñas no coinciden.');return;}
+  if(!code){showErr(err,'Escribe el código de clase que te ha dado tu profesor/a.');return;}
+  await ensureConfig();
+  var url=REMOTE_CONF.driveUrl||getConf().driveUrl||'';
+  if(!url){showErr(err,'El registro todavía no está activado. Avisa a tu profesor/a.');return;}
+  btn.disabled=true;btn.textContent='Creando cuenta…';
+  try{
+    var r=await fetch(url,{method:'POST',body:JSON.stringify({accion:'registro',usuario:u,password:p,codigo:code})});
+    var j=await r.json();
+    if(!j.ok)throw new Error(j.error||'No se pudo crear la cuenta');
+    // Disponible al instante en este navegador, aunque la hoja tarde en refrescarse
+    var su=SHEET_USERS||[];
+    su=su.filter(function(x){return x.username!==u;});
+    su.push({username:u,password:p,displayName:u,role:'student',expires:j.caduca||'2027-06-30',source:'sheets'});
+    SHEET_USERS=su;ss(SHEET_CACHE_KEY,su);
+    document.getElementById('lu').value=u;
+    document.getElementById('lp').value='';
+    ['ru','rp','rp2','rcode'].forEach(function(id){document.getElementById(id).value='';});
+    showLoginTab('login',document.querySelectorAll('.login-tab')[0]);
+    toast('✓ Cuenta creada. Ya puedes entrar con tu usuario y contraseña.');
+  }catch(e){
+    showErr(err,/fetch/i.test(e.message)?'No se pudo conectar con el servidor. Inténtalo de nuevo.':e.message);
+  }finally{btn.disabled=false;btn.textContent='Crear cuenta →';}
+}
+
+function doLogout(){
+  CUR=null; try{localStorage.removeItem(AUTH_KEY);}catch(e){}
+  document.getElementById('app-shell').style.display='none';
+  document.getElementById('login-wrap').style.display='flex';
+  document.getElementById('lu').value='';
+  document.getElementById('lp').value='';
+}
+
+function tryAutoLogin(){
+  try{
+    var s=ls(AUTH_KEY,null);
+    if(!s)return false;
+    if(Date.now()-s.ts>8*3600*1000)return false;
+    var users=getUsers().concat(ls(SHEET_CACHE_KEY,[])||[]);
+    for(var i=0;i<users.length;i++){if(users[i].username===s.username){CUR=users[i];return true;}}
+  }catch(e){}
+  return false;
+}
+
+ensureConfig();
+document.getElementById('lp').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+document.getElementById('lu').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('lp').focus();});
+
+// ══════════════════════════════════════════════════════════════
+//  APP START
+// ══════════════════════════════════════════════════════════════
+function startApp(){
+  var conf=getConf();
+  DRIVE_URL=REMOTE_CONF.driveUrl||conf.driveUrl||'';
+
+  document.getElementById('top-name').textContent=CUR.displayName||CUR.username;
+  document.getElementById('top-avatar').textContent=(CUR.displayName||CUR.username).charAt(0).toUpperCase();
+  var profLink=document.getElementById('nav-prof');
+  if(CUR.role==='teacher')profLink.style.display='';else profLink.style.display='none';
+  document.getElementById('top-folder').style.display=(CUR.role!=='teacher'&&DRIVE_URL)?'':'none';
+  if(CUR.role!=='teacher'&&DRIVE_URL&&!CUR.carpeta)setTimeout(function(){openFolderModal(true);},400);
+
+  renderSidebar();
+  document.getElementById('login-wrap').style.display='none';
+  document.getElementById('app-shell').style.display='';
+  navigate('home');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ROUTING
+// ══════════════════════════════════════════════════════════════
+var PAGES=['home','sesion','sandbox','recursos','profesor'];
+
+function navigate(page, id){
+  PAGES.forEach(function(p){
+    document.getElementById('p-'+p).classList.add('page-hidden');
+  });
+  document.querySelectorAll('.nav a').forEach(function(a){a.classList.remove('active');});
+
+  if(page==='home'){
+    renderHome();
+    document.getElementById('p-home').classList.remove('page-hidden');
+    var el=document.getElementById('nav-home');if(el)el.classList.add('active');
+  } else if(page==='sesion'){
+    CUR_FICHA=id;
+    loadFicha(id);
+    document.getElementById('p-sesion').classList.remove('page-hidden');
+    renderSidebar(id);
+  } else if(page==='sandbox'){
+    document.getElementById('p-sandbox').classList.remove('page-hidden');
+    var el=document.getElementById('nav-sandbox');if(el)el.classList.add('active');
+  } else if(page==='recursos'){
+    document.getElementById('p-recursos').classList.remove('page-hidden');
+    var el=document.getElementById('nav-recursos');if(el)el.classList.add('active');
+  } else if(page==='profesor'){
+    if(CUR&&CUR.role==='teacher'){
+      renderPanel();
+      document.getElementById('p-profesor').classList.remove('page-hidden');
+      var el=document.getElementById('nav-prof');if(el)el.classList.add('active');
+    } else { navigate('home'); }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HOME
+// ══════════════════════════════════════════════════════════════
+function renderHome(){
+  var done=SESSIONS.filter(function(s){return s.status==='done';}).length;
+  var pct=Math.round(done/SESSIONS.length*100);
+  var expiryBanner='';
+  if(CUR&&CUR.expires){
+    var d=new Date(CUR.expires);d.setHours(23,59,59);
+    var days=Math.round((d-new Date())/86400000);
+    if(days<0)expiryBanner='<div class="alert bad mb">⚠️ Tu acceso ha expirado. Contacta con tu profesor/a.</div>';
+    else if(days<30)expiryBanner='<div class="alert warn mb">⏰ Tu acceso caduca en '+days+' días ('+CUR.expires+').</div>';
+  }
+  var cards='';
+  SESSIONS.forEach(function(s){
+    var pill=s.status==='done'?'<span class="badge ok">✓ Completada</span>':s.status==='active'?'<span class="badge ok">▶ En curso</span>':s.status==='plan'?'<span class="badge warn">Planificada</span>':'<span class="badge">Próximamente</span>';
+    var tags=s.tags.map(function(t){return '<span class="tag '+t+'">'+(t==='concept'?'Teoría':t==='practice'?'Práctica':esc(t))+'</span>';}).join('');
+    cards+='<a class="card session-card" href="#/sesion/'+s.id+'" onclick="navigate(\'sesion\',\''+s.id+'\');return false">'
+      +'<div class="card-num">Sesión '+s.id+'</div>'
+      +'<div class="card-title">'+esc(s.title)+'</div>'
+      +'<div class="card-desc">'+esc(s.desc)+'</div>'
+      +'<div class="card-foot">'+pill+'<span class="card-date">'+s.date+'</span></div>'
+      +'<div class="card-tags" style="margin-top:6px">'+tags+'</div>'
+      +'</a>';
+  });
+  var quick='<div class="quick-grid">'
+    +'<a class="quick-card" href="#/sandbox" onclick="navigate(\'sandbox\');return false"><span class="quick-icon">🐍</span><div><div class="quick-label">Sandbox Python</div><div class="quick-desc">Ejecuta código en el navegador</div></div></a>'
+    +'<a class="quick-card" href="#/recursos" onclick="navigate(\'recursos\');return false"><span class="quick-icon">📦</span><div><div class="quick-label">Recursos</div><div class="quick-desc">Descargas y materiales</div></div></a>'
+    +(CUR&&CUR.role==='teacher'?'<a class="quick-card" href="#/profesor" onclick="navigate(\'profesor\');return false"><span class="quick-icon">👩‍🏫</span><div><div class="quick-label">Panel Profesor</div><div class="quick-desc">Entregas y configuración</div></div></a>':'')
+    +'</div>';
+  document.getElementById('p-home').innerHTML='<div class="container" style="padding-top:24px;padding-bottom:40px">'
+    +expiryBanner
+    +'<div class="page-head">'
+    +'<h1>🧠 Inteligencia Artificial</h1>'
+    +'<p class="muted small">'+done+' de '+SESSIONS.length+' sesiones completadas</p>'
+    +'<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>'
+    +'</div>'
+    +'<div class="grid2">'+cards+'</div>'
+    +quick
+    +'</div>';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SIDEBAR & FICHA
+// ══════════════════════════════════════════════════════════════
+function renderSidebar(activeId){
+  var html='';
+  SESSIONS.forEach(function(s){
+    var dot='dot-'+(s.status==='done'?'done':(s.status==='plan'||s.status==='active')?'plan':'upcoming');
+    var cls='sidebar-item'+(s.status==='done'?' done':'')+(s.id===activeId?' active':'');
+    html+='<a class="'+cls+'" href="#/sesion/'+s.id+'" onclick="navigate(\'sesion\',\''+s.id+'\');return false">'
+      +'<div class="snum">'+s.id+'</div>'
+      +'<span style="flex:1;font-size:.82rem;font-weight:'+(s.id===activeId?'700':'500')+'">'+esc(s.title)+'</span>'
+      +'<div class="sdot '+dot+'"></div>'
+      +'</a>';
+  });
+  document.getElementById('sidebar-items').innerHTML=html;
+}
+
+async function loadFicha(id){
+  var sess=SESSIONS.find(function(s){return s.id===id;});
+  if(sess)document.getElementById('ficha-bar-title').textContent='Sesión '+id+' — '+sess.title;
+  document.getElementById('ficha-content').innerHTML='<p class="muted" style="padding:40px;text-align:center">Cargando ficha…</p>';
+  try{
+    var html;
+    if(sess&&sess.source==='remote'){
+      var jr=await apiGet({accion:'ficha',id:id});html=jr.html;
+    }else{
+      var r=await fetch('fichas/'+id+'.html');
+      if(r.ok)html=await r.text();
+      else if(DRIVE_URL){var jr2=await apiGet({accion:'ficha',id:id});html=jr2.html;}
+      else throw new Error('HTTP '+r.status);
+    }
+    var fc=document.getElementById('ficha-content');
+    fc.innerHTML=html;
+    // Ejecutar los <script> propios de la ficha (innerHTML no los ejecuta)
+    fc.querySelectorAll('script').forEach(function(old){
+      var s=document.createElement('script');
+      if(old.src)s.src=old.src;else s.textContent=old.textContent;
+      old.parentNode.replaceChild(s,old);
+    });
+    fc.scrollTop=0;
+    document.getElementById('ficha-main')&&(document.querySelector('.ficha-main').scrollTop=0);
+    // Fix internal anchor navigation inside ficha
+    document.getElementById('ficha-content').querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click',function(e){
+        e.preventDefault();e.stopPropagation();
+        var target=document.getElementById(this.getAttribute('href').slice(1));
+        if(target){target.scrollIntoView({behavior:'smooth',block:'start'});}
+      });
+    });
+    // Init collapsible exercises
+    initCollapsible();
+    exRestore();
+    // Init download buttons
+    initDownloads(id);
+  }catch(e){
+    document.getElementById('ficha-content').innerHTML='<div class="container" style="padding:40px"><div class="alert warn">No se pudo cargar la ficha de la sesión '+id+'. Verifica que el archivo <code>fichas/'+id+'.html</code> existe.</div></div>';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLASHCARD FUNCTIONS (ficha 03 — tarjetas autoevaluación)
+// ══════════════════════════════════════════════════════════════
+function fcFlip(card){
+  card.classList.toggle('flipped');
+}
+function fcFlipAll(btn){
+  var show = btn.textContent.includes('Mostrar');
+  document.querySelectorAll('.fc-card').forEach(function(c){
+    if(show) c.classList.add('flipped');
+    else c.classList.remove('flipped');
+  });
+  btn.textContent = show ? '🙈 Ocultar todas' : '👁 Mostrar todas';
+}
+function fcKnown(card){
+  card.classList.remove('fc-unknown');
+  card.classList.add('fc-known');
+  card.classList.remove('flipped');
+  fcUpdateScore();
+}
+function fcUnknown(card){
+  card.classList.remove('fc-known');
+  card.classList.add('fc-unknown');
+  card.classList.remove('flipped');
+  fcUpdateScore();
+}
+function fcMark(id, val){
+  var c = document.getElementById(id);
+  if(!c) return;
+  c.classList.remove('fc-known','fc-unknown','flipped');
+  if(val === 1) c.classList.add('fc-known');
+  else c.classList.add('fc-unknown');
+  fcUpdateScore();
+}
+function fcReset(){
+  document.querySelectorAll('.fc-card').forEach(function(c){
+    c.classList.remove('flipped','fc-known','fc-unknown');
+  });
+  fcUpdateScore();
+}
+function fcUpdateScore(){
+  var total = document.querySelectorAll('.fc-card').length;
+  var known = document.querySelectorAll('.fc-card.fc-known').length;
+  var el = document.getElementById('fc-score');
+  if(el) el.textContent = known + ' / ' + total + ' dominadas';
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  COMPONENTES INTERACTIVOS DE LAS FICHAS 03-05
+// ══════════════════════════════════════════════════════════════
+var EX_KEY='ia27_excode';
+function exToggle(id){
+  var b=document.getElementById('ex-body-'+id),ch=document.getElementById('ex-chev-'+id);
+  if(!b)return;var open=!b.classList.contains('open');
+  b.classList.toggle('open',open);if(ch)ch.classList.toggle('open',open);
+}
+function exTab(id,i){
+  document.querySelectorAll('[id^="ex-panel-'+id+'-"]').forEach(function(p){p.classList.toggle('on',p.id==='ex-panel-'+id+'-'+i);});
+  document.querySelectorAll('[id^="ex-tabBtn-'+id+'-"]').forEach(function(t){t.classList.toggle('on',t.id==='ex-tabBtn-'+id+'-'+i);});
+  var tabs=document.querySelectorAll('#ex-body-'+id+' .ex-tab');
+  if(!document.getElementById('ex-tabBtn-'+id+'-'+i))tabs.forEach(function(t,k){t.classList.toggle('on',k===i);});
+}
+function exSave(id,i,v){var s=ls(EX_KEY,{});s[CUR_FICHA+'|'+id+'|'+i]=v;ss(EX_KEY,s);}
+function exRestore(){
+  var s=ls(EX_KEY,{});
+  document.querySelectorAll('#ficha-content .ex-code').forEach(function(ta){
+    var m=ta.id.match(/^ex-code-(.+)-(\d+)$/);if(!m)return;
+    if(!ta.dataset.orig)ta.dataset.orig=ta.value;
+    var k=CUR_FICHA+'|'+m[1]+'|'+m[2];if(s[k]!=null)ta.value=s[k];
+    ta.addEventListener('keydown',function(e){if(e.key==='Tab'){e.preventDefault();var a=this.selectionStart;this.setRangeText('    ',a,this.selectionEnd,'end');exSave(m[1],+m[2],this.value);}});
+  });
+  // Botón «Subir mi .py» en cada ejercicio de práctica
+  document.querySelectorAll('#ficha-content .ex-card').forEach(function(card,k){
+    var row=card.querySelector('.ex-btnrow');if(!row||row.querySelector('.ex-btn-up'))return;
+    var h=card.querySelector('h4'),t=h?h.textContent:'';
+    var m=t.match(/EJ-[\w]+/i);var ej=m?m[0].toUpperCase():('Ejercicio '+(k+1));
+    var b=document.createElement('button');b.type='button';b.className='ex-btn-up';b.textContent='📤 Subir mi .py';
+    b.title='Guarda tu fichero en tu carpeta de Drive › '+sessFolder(CUR_FICHA);
+    b.addEventListener('click',function(){exUploadPick(ej,'.py,.ipynb,.txt',b);});
+    row.appendChild(b);
+  });
+  document.querySelectorAll('#ficha-content .ex-body').forEach(function(b){
+    var id=b.id.replace('ex-body-',''),ch=document.getElementById('ex-chev-'+id);
+    if(ch&&ch.classList.contains('open'))b.classList.add('open');
+  });
+}
+function _dlText(name,txt,type){
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([txt],{type:(type||'text/x-python')+';charset=utf-8'}));
+  a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+function _exName(btn,fallback){var m=btn&&btn.textContent.match(/([\w\-]+\.(py|csv|txt))/);return m?m[1]:fallback;}
+function exDownload(id,i){
+  var ta=document.getElementById('ex-code-'+id+'-'+i);if(!ta)return;
+  var btn=document.querySelector('[onclick="exDownload(\''+id+'\','+i+')"]');
+  _dlText(_exName(btn,'ejercicio_'+id+'_'+(i+1)+'.py'),ta.value);
+}
+function exDownloadAll(){
+  var btn=document.querySelector('#ficha-content .ex-btn-all');
+  var out='# Ejercicios — Sesión '+CUR_FICHA+' · IA 1º Bachillerato · IES Valle del Jerte\n\n';
+  document.querySelectorAll('#ficha-content .ex-code').forEach(function(ta){out+='\n# '+'='.repeat(60)+'\n'+ta.value+'\n';});
+  _dlText(_exName(btn,'ejercicios_S'+CUR_FICHA+'.py'),out);
+}
+function exRevealSol(){toast('Las soluciones las facilita el profesor en clase.');}
+function exShowModal(){toast('Modo profesor no disponible en esta versión.');}
+// Pestañas genéricas: dsTab (05), praTab (03), ptcTab (04)
+function _tabs(prefix,name,panelsSel,btnSel){
+  document.querySelectorAll(panelsSel).forEach(function(p){p.style.display=(p.id===prefix+name)?'':'none';});
+  document.querySelectorAll(btnSel).forEach(function(b){b.classList.toggle('active',b.id===prefix+'tab-'+name);});
+}
+function dsTab(n){
+  document.querySelectorAll('#ficha-content .ds-panel').forEach(function(p){if(p.id)p.style.display=(p.id==='ds-'+n)?'':'none';});
+  document.querySelectorAll('#ficha-content .ds-tab-btn').forEach(function(b){b.classList.toggle('active',b.id==='ds-tab-'+n);});
+  var t=document.getElementById('ds-tab-'+n);if(t)t.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function praTab(n){
+  document.querySelectorAll('#ficha-content .pra-panel').forEach(function(p){p.style.display=(p.id==='pra-'+n)?'':'none';});
+  document.querySelectorAll('#ficha-content .pra-tab-btn').forEach(function(b){b.classList.toggle('active',b.id==='pra-tab-'+n);});
+}
+function praStep(hdr){var b=hdr.nextElementSibling;if(b)b.classList.toggle('open');}
+function praToggle(i){
+  var c=document.getElementById('pra-c'+i);if(!c)return;c.classList.toggle('done');c.textContent=c.classList.contains('done')?'✓':'';
+  var all=document.querySelectorAll('#ficha-content .pra-self-chk'),d=document.querySelectorAll('#ficha-content .pra-self-chk.done').length;
+  var bar=document.getElementById('pra-self-bar'),tx=document.getElementById('pra-self-txt');
+  if(bar)bar.style.width=Math.round(d/all.length*100)+'%';if(tx)tx.textContent=d+' / '+all.length;
+}
+function praDownloadCSV(){toast('El dataset de esta práctica lo facilita el profesor en clase.');}
+function ptcTab(n){
+  ['theory','practice'].forEach(function(k){var p=document.getElementById('ptc-'+k);if(p)p.style.display=k===n?'':'none';var b=document.getElementById('ptc-tab-'+k);if(b)b.classList.toggle('active',k===n);});
+}
+// ══════════════════════════════════════════════════════════════
+//  COLLAPSIBLE EXERCISES
+// ══════════════════════════════════════════════════════════════
+function initCollapsible(){
+  // Make ficha sections collapsible
+  var sections=document.querySelectorAll('#ficha-content .ficha-section');
+  sections.forEach(function(sec,i){
+    var header=sec.querySelector('.section-header');
+    var body=sec.querySelector('.section-body');
+    if(!header||!body||header.dataset.wired)return;
+    header.dataset.wired='1';
+    // Add toggle arrow if not present
+    if(!header.querySelector('.sec-toggle')){
+      var arrow=document.createElement('span');
+      arrow.className='sec-toggle';
+      arrow.textContent='▶';
+      header.appendChild(arrow);
+    }
+    header.addEventListener('click',function(){
+      sec.classList.toggle('open');
+    });
+    // First section open by default, rest closed
+    if(i===0) sec.classList.add('open');
+  });
+  // Ejercicios propuestos: botón para desplegar + descarga individual
+  document.querySelectorAll('#ficha-content .activity-block').forEach(function(block,i){
+    var hd=block.querySelector('.act-header');
+    if(!hd||hd.dataset.wired)return;
+    hd.dataset.wired='1';
+    if(!hd.querySelector('.act-toggle')){
+      var t=document.createElement('button');
+      t.type='button';t.className='act-toggle act-btn';t.textContent='Ver enunciado ▾';
+      hd.appendChild(t);
+    }
+    var dl=document.createElement('button');
+    dl.type='button';dl.className='act-dl';dl.title='Descargar este ejercicio';dl.textContent='⬇';
+    dl.addEventListener('click',function(e){e.stopPropagation();downloadExercise(block,i);});
+    hd.appendChild(dl);
+    var up=document.createElement('button');
+    up.type='button';up.className='act-dl act-up';up.title='Subir mi respuesta a mi carpeta de Drive';up.textContent='📤';
+    var hh=block.querySelector('h4');var ejName='Ejercicio '+(i+1)+(hh?' · '+hh.textContent.trim().slice(0,40):'');
+    up.addEventListener('click',function(e){e.stopPropagation();exUploadPick(ejName,'.py,.ipynb,.pdf,.doc,.docx,.odt,.txt,.png,.jpg,.jpeg,.zip',up);});
+    hd.appendChild(up);
+    hd.addEventListener('click',function(){
+      block.classList.toggle('open');
+      var b=hd.querySelector('.act-btn');
+      if(b)b.textContent=block.classList.contains('open')?'Ocultar ▴':'Ver enunciado ▾';
+    });
+  });
+}
+function downloadExercise(block,i){
+  var h=block.querySelector('h4');
+  var title=h?h.textContent.trim():'Ejercicio '+(i+1);
+  var body=block.querySelector('.act-body');
+  var text=(body?(body.innerText||body.textContent):'').trim();
+  if(body&&!block.classList.contains('open')){block.classList.add('open');text=(body.innerText||body.textContent).trim();block.classList.remove('open');}
+  var sess=SESSIONS.find(function(s){return s.id===CUR_FICHA;});
+  var txt=title+'\nSesión '+CUR_FICHA+(sess?' — '+sess.title:'')+'\nIA 1º Bachillerato · IES Valle del Jerte · 2026-27\n'+'─'.repeat(50)+'\n\n'+text+'\n';
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));
+  a.download='Sesion'+CUR_FICHA+'_Ejercicio'+(i+1)+'.txt';a.click();
+}
+function toggleAct(block){
+  block.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DOWNLOAD EXERCISES
+// ══════════════════════════════════════════════════════════════
+function initDownloads(fichaId){
+  var bar=document.getElementById('ficha-dl-bar');
+  if(!bar)return;
+  bar.innerHTML='';
+  var sess=SESSIONS.find(function(s){return s.id===fichaId;});
+  var title=sess?sess.title:'Sesión '+fichaId;
+  // Extract exercise texts
+  var acts=document.querySelectorAll('#ficha-content .activity-block');
+  if(!acts.length){bar.innerHTML='<span style="font-size:.78rem;color:var(--muted)">Sin ejercicios descargables en esta ficha</span>';return;}
+  var txt='EJERCICIOS — '+title+'\nIA 1º Bachillerato · IES Valle del Jerte · 2026-27\n'+'═'.repeat(60)+'\n\n';
+  acts.forEach(function(block,i){
+    var h4=block.querySelector('h4');
+    var heading=h4?h4.textContent.trim():'Actividad '+(i+1);
+    var body=block.cloneNode(true);
+    body.querySelectorAll('h4').forEach(function(el){el.remove();});
+    var bodyText=body.innerText||body.textContent||'';
+    txt+='['+(i+1)+'] '+heading+'\n'+'─'.repeat(40)+'\n'+bodyText.trim()+'\n\n';
+  });
+  var blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='Ejercicios_Sesion'+fichaId+'_IA.txt';
+  a.className='btn sm';a.style.fontSize='.78rem';
+  a.textContent='⬇ Descargar ejercicios';
+  bar.appendChild(a);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  IMPORT FROM GOOGLE SHEETS
+// ══════════════════════════════════════════════════════════════
+var _sheetsData = [];
+
+function openImportSheets(){
+  _sheetsData=[];
+  document.getElementById('sheets-url').value='';
+  document.getElementById('sheets-csv').value='';
+  document.getElementById('sheets-preview').style.display='none';
+  document.getElementById('sheets-import-btn').style.display='none';
+  document.getElementById('sheets-err').style.display='none';
+  document.getElementById('sheets-modal').classList.add('open');
+}
+
+async function fetchSheets(){
+  var url=document.getElementById('sheets-url').value.trim();
+  if(!url){showSheetsErr('Pega la URL de tu Sheets');return;}
+  // Convert share URL to CSV export URL
+  var csvUrl=url;
+  var m=url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(m){
+    var gid='';
+    var gm=url.match(/gid=(\d+)/);
+    if(gm)gid='&gid='+gm[1];
+    csvUrl='https://docs.google.com/spreadsheets/d/'+m[1]+'/export?format=csv'+gid;
+  }
+  try{
+    document.getElementById('sheets-err').style.display='none';
+    var r=await fetch(csvUrl);
+    if(!r.ok)throw new Error('HTTP '+r.status+' — asegúrate de que el Sheet es público o publicado como CSV');
+    var text=await r.text();
+    document.getElementById('sheets-csv').value=text;
+    parseSheetsCSV(text);
+  }catch(e){
+    showSheetsErr('No se pudo cargar: '+e.message+'. Publica el Sheet como CSV o pega los datos manualmente.');
+  }
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var ta=document.getElementById('sheets-csv');
+  if(ta)ta.addEventListener('input',function(){
+    if(this.value.trim())parseSheetsCSV(this.value);
+  });
+});
+
+function parseSheetsCSV(text){
+  var lines=text.trim().split(/\r?\n/).filter(function(l){return l.trim();});
+  var rows=[];
+  var existing=getUsers().map(function(u){return u.username;});
+  var header=lines[0].toLowerCase();
+  var startRow=(header.includes('usuario')||header.includes('user'))?1:0;
+  for(var i=startRow;i<lines.length;i++){
+    var cols=lines[i].split(/,|\t/);
+    var user=(cols[0]||'').trim().toLowerCase();
+    var pass=(cols[1]||'').trim();
+    if(!user||!pass)continue;
+    rows.push({username:user,password:pass,exists:existing.includes(user)});
+  }
+  _sheetsData=rows;
+  if(!rows.length){showSheetsErr('No se encontraron filas válidas. Comprueba el formato (usuario,contraseña)');return;}
+  renderSheetsPreview(rows);
+}
+
+function renderSheetsPreview(rows){
+  var nuevos=rows.filter(function(r){return!r.exists;}).length;
+  var actualizados=rows.filter(function(r){return r.exists;}).length;
+  document.getElementById('sheets-count').textContent=nuevos+' nuevos · '+actualizados+' actualizados';
+  var html='';
+  rows.forEach(function(r){
+    var pass='•'.repeat(Math.min(r.password.length,8));
+    var badge=r.exists
+      ? '<span class="badge warn">Actualizar</span>'
+      : '<span class="badge ok">Nuevo</span>';
+    html+='<tr><td><code>'+esc(r.username)+'</code></td><td><code>'+esc(pass)+'</code></td><td>'+badge+'</td></tr>';
+  });
+  document.getElementById('sheets-tbody').innerHTML=html;
+  document.getElementById('sheets-preview').style.display='block';
+  document.getElementById('sheets-import-btn').style.display='inline-flex';
+  document.getElementById('sheets-err').style.display='none';
+}
+
+function importSheets(){
+  if(!_sheetsData.length)return;
+  var expires=document.getElementById('sheets-expires').value||'2027-06-30';
+  var users=getUsers();
+  var added=0,updated=0;
+  _sheetsData.forEach(function(r){
+    var idx=users.findIndex(function(u){return u.username===r.username;});
+    var entry={username:r.username,password:r.password,displayName:r.username,role:'student',expires:expires};
+    if(idx>=0){users[idx]=Object.assign(users[idx],entry);updated++;}
+    else{users.push(entry);added++;}
+  });
+  saveUsers(users);
+  closeModal('sheets-modal');
+  renderUsers();
+  toast('✓ Importados: '+added+' nuevos, '+updated+' actualizados');
+}
+
+function showSheetsErr(msg){
+  var el=document.getElementById('sheets-err');
+  el.textContent=msg;el.style.display='block';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SUBMIT
+// ══════════════════════════════════════════════════════════════
+var _file=null;
+function openSubmit(){
+  _file=null;
+  document.getElementById('file-pill').style.display='none';
+  document.getElementById('drop-zone').style.display='block';
+  document.getElementById('fi').value='';
+  document.getElementById('s-comment').value='';
+  document.getElementById('s-url').value='';
+  document.getElementById('s-err').style.display='none';
+  document.getElementById('ubar').style.display='none';
+  document.getElementById('ufill').style.width='0%';
+  document.getElementById('s-btn').disabled=false;
+  document.getElementById('s-btn').textContent='Entregar ✓';
+  var note;
+  if(CUR&&CUR.role==='teacher')note='<div class="alert warn mb">👩‍🏫 Estás como profesor: las entregas son para las cuentas de alumno.</div>';
+  else if(!DRIVE_URL)note='<div class="alert warn mb">⚠️ Las entregas aún no están activadas. Avisa a tu profesor/a.</div>';
+  else if(!CUR.carpeta)note='<div class="alert warn mb">📁 Antes de entregar, indica tu carpeta de Drive. <a href="#" onclick="openFolderModal(false);return false">Configurar ahora</a></div>';
+  else note='<div class="alert ok mb">🗂 Se guardará en tu carpeta de Drive › <b>'+sessFolder(CUR_FICHA)+'</b></div>';
+  document.getElementById('submit-storage-note').innerHTML=note;
+  document.getElementById('submit-modal').classList.add('open');
+}
+function onDrop(e){e.preventDefault();document.getElementById('drop-zone').classList.remove('over');var f=e.dataTransfer.files[0];if(f)onFileChosen(f);}
+function onFileChosen(f){if(!f)return;if(f.size>30*1024*1024){toast('El archivo supera 30 MB');return;}_file=f;document.getElementById('fp-name').textContent=f.name+' ('+(f.size/1024/1024).toFixed(1)+' MB)';document.getElementById('file-pill').style.display='flex';document.getElementById('drop-zone').style.display='none';}
+function clearFile(){_file=null;document.getElementById('file-pill').style.display='none';document.getElementById('drop-zone').style.display='block';document.getElementById('fi').value='';}
+
+async function doSubmit(){
+  var comment=document.getElementById('s-comment').value.trim();
+  var link=document.getElementById('s-url').value.trim();
+  var err=document.getElementById('s-err');
+  err.style.display='none';
+  if(!_file&&!link){showErr(err,'Sube un archivo o añade un enlace.');return;}
+  var btn=document.getElementById('s-btn');
+  btn.disabled=true;btn.textContent='Subiendo…';
+  try{
+    var r=await uploadActivity(_file,{comentario:comment,enlace:link,ejercicio:'Entrega final'});
+    closeModal('submit-modal');
+    toast('✓ Entregado en tu carpeta › '+sessFolder(CUR_FICHA));
+  }catch(e){showErr(err,e.message);}
+  finally{btn.disabled=false;btn.textContent='Entregar ✓';}
+}
+
+// ══════════════════════════════════════════════════════════════
+//  APPS SCRIPT: carpeta del alumno y subida de actividades
+// ══════════════════════════════════════════════════════════════
+var SCRIPT_INFO=null;
+function sessFolder(id){return 'S'+String(id||'00').padStart(2,'0');}
+async function apiPost(obj){
+  if(!DRIVE_URL)throw new Error('El Apps Script no está configurado. Avisa a tu profesor/a.');
+  var r;
+  try{r=await fetch(DRIVE_URL,{method:'POST',body:JSON.stringify(obj)});}
+  catch(e){throw new Error('No se pudo conectar con el servidor. Inténtalo de nuevo.');}
+  var j;try{j=await r.json();}catch(e){throw new Error('Respuesta no válida del servidor (¿script antiguo?).');}
+  if(!j.ok)throw new Error(j.error||'Error del servidor');
+  return j;
+}
+async function apiGet(params){
+  if(!DRIVE_URL)throw new Error('El Apps Script no está configurado.');
+  var q=Object.keys(params||{}).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
+  var r=await fetch(DRIVE_URL+(q?(DRIVE_URL.indexOf('?')>-1?'&':'?')+q:''),{cache:'no-store'});
+  var j=await r.json();
+  if(j.ok===false)throw new Error(j.error||'Error del servidor');
+  return j;
+}
+async function getScriptInfo(){
+  if(SCRIPT_INFO)return SCRIPT_INFO;
+  try{SCRIPT_INFO=await apiGet({});}catch(e){SCRIPT_INFO={};}
+  return SCRIPT_INFO;
+}
+async function openFolderModal(first){
+  document.getElementById('f-err').style.display='none';
+  document.getElementById('f-url').value=CUR.carpeta||'';
+  document.getElementById('f-cur').innerHTML=CUR.carpeta?'Carpeta actual: <a href="'+esc(CUR.carpeta)+'" target="_blank">abrir en Drive ↗</a>':'';
+  document.getElementById('f-later').textContent=first?'Más tarde':'Cancelar';
+  document.getElementById('folder-modal').classList.add('open');
+  var info=await getScriptInfo();
+  if(info.email)document.getElementById('f-teacher').textContent=info.email;
+}
+async function saveFolder(){
+  var url=document.getElementById('f-url').value.trim();
+  var err=document.getElementById('f-err'),btn=document.getElementById('f-btn');
+  err.style.display='none';
+  if(!/drive\.google\.com\/.*folders\/[\w-]+|^[\w-]{20,}$/.test(url)){showErr(err,'Pega la URL de una carpeta de Drive (contiene /folders/).');return;}
+  btn.disabled=true;btn.textContent='Comprobando…';
+  try{
+    var j=await apiPost({accion:'carpeta',usuario:CUR.username,password:CUR.password,url:url});
+    CUR.carpeta=j.url||url;
+    var su=SHEET_USERS||[];su.forEach(function(u){if(u.username===CUR.username)u.carpeta=CUR.carpeta;});
+    if(SHEET_USERS)ss(SHEET_CACHE_KEY,SHEET_USERS);
+    closeModal('folder-modal');
+    toast('✓ Carpeta «'+(j.nombre||'')+'» guardada. Tus actividades irán ahí.');
+  }catch(e){showErr(err,e.message);}
+  finally{btn.disabled=false;btn.textContent='Guardar carpeta ✓';}
+}
+function fileToBase64(file){
+  return new Promise(function(res,rej){var r=new FileReader();r.onload=function(e){res(e.target.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(file);});
+}
+async function uploadActivity(file,opts){
+  opts=opts||{};
+  if(!CUR||CUR.role==='teacher')throw new Error('Entra con tu cuenta de alumno para entregar.');
+  if(!CUR.carpeta){openFolderModal(false);throw new Error('Primero indica tu carpeta de Drive.');}
+  var payload={accion:'entrega',usuario:CUR.username,password:CUR.password,sesion:CUR_FICHA,
+    ejercicio:opts.ejercicio||'',comentario:opts.comentario||'',enlace:opts.enlace||''};
+  if(file){
+    if(file.size>30*1024*1024)throw new Error('El archivo supera 30 MB.');
+    payload.fileName=file.name;payload.mimeType=file.type||'application/octet-stream';
+    payload.base64=await fileToBase64(file);
+  }
+  return apiPost(payload);
+}
+// Botón de subida de un ejercicio concreto
+var _exUpTarget=null;
+function exUploadPick(ejercicio,accept,btn){
+  _exUpTarget={ejercicio:ejercicio,btn:btn};
+  var fi=document.getElementById('ex-fi');fi.value='';fi.accept=accept||'';fi.click();
+}
+document.getElementById('ex-fi').addEventListener('change',async function(){
+  var f=this.files[0],t=_exUpTarget;if(!f||!t)return;
+  var old=t.btn.textContent;t.btn.disabled=true;t.btn.textContent='Subiendo…';
+  try{
+    var r=await uploadActivity(f,{ejercicio:t.ejercicio});
+    t.btn.textContent='✓ Subido';t.btn.classList.add('done');
+    toast('✓ '+t.ejercicio+' guardado en tu carpeta › '+sessFolder(CUR_FICHA));
+    setTimeout(function(){t.btn.textContent=old;t.btn.disabled=false;},2500);
+  }catch(e){toast('✗ '+e.message);t.btn.textContent=old;t.btn.disabled=false;}
+});
+
+// ══════════════════════════════════════════════════════════════
+//  TEACHER PANEL
+// ══════════════════════════════════════════════════════════════
+function renderPanel(){
+  renderUsers();loadEntregas();renderFichasAdmin();
+  document.getElementById('adm-key').value=getAdminKey();
+  var conf=getConf();
+  document.getElementById('drive-url').value=REMOTE_CONF.driveUrl||conf.driveUrl||'';
+  renderPermConfig();
+}
+function switchPTab(id,btn){
+  document.querySelectorAll('.ptab').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.ptab-body').forEach(function(el){el.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('ptab-'+id).classList.add('active');
+  if(id==='entregas')loadEntregas();
+  if(id==='notas'){if(!ENTREGAS.length)loadEntregas();else renderNotas();}
+  if(id==='fichas')renderFichasAdmin();
+  if(id==='usuarios')renderUsers();
+}
+function expiryBadge(e){
+  if(!e)return '<span class="badge">Sin caducidad</span>';
+  var d=new Date(e);d.setHours(23,59,59);
+  var days=Math.round((d-new Date())/86400000);
+  if(days<0)return '<span class="badge bad">Expirado</span>';
+  if(days<30)return '<span class="badge warn">'+days+'d</span>';
+  return '<span class="badge ok">'+e+'</span>';
+}
+function renderUsers(){
+  var users=getUsers();
+  document.getElementById('usr-count').textContent=users.length+' usuarios';
+  var html='';
+  users.forEach(function(u){
+    html+='<tr>'
+      +'<td><code>'+esc(u.username)+'</code></td>'
+      +'<td>'+esc(u.displayName||'')+'</td>'
+      +'<td><span class="badge'+(u.role==='teacher'?' primary':'')+'">'+( u.role==='teacher'?'Profesor':'Alumno')+'</span></td>'
+      +'<td>'+expiryBadge(u.expires)+'</td>'
+      +'<td>'+(u.username!=='profesor'?'<button class="act-btn" style="border-color:#b42318;color:#b42318" onclick="deleteUser(\''+esc(u.username)+'\')">Eliminar</button>':'')+'</td>'
+      +'</tr>';
+  });
+  document.getElementById('usr-tbody').innerHTML=html||'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">Sin usuarios</td></tr>';
+}
+function openAddUser(){var f=document.getElementById('add-user-form');f.style.display=f.style.display==='none'?'':'none';}
+function addUser(){
+  var u=document.getElementById('nu-u').value.trim().toLowerCase();
+  var p=document.getElementById('nu-p').value;
+  var n=document.getElementById('nu-n').value.trim();
+  var r=document.getElementById('nu-r').value;
+  var e=document.getElementById('nu-e').value||null;
+  var err=document.getElementById('nu-err');err.style.display='none';
+  if(!u||!p){showErr(err,'Usuario y contraseña requeridos.');return;}
+  var users=getUsers();
+  if(users.some(function(x){return x.username===u;})){showErr(err,'Ese usuario ya existe.');return;}
+  users.push({username:u,password:p,role:r,displayName:n||u,expires:e});
+  saveUsers(users);renderUsers();
+  document.getElementById('add-user-form').style.display='none';
+  toast('Usuario '+u+' creado');
+}
+function deleteUser(username){if(!confirm('¿Eliminar usuario '+username+'?'))return;saveUsers(getUsers().filter(function(u){return u.username!==username;}));renderUsers();toast('Usuario eliminado');}
+
+var ENTREGAS=[];
+function getAdminKey(){return ls('ia27_admkey','');}
+function saveAdminKey(){ss('ia27_admkey',document.getElementById('adm-key').value.trim());toast('Clave guardada en este navegador');loadEntregas();}
+async function loadEntregas(){
+  var tb=document.getElementById('ent-tbody');
+  if(!DRIVE_URL){tb.innerHTML='<tr><td colspan="8" class="muted" style="text-align:center;padding:24px">Configura el Apps Script en ⚙️ Configuración.</td></tr>';return;}
+  if(!getAdminKey()){tb.innerHTML='<tr><td colspan="8" class="muted" style="text-align:center;padding:24px">Introduce la clave de administrador en ⚙️ Configuración.</td></tr>';return;}
+  tb.innerHTML='<tr><td colspan="8" class="muted" style="text-align:center;padding:24px">Cargando…</td></tr>';
+  try{
+    var j=await apiGet({accion:'entregas',clave:getAdminKey()});
+    ENTREGAS=j.entregas||[];
+    if(j.ponderacion){PONDERACION=j.ponderacion;
+      var ps=PONDERACION.pesos||[];if(ps.length&&ps.every(function(p){return p.ejercicio==='*';}))document.getElementById('pond-mode').value='ses';}
+    renderNotas();
+    var sel=document.getElementById('ent-filter'),cur=sel.value;
+    var ses=[];ENTREGAS.forEach(function(a){if(ses.indexOf(a.sesion)<0)ses.push(a.sesion);});ses.sort();
+    sel.innerHTML='<option value="">Todas las sesiones</option>'+ses.map(function(s){return '<option value="'+esc(s)+'">Sesión '+esc(s)+'</option>';}).join('');
+    sel.value=cur;
+    renderEntregas();
+  }catch(e){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;color:#b42318">✗ '+esc(e.message)+'</td></tr>';}
+}
+function hasNota(a){return a.nota!==''&&a.nota!=null;}
+function renderEntregas(){
+  var f=document.getElementById('ent-filter').value,st=document.getElementById('ent-state').value;
+  var list=ENTREGAS.filter(function(a){return (!f||a.sesion===f)&&(!st||(st==='done')===hasNota(a));}).slice().reverse();
+  var al={};list.forEach(function(a){al[a.usuario]=1;});
+  var pend=ENTREGAS.filter(function(a){return !hasNota(a);}).length;
+  document.getElementById('ent-count').textContent=list.length+' entrega'+(list.length!==1?'s':'')+' · '+Object.keys(al).length+' alumno'+(Object.keys(al).length!==1?'s':'')+' · '+pend+' sin corregir';
+  if(!list.length){document.getElementById('ent-tbody').innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:30px">Sin entregas</td></tr>';return;}
+  document.getElementById('ent-tbody').innerHTML=list.map(function(a){
+    var link=a.url?'<a href="'+esc(a.url)+'" target="_blank" class="btn sm ghost">'+esc(a.archivo||'Abrir')+' ↗</a>':'—';
+    if(a.enlace)link+=' <a href="'+esc(a.enlace)+'" target="_blank" class="btn sm ghost">🔗 Enlace</a>';
+    return '<tr'+(hasNota(a)?'':' class="ent-pend"')+'><td style="font-size:.74rem;white-space:nowrap">'+esc(a.fecha)+'</td>'
+      +'<td><b>'+esc(a.usuario)+'</b>'+(a.carpeta?'<br><a href="'+esc(a.carpeta)+'" target="_blank" style="font-size:.7rem">📁 carpeta</a>':'')+'</td>'
+      +'<td>'+esc(a.sesion)+'</td><td>'+esc(a.ejercicio||'—')+'</td><td>'+link+'</td>'
+      +'<td style="font-size:.8rem;max-width:180px;white-space:normal">'+esc(a.comentario||'—')+'</td>'
+      +'<td><input class="nota-in" type="number" min="0" max="10" step="0.25" value="'+esc(a.nota)+'" data-id="'+esc(a.id)+'" onchange="queueNota(this)" style="width:72px"></td>'
+      +'<td><input class="fb-in" value="'+esc(a.feedback||'')+'" data-id="'+esc(a.id)+'" onchange="queueNota(this)" placeholder="Comentario para el alumno"></td></tr>';
+  }).join('');
+}
+var _notaQueue={},_notaTimer=null;
+function queueNota(el){
+  var id=el.dataset.id,row=el.closest('tr');
+  var n=row.querySelector('.nota-in').value.trim(),fb=row.querySelector('.fb-in').value.trim();
+  if(n!==''&&(isNaN(+n)||+n<0||+n>10)){toast('La nota debe estar entre 0 y 10');el.focus();return;}
+  _notaQueue[id]={id:id,nota:n,feedback:fb};
+  var a=ENTREGAS.find(function(x){return x.id===id;});if(a){a.nota=n;a.feedback=fb;}
+  row.classList.toggle('ent-pend',n==='');
+  document.getElementById('ent-save').textContent='Guardando…';
+  clearTimeout(_notaTimer);_notaTimer=setTimeout(flushNotas,700);
+}
+async function flushNotas(){
+  var notas=Object.keys(_notaQueue).map(function(k){return _notaQueue[k];});_notaQueue={};
+  if(!notas.length)return;
+  var s=document.getElementById('ent-save');
+  try{await apiPost({accion:'calificar',clave:getAdminKey(),notas:notas});s.textContent='✓ Guardado';s.style.color='var(--ok)';renderNotas();}
+  catch(e){s.textContent='✗ '+e.message;s.style.color='#b42318';notas.forEach(function(n){_notaQueue[n.id]=n;});}
+  setTimeout(function(){if(s.textContent==='✓ Guardado')s.textContent='';},2500);
+}
+
+// ── Ponderación y calificación final ──
+var PONDERACION={pesos:[],ceros:true};
+function actKey(s,e){return s+'|'+(e||'');}
+function pondMode(){var m=document.getElementById('pond-mode');return m?m.value:'act';}
+function actividades(){
+  // actividades = entregas existentes ∪ ponderación guardada
+  var map={},mode=pondMode();
+  function add(s,e){var k=mode==='ses'?actKey(s,'*'):actKey(s,e);if(!map[k])map[k]={sesion:s,ejercicio:mode==='ses'?'*':e,n:0,c:0};return map[k];}
+  PONDERACION.pesos.forEach(function(p){if((mode==='ses')===(p.ejercicio==='*'))add(p.sesion,p.ejercicio);});
+  ENTREGAS.forEach(function(a){var x=add(a.sesion,a.ejercicio);x.n++;if(hasNota(a))x.c++;});
+  return Object.keys(map).sort().map(function(k){return map[k];});
+}
+function pesoDe(s,e){var p=PONDERACION.pesos.find(function(p){return p.sesion===s&&p.ejercicio===e;});return p?p.peso:null;}
+function renderPonderacion(){
+  var tb=document.getElementById('pond-tbody');if(!tb)return;
+  // si la ponderación guardada es por sesión, mostrar ese modo
+  document.getElementById('pond-ceros').checked=PONDERACION.ceros!==false;
+  var acts=actividades();
+  if(!acts.length){tb.innerHTML='<tr><td colspan="6" class="muted" style="text-align:center;padding:20px">Todavía no hay entregas.</td></tr>';return;}
+  tb.innerHTML=acts.map(function(a,i){
+    var w=pesoDe(a.sesion,a.ejercicio);if(w==null)w=1;
+    return '<tr><td>'+esc(a.sesion)+'</td><td>'+(a.ejercicio==='*'?'<i>Todas las actividades</i>':esc(a.ejercicio||'—'))+'</td><td>'+a.n+'</td><td>'+a.c+'</td>'
+      +'<td><input type="number" class="pond-in" min="0" step="1" value="'+w+'" data-s="'+esc(a.sesion)+'" data-e="'+esc(a.ejercicio)+'" oninput="pondPct();renderNotas(true)" style="width:80px"></td><td class="pond-pct"></td></tr>';
+  }).join('');
+  pondPct();
+}
+function readPesos(){
+  return Array.prototype.map.call(document.querySelectorAll('.pond-in'),function(i){return{sesion:i.dataset.s,ejercicio:i.dataset.e,peso:Math.max(0,+i.value||0)};});
+}
+function pondPct(){
+  var ins=document.querySelectorAll('.pond-in'),tot=0;ins.forEach(function(i){tot+=Math.max(0,+i.value||0);});
+  ins.forEach(function(i){var cell=i.closest('tr').querySelector('.pond-pct');var v=Math.max(0,+i.value||0);cell.textContent=tot?(v/tot*100).toFixed(1)+' %':'—';});
+  document.getElementById('pond-msg').textContent='Suma de pesos: '+tot+(tot?'':' · ⚠️ asigna algún peso');
+}
+function pondEqual(){document.querySelectorAll('.pond-in').forEach(function(i){i.value=1;});pondPct();renderNotas(true);}
+async function savePonderacion(){
+  var msg=document.getElementById('pond-msg');
+  var pesos=readPesos(),mode=pondMode();
+  // conservar los pesos del otro modo
+  var otros=PONDERACION.pesos.filter(function(p){return (mode==='ses')!==(p.ejercicio==='*');});
+  var ceros=document.getElementById('pond-ceros').checked;
+  try{
+    await apiPost({accion:'guardarPonderacion',clave:getAdminKey(),pesos:otros.concat(pesos),ceros:ceros});
+    PONDERACION={pesos:otros.concat(pesos),ceros:ceros};
+    msg.innerHTML='<span style="color:var(--ok)">✓ Ponderación guardada en la pestaña «ponderacion» de tu hoja</span>';
+    renderNotas();
+  }catch(e){msg.innerHTML='<span style="color:#b42318">✗ '+esc(e.message)+'</span>';}
+}
+function calcNotas(){
+  var mode=pondMode(),live=document.querySelectorAll('.pond-in').length;
+  var acts=actividades().map(function(a){
+    var w=live?null:pesoDe(a.sesion,a.ejercicio);
+    if(live){var el=document.querySelector('.pond-in[data-s="'+a.sesion+'"][data-e="'+(a.ejercicio||'').replace(/"/g,'\\"')+'"]');w=el?Math.max(0,+el.value||0):0;}
+    if(w==null)w=1;a.peso=w;return a;}).filter(function(a){return a.peso>0;});
+  var ceros=document.getElementById('pond-ceros')?document.getElementById('pond-ceros').checked:PONDERACION.ceros!==false;
+  var users={};
+  (SHEET_USERS||[]).forEach(function(u){users[u.username]=1;});
+  ENTREGAS.forEach(function(a){users[a.usuario]=1;});
+  var rows=Object.keys(users).sort().map(function(u){
+    var cells=[],sw=0,sn=0,pend=0;
+    acts.forEach(function(a){
+      var mine=ENTREGAS.filter(function(e){return e.usuario===u&&e.sesion===a.sesion&&(a.ejercicio==='*'||e.ejercicio===a.ejercicio);});
+      var graded=mine.filter(hasNota);
+      var val;
+      if(a.ejercicio==='*'&&graded.length){ // por sesión: media de sus actividades corregidas (última de cada ejercicio)
+        var last={};graded.forEach(function(e){last[e.ejercicio]=+String(e.nota).replace(',','.');});
+        var ks=Object.keys(last);val=ks.reduce(function(s,k){return s+last[k];},0)/ks.length;
+      }else if(graded.length){val=+String(graded[graded.length-1].nota).replace(',','.');}
+      if(val!=null){cells.push(val.toFixed(2).replace(/\.?0+$/,''));sw+=a.peso;sn+=a.peso*val;}
+      else if(mine.length){cells.push('⏳');pend++;}
+      else{cells.push('—');if(ceros){sw+=a.peso;}}
+    });
+    return{usuario:u,cells:cells,final:sw?sn/sw:null,pend:pend};
+  });
+  return{acts:acts,rows:rows};
+}
+function renderNotas(skipPond){
+  if(!document.getElementById('notas-tbody'))return;
+  if(!skipPond)renderPonderacion();
+  var d=calcNotas();
+  document.getElementById('notas-thead').innerHTML='<tr><th>Alumno</th>'+d.acts.map(function(a){
+    return '<th title="Peso '+a.peso+'">'+esc(a.sesion)+(a.ejercicio==='*'?'':'<br><span style="font-weight:500;font-size:.7rem">'+esc(a.ejercicio)+'</span>')+'</th>';}).join('')+'<th>Nota final</th></tr>';
+  if(!d.rows.length){document.getElementById('notas-tbody').innerHTML='<tr><td colspan="'+(d.acts.length+2)+'" class="muted" style="text-align:center;padding:20px">Sin alumnos</td></tr>';return;}
+  document.getElementById('notas-tbody').innerHTML=d.rows.map(function(r){
+    var f=r.final==null?'—':r.final.toFixed(2);
+    var cls=r.final==null?'':r.final>=5?' ok':' bad';
+    return '<tr><td><b>'+esc(r.usuario)+'</b>'+(r.pend?' <span class="muted small">('+r.pend+' sin corregir)</span>':'')+'</td>'
+      +r.cells.map(function(c){return '<td style="text-align:center">'+c+'</td>';}).join('')
+      +'<td><span class="badge'+cls+'" style="font-size:.85rem">'+f+'</span></td></tr>';
+  }).join('');
+}
+function exportNotas(){
+  var d=calcNotas(),q=function(s){return '"'+String(s==null?'':s).replace(/"/g,'""')+'"';};
+  var csv=['Alumno'].concat(d.acts.map(function(a){return 'S'+a.sesion+(a.ejercicio==='*'?'':' '+a.ejercicio)+' (peso '+a.peso+')';})).concat(['Nota final']).map(q).join(';')+'\n';
+  d.rows.forEach(function(r){csv+=[r.usuario].concat(r.cells.map(function(c){return /^\d/.test(c)?c.replace('.',','):'';})).concat([r.final==null?'':r.final.toFixed(2).replace('.',',')]).map(q).join(';')+'\n';});
+  var link=document.createElement('a');link.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}));link.download='calificaciones_ia27.csv';link.click();
+}
+function exportEntregas(){
+  var q=function(s){return '"'+String(s==null?'':s).replace(/"/g,'""')+'"';};
+  var csv='Fecha,Alumno,Sesión,Ejercicio,Archivo,URL,Enlace,Comentario,Nota,Comentario profesor\n';
+  ENTREGAS.forEach(function(a){csv+=[a.fecha,a.usuario,a.sesion,a.ejercicio,a.archivo,a.url,a.enlace,a.comentario,a.nota,a.feedback].map(q).join(',')+'\n';});
+  var link=document.createElement('a');link.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}));link.download='entregas_ia27.csv';link.click();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FICHAS SUBIDAS POR EL ADMINISTRADOR
+// ══════════════════════════════════════════════════════════════
+var REMOTE_FICHAS=[];
+function normalizeFichaHtml(raw,meta){
+  var doc=new DOMParser().parseFromString(raw,'text/html');
+  var styles=Array.prototype.map.call(doc.head?doc.head.querySelectorAll('style'):[],function(s){return s.outerHTML;}).join('\n');
+  var body=doc.body;
+  var sn=body.querySelector('header.header .session-num');if(sn)sn.textContent='Sesión '+meta.id;
+  var html=body.innerHTML.trim();
+  if(!body.querySelector('header.header,.header .ficha-h1')){
+    var t=esc(meta.title||'Sesión '+meta.id);
+    html='<header class="header"><div class="header-text"><div class="session-num">Sesión '+esc(meta.id)+'</div>'
+      +'<h1 class="ficha-h1">'+t+'</h1><div class="meta">Inteligencia Artificial'+(meta.date?' &nbsp;·&nbsp; '+esc(meta.date):'')+'</div></div>'
+      +'<img class="header-logo" src="img/logo-ies.png" alt="IES Valle del Jerte"></header>\n'+html;
+  }
+  return (styles?styles+'\n':'')+html;
+}
+async function readFichaForm(){
+  var id=document.getElementById('nf-id').value.trim();
+  var f=document.getElementById('nf-file').files[0];
+  if(!/^\d{1,2}$/.test(id))throw new Error('Nº de sesión: un número de 1 o 2 cifras (p. ej. 07).');
+  id=id.padStart(2,'0');
+  var meta={id:id,title:document.getElementById('nf-title').value.trim(),date:document.getElementById('nf-date').value.trim(),
+    status:document.getElementById('nf-status').value,desc:document.getElementById('nf-desc').value.trim(),tags:['concept','practice']};
+  if(!meta.title)throw new Error('Escribe el título de la sesión.');
+  if(!f)throw new Error('Elige el archivo HTML de la ficha.');
+  var raw=await f.text();
+  return {meta:meta,html:normalizeFichaHtml(raw,meta)};
+}
+async function previewFicha(){
+  var msg=document.getElementById('nf-msg');msg.innerHTML='';
+  try{
+    var d=await readFichaForm();
+    var w=window.open('','_blank');
+    if(!w){msg.innerHTML='<div class="alert warn small">Permite las ventanas emergentes para ver la vista previa.</div>';return;}
+    var css=Array.prototype.map.call(document.querySelectorAll('style'),function(s){return s.outerHTML;}).join('');
+    w.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Vista previa</title><base href="'+location.href.replace(/[#?].*$/,'').replace(/[^/]*$/,'')+'">'+css+'</head><body><div class="ficha-content" id="ficha-content" style="max-width:980px;margin:0 auto">'+d.html+'</div></body></html>');
+    w.document.close();
+  }catch(e){msg.innerHTML='<div class="alert bad small">✗ '+esc(e.message)+'</div>';}
+}
+async function uploadFicha(){
+  var msg=document.getElementById('nf-msg'),btn=document.getElementById('nf-btn');msg.innerHTML='';
+  if(!getAdminKey()){msg.innerHTML='<div class="alert bad small">Introduce primero la clave de administrador en ⚙️ Configuración.</div>';return;}
+  try{
+    var d=await readFichaForm();
+    if(SESSIONS.some(function(s){return s.id===d.meta.id;})&&!confirm('Ya existe la sesión '+d.meta.id+'. ¿Sustituirla por esta ficha?'))return;
+    btn.disabled=true;btn.textContent='Publicando…';
+    await apiPost({accion:'subirFicha',clave:getAdminKey(),meta:d.meta,html:d.html});
+    msg.innerHTML='<div class="alert ok small">✓ Ficha '+d.meta.id+' publicada. Ya la ven todos los alumnos.</div>';
+    ['nf-id','nf-title','nf-date','nf-desc','nf-file'].forEach(function(k){document.getElementById(k).value='';});
+    await loadSessions(true);renderSidebar();renderFichasAdmin();
+  }catch(e){msg.innerHTML='<div class="alert bad small">✗ '+esc(e.message)+'</div>';}
+  finally{btn.disabled=false;btn.textContent='⬆ Publicar ficha';}
+}
+async function deleteFicha(id){
+  if(!confirm('¿Retirar la ficha '+id+' publicada desde el panel?'))return;
+  try{await apiPost({accion:'borrarFicha',clave:getAdminKey(),id:id});toast('Ficha '+id+' retirada');await loadSessions(true);renderSidebar();renderFichasAdmin();}
+  catch(e){toast('✗ '+e.message);}
+}
+function renderFichasAdmin(){
+  var el=document.getElementById('nf-list');if(!el)return;
+  if(!REMOTE_FICHAS.length){el.innerHTML='Todavía no has publicado fichas desde el panel.';return;}
+  el.innerHTML='<table class="data-table"><thead><tr><th>Sesión</th><th>Título</th><th>Fecha</th><th>Estado</th><th></th></tr></thead><tbody>'
+    +REMOTE_FICHAS.map(function(s){return '<tr><td>'+esc(s.id)+'</td><td>'+esc(s.title)+'</td><td>'+esc(s.date||'')+'</td><td>'+esc(s.status)+'</td>'
+      +'<td><a class="btn sm ghost" href="#/sesion/'+esc(s.id)+'">Ver</a> <button class="btn sm secondary" onclick="deleteFicha(\''+esc(s.id)+'\')">Retirar</button></td></tr>';}).join('')
+    +'</tbody></table>';
+}
+
+// Configuración permanente (config.json)
+function renderPermConfig(){
+  var d=document.getElementById('perm-drive'),s=document.getElementById('perm-sheets'),st=document.getElementById('perm-status');
+  if(!d)return;
+  d.value=REMOTE_CONF.driveUrl||getConf().driveUrl||'';
+  s.value=REMOTE_CONF.sheetsUrl||'';
+  var lines=[];
+  lines.push(REMOTE_CONF.driveUrl?'✅ Carpeta de entregas fijada en config.json':'⚠️ config.json sin carpeta de entregas (se usa la URL guardada en este navegador)');
+  if(REMOTE_CONF.sheetsUrl)lines.push(SHEET_USERS?'✅ Hoja de usuarios activa: '+SHEET_USERS.length+' alumnos':'⚠️ Hoja configurada pero no accesible');
+  else lines.push('ℹ️ Sin hoja de usuarios: se usan las cuentas locales');
+  if(REMOTE_CONF.actualizado)lines.push('Última actualización: '+esc(REMOTE_CONF.actualizado));
+  st.innerHTML=lines.join('<br>');
+}
+async function testSheetsPerm(){
+  var url=document.getElementById('perm-sheets').value.trim();
+  var msg=document.getElementById('perm-msg');
+  if(!url){msg.innerHTML='<div class="alert bad small">Pega la URL de la hoja</div>';return;}
+  msg.innerHTML='<span class="muted small">Probando…</span>';
+  try{
+    var r=await fetch(sheetsCsvUrl(url),{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var u=parseUserCSV(await r.text());
+    if(!u.length)throw new Error(_lastSheetDiag||'no hay filas usuario,contraseña');
+    msg.innerHTML='<div class="alert ok small">✓ Hoja accesible: '+u.length+' alumnos ('+esc(u.slice(0,3).map(function(x){return x.username;}).join(', '))+'…)</div>';
+  }catch(e){
+    var m=e.message;
+    if(/fetch/i.test(m))m='No se pudo descargar la hoja (normalmente porque no está compartida). Compartir → Acceso general → “Cualquier persona con el enlace” → Lector.';
+    msg.innerHTML='<div class="alert bad small">✗ '+esc(m)+'</div>';
+  }
+}
+function downloadConfig(){
+  var cfg={
+    _ayuda:'Configuración PERMANENTE de la app. Solo el administrador la modifica (en GitHub). Tras cambiarla, Netlify redespliega y se aplica a todos los dispositivos.',
+    driveUrl:document.getElementById('perm-drive').value.trim(),
+    sheetsUrl:document.getElementById('perm-sheets').value.trim(),
+    actualizado:new Date().toISOString().slice(0,10)
+  };
+  var blob=new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='config.json';a.click();
+  toast('config.json descargado → cópialo en frontend/ y súbelo a GitHub');
+}
+
+// Apps Script config
+function saveDriveUrl(){DRIVE_URL=document.getElementById('drive-url').value.trim();var c=getConf();c.driveUrl=DRIVE_URL;saveConf(c);toast('URL de Drive guardada');}
+async function testDrive(){
+  var url=document.getElementById('drive-url').value.trim();
+  if(!url){toast('Introduce una URL primero');return;}
+  var msg=document.getElementById('drive-msg');
+  msg.innerHTML='<span class="muted small">Probando…</span>';
+  try{var r=await fetch(url);var j=await r.json();msg.innerHTML='<div class="alert ok small">✓ Conexión correcta: '+(j.msg||'OK')+'</div>';}
+  catch(e){msg.innerHTML='<div class="alert bad small">✗ Error: '+esc(e.message)+'</div>';}
+}
+// ══════════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════════
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(function(ov){ov.addEventListener('click',function(e){if(e.target===ov)ov.classList.remove('open');});});
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2600);}
+function showErr(el,msg){el.textContent=msg;el.style.display='block';}
+function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ══════════════════════════════════════════════════════════════
+//  HASH ROUTING
+// ══════════════════════════════════════════════════════════════
+function handleHash(){
+  if(!CUR)return;
+  var h=location.hash||'#/';
+  if(h.startsWith('#/sesion/')){navigate('sesion',h.split('/')[2]);}
+  else if(h==='#/sandbox'){navigate('sandbox');}
+  else if(h==='#/recursos'){navigate('recursos');}
+  else if(h==='#/profesor'){navigate('profesor');}
+  else{navigate('home');}
+}
+window.addEventListener('hashchange',handleHash);
+
+// ══════════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════════
+(function(){
+  if(tryAutoLogin()){ensureConfig().then(function(){startApp();handleHash();});}
+})();
+</script>
+</body>
+</html>

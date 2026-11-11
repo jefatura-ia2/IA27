@@ -1,0 +1,68 @@
+[
+  {
+    "id": "01",
+    "status": "done",
+    "title": "El Terminal de Windows (CMD)",
+    "date": "15 Sep",
+    "tags": [
+      "concept",
+      "practice"
+    ],
+    "desc": "Comandos básicos de CMD: rutas, cd, dir, copy, del. Filosofía CLI vs GUI."
+  },
+  {
+    "id": "02",
+    "status": "done",
+    "title": "PowerShell y Comandos Avanzados",
+    "date": "22 Sep",
+    "tags": [
+      "concept",
+      "practice"
+    ],
+    "desc": "Variables, tuberías, aliases y scripting básico con PowerShell."
+  },
+  {
+    "id": "03",
+    "status": "done",
+    "title": "Conceptos Básicos de Estadística",
+    "date": "29 Sep",
+    "tags": [
+      "concept",
+      "practice"
+    ],
+    "desc": "Media, mediana, varianza, desv. típica, histogramas y distribución normal con Excel."
+  },
+  {
+    "id": "04",
+    "status": "done",
+    "title": "Python con VSCode: De Hola Mundo a Funciones",
+    "date": "13 Oct",
+    "tags": [
+      "concept",
+      "practice"
+    ],
+    "desc": "Entorno VSCode + Python, tipos, operadores, condicionales, bucles y funciones."
+  },
+  {
+    "id": "05",
+    "status": "done",
+    "title": "Estructuras de Datos en Python",
+    "date": "20 Oct",
+    "tags": [
+      "concept",
+      "practice"
+    ],
+    "desc": "Listas, tuplas, diccionarios y conjuntos: colecciones fundamentales de Python."
+  },
+  {
+    "id": "06",
+    "status": "active",
+    "title": "Machine Learning: tipos de aprendizaje y workflow",
+    "date": "30 Oct",
+    "tags": [
+      "concept",
+      "practice"
+    ],
+    "desc": "Supervisado, no supervisado, refuerzo y deep learning. Las 8 fases de un proyecto de ML y el preprocesamiento de datos. Incluye laboratorio interactivo de EDA y regresión (péndulo)."
+  }
+]

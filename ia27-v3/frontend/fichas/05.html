@@ -1,0 +1,702 @@
+<header class="header">
+  <div class="header-text">
+    <p class="session-num">Sesi&oacute;n 05</p>
+    <h1 class="ficha-h1">Estructuras<br><em>de Datos</em></h1>
+    <p class="meta">Inteligencia Artificial &nbsp;&middot;&nbsp; Tecnolog&iacute;a e Inform&aacute;tica</p>
+  </div>
+  <div class="header-logo" style="display:flex;align-items:center;justify-content:center;width:120px;height:120px">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="8" width="72" height="14" rx="7" fill="#1a4fa0"/>
+      <rect x="4" y="30" width="52" height="14" rx="7" fill="#1a4fa0" opacity=".75"/>
+      <rect x="4" y="52" width="64" height="14" rx="7" fill="#1a4fa0" opacity=".5"/>
+      <circle cx="68" cy="65" r="10" fill="#c9200e"/>
+      <text x="68" y="69" font-size="12" fill="#fff" text-anchor="middle" font-family="monospace" font-weight="bold">{}</text>
+    </svg>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+
+<!-- ESTRUCTURAS DE DATOS PYTHON -->
+<section id="estructuras-datos" style="margin:32px 0">
+  <style>
+    .ds-wrap{background:#fff;border:1.5px solid var(--border);border-radius:16px;overflow:hidden}
+    .ds-header{background:linear-gradient(135deg,#0f4c81 0%,#1a6fa8 100%);color:#fff;padding:22px 28px}
+    .ds-header h2{margin:0 0 4px;font-size:1.2rem;font-family:Montserrat,sans-serif}
+    .ds-header p{margin:0;font-size:.83rem;opacity:.8}
+    /* Overview table */
+    .ds-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;padding:22px 28px 10px;background:var(--bg)}
+    .ds-ov-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+    .ds-ov-card:hover{border-color:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.08)}
+    .ds-ov-icon{font-size:1.6rem;margin-bottom:6px}
+    .ds-ov-name{font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:3px}
+    .ds-ov-tag{display:inline-flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+    .ds-tag{font-size:.7rem;padding:2px 7px;border-radius:10px;font-weight:600}
+    .ds-tag-mut{background:#dcfce7;color:#15803d}
+    .ds-tag-inmut{background:#fee2e2;color:#dc2626}
+    .ds-tag-ord{background:#dbeafe;color:#1d4ed8}
+    .ds-tag-nord{background:#f3f4f6;color:#6b7280}
+    .ds-tag-dup{background:#fef9c3;color:#92400e}
+    .ds-tag-nodup{background:#ede9fe;color:#6d28d9}
+    .ds-ov-desc{font-size:.78rem;color:#64748b;line-height:1.4}
+    /* Tabs */
+    .ds-tabs{display:flex;border-bottom:1.5px solid var(--border);background:var(--bg);overflow-x:auto}
+    .ds-tab-btn{flex:0 0 auto;padding:12px 18px;border:none;background:transparent;cursor:pointer;font-size:.85rem;font-weight:600;color:#64748b;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
+    .ds-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);background:#fff}
+    /* Panels */
+    .ds-panel{padding:22px 28px}
+    .ds-panel-title{font-size:1.1rem;font-weight:700;color:var(--ink);margin:0 0 4px;font-family:Montserrat,sans-serif}
+    .ds-panel-sub{font-size:.83rem;color:#64748b;margin:0 0 18px}
+    /* Syntax card */
+    .ds-syntax{background:#0f172a;border-radius:10px;padding:18px 20px;margin-bottom:20px;overflow-x:auto}
+    .ds-syntax pre{margin:0;font-family:DM Mono,monospace;font-size:.83rem;color:#e2e8f0;line-height:1.7;white-space:pre}
+    .ds-syntax .cm{color:#94a3b8}
+    .ds-syntax .kw{color:#93c5fd}
+    .ds-syntax .st{color:#86efac}
+    .ds-syntax .nm{color:#fde68a}
+    /* Methods table */
+    .ds-methods-title{font-size:.85rem;font-weight:700;color:var(--ink);margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em}
+    .ds-table{width:100%;border-collapse:collapse;font-size:.84rem;margin-bottom:20px}
+    .ds-table th{background:var(--bg);text-align:left;padding:8px 12px;font-weight:700;color:var(--ink);border-bottom:2px solid var(--border)}
+    .ds-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+    .ds-table tr:last-child td{border-bottom:none}
+    .ds-table code{font-family:DM Mono,monospace;font-size:.82rem;background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--accent)}
+    /* Example boxes */
+    .ds-example{background:var(--bg);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:16px}
+    .ds-example-title{font-size:.8rem;font-weight:700;color:var(--accent);margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em}
+    /* Activities */
+    .ds-act-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+    .ds-act-tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s}
+    .ds-act-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .ds-act-card{background:var(--bg);border-radius:12px;padding:20px;margin-bottom:16px}
+    .ds-act-title{font-size:1rem;font-weight:700;color:var(--ink);margin:0 0 4px}
+    .ds-act-diff{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.74rem;font-weight:700;margin-bottom:10px}
+    .ds-act-diff.easy{background:#dcfce7;color:#15803d}
+    .ds-act-diff.medium{background:#fef9c3;color:#ca8a04}
+    .ds-act-diff.hard{background:#fee2e2;color:#dc2626}
+    .ds-act-desc{font-size:.9rem;color:#374151;line-height:1.65;margin:0 0 14px;white-space:pre-wrap}
+    .ds-hint-box{background:#fef9c3;border:1.5px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:.86rem;color:#92400e;margin-bottom:12px}
+    .ds-hint-btn{border:none;background:transparent;color:var(--accent);cursor:pointer;font-size:.84rem;font-weight:600;padding:0 0 12px}
+    .ds-code-editor{width:100%;min-height:160px;font-family:DM Mono,monospace;font-size:.84rem;background:#0f172a;color:#e2e8f0;border:none;border-radius:10px;padding:16px;resize:vertical;outline:none;line-height:1.65;tab-size:4;box-sizing:border-box}
+    .ds-run-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .ds-run-btn{padding:9px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:.88rem}
+    .ds-run-btn:hover{opacity:.88}
+    .ds-reset-btn{padding:9px 16px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-weight:600;font-size:.84rem}
+    .ds-results{margin-top:16px}
+    .ds-result-row{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:.85rem}
+    .ds-result-row.pass{background:#dcfce7;color:#15803d}
+    .ds-result-row.fail{background:#fee2e2;color:#dc2626}
+    .ds-result-row.err{background:#fef9c3;color:#92400e;font-family:DM Mono,monospace}
+    .ds-score-bar{display:flex;align-items:center;gap:12px;margin-top:12px;padding:11px 15px;background:var(--bg);border-radius:10px}
+    .ds-score-txt{font-size:.9rem;font-weight:700;color:var(--ink)}
+  
+/* ── FICHA SECTION NAV ─── */
+.ficha-section-nav{position:sticky;top:56px;z-index:90;background:#fff;border-bottom:2px solid var(--ink);display:none;overflow-x:auto;padding:0 12px;scrollbar-width:none}
+.ficha-section-nav::-webkit-scrollbar{display:none}
+.topbar.ficha-mode ~ .ficha-section-nav,.ficha-mode + * .ficha-section-nav{display:flex}
+#fichaSecNav{display:none}
+.topbar.ficha-mode ~ #fichaSecNav,.ficha-mode-active #fichaSecNav{display:flex}
+.fsn-btn{padding:10px 14px;font-size:.75rem;font-weight:700;border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;color:#888;transition:color .15s,border-color .15s;flex-shrink:0}
+.fsn-btn:hover{color:var(--ink)}
+.fsn-btn.fsn-active{color:var(--blue);border-bottom-color:var(--blue)}
+.fsn-btn.fsn-ae.fsn-active{color:#16a34a;border-bottom-color:#16a34a}
+/* ── PREV / NEXT ─── */
+.ficha-prev-next{display:flex;justify-content:space-between;align-items:center;padding:28px 0 8px;border-top:2px solid #eee;margin-top:40px;gap:12px}
+.pn-btn{display:flex;align-items:center;gap:8px;padding:11px 18px;border:2px solid var(--ink);border-radius:8px;background:#fff;cursor:pointer;font-weight:700;font-size:.8rem;transition:background .15s,color .15s;line-height:1.2;text-align:left}
+.pn-btn:hover{background:var(--ink);color:#fff}
+.pn-btn[disabled]{opacity:.3;cursor:not-allowed;pointer-events:none}
+.pn-label{font-size:.65rem;font-weight:500;color:#888;display:block}
+.pn-title{font-size:.8rem;font-weight:700;display:block}
+.pn-btn:hover .pn-label,.pn-btn:hover .pn-title{color:#fff}
+.pn-center{font-size:.72rem;color:#aaa;text-align:center;flex:1}
+/* ── SIDEBAR DRAWER ─── */
+.fsd-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300}
+.fsd-overlay.open{display:block}
+.fsd-drawer{position:fixed;right:0;top:0;bottom:0;width:300px;max-width:92vw;background:#fff;z-index:301;transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-left:2px solid var(--ink)}
+.fsd-drawer.open{transform:translateX(0)}
+.fsd-head{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 14px;border-bottom:2px solid var(--ink);background:#fff;flex-shrink:0}
+.fsd-head-title{font-weight:800;font-size:.88rem}
+.fsd-close-btn{background:none;border:none;cursor:pointer;font-size:1.3rem;line-height:1;color:#666;padding:4px 6px;border-radius:4px}
+.fsd-close-btn:hover{background:#f0f0f0}
+.fsd-list{overflow-y:auto;flex:1}
+.fsd-item{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid #f2f2f2;cursor:pointer;transition:background .1s}
+.fsd-item:hover{background:#f8f8f8}
+.fsd-item.fsd-current{background:#f0f4ff;border-left:3px solid var(--blue);padding-left:15px}
+.fsd-item.fsd-locked{opacity:.45;cursor:not-allowed}
+.fsd-num{width:34px;height:34px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff;background:#bbb}
+.fsd-item.status-done .fsd-num{background:var(--blue)}
+.fsd-item.status-plan .fsd-num{background:var(--amber)}
+.fsd-info{flex:1;min-width:0}
+.fsd-snum{font-size:.65rem;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em}
+.fsd-stitle{font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsd-sdate{font-size:.68rem;color:#999}
+/* ── SESSIONS BUTTON IN TOPBAR ─── */
+.sessions-btn{display:none;align-items:center;gap:5px;padding:6px 13px;border:2px solid var(--ink);border-radius:6px;background:#fff;cursor:pointer;font-size:.75rem;font-weight:700;margin-left:6px;transition:background .12s,color .12s}
+.sessions-btn:hover{background:var(--ink);color:#fff}
+.topbar.ficha-mode .sessions-btn{display:flex}
+
+</style>
+  <div class="ds-wrap">
+    <div class="ds-header">
+      <h2>🗂 Estructuras de Datos en Python</h2>
+      <p>Listas, tuplas, diccionarios y conjuntos — las colecciones fundamentales de Python con sus métodos y actividades prácticas</p>
+    </div>
+    <!-- Overview cards -->
+    <div class="ds-overview">
+      <div class="ds-ov-card" onclick="dsTab('lista')">
+        <div class="ds-ov-icon">📋</div>
+        <div class="ds-ov-name">Lista</div>
+        <div class="ds-ov-tag">
+          <span class="ds-tag ds-tag-mut">Mutable</span>
+          <span class="ds-tag ds-tag-ord">Ordenada</span>
+          <span class="ds-tag ds-tag-dup">Duplicados</span>
+        </div>
+        <div class="ds-ov-desc">Colección modificable de elementos en orden. La más versátil.</div>
+      </div>
+      <div class="ds-ov-card" onclick="dsTab('tupla')">
+        <div class="ds-ov-icon">📌</div>
+        <div class="ds-ov-name">Tupla</div>
+        <div class="ds-ov-tag">
+          <span class="ds-tag ds-tag-inmut">Inmutable</span>
+          <span class="ds-tag ds-tag-ord">Ordenada</span>
+          <span class="ds-tag ds-tag-dup">Duplicados</span>
+        </div>
+        <div class="ds-ov-desc">Como una lista pero fija. Ideal para datos que no deben cambiar.</div>
+      </div>
+      <div class="ds-ov-card" onclick="dsTab('dict')">
+        <div class="ds-ov-icon">📖</div>
+        <div class="ds-ov-name">Diccionario</div>
+        <div class="ds-ov-tag">
+          <span class="ds-tag ds-tag-mut">Mutable</span>
+          <span class="ds-tag ds-tag-ord">Ordenado</span>
+          <span class="ds-tag ds-tag-nodup">Claves únicas</span>
+        </div>
+        <div class="ds-ov-desc">Pares clave→valor. Acceso ultrarrápido por clave.</div>
+      </div>
+      <div class="ds-ov-card" onclick="dsTab('conj')">
+        <div class="ds-ov-icon">🔵</div>
+        <div class="ds-ov-name">Conjunto</div>
+        <div class="ds-ov-tag">
+          <span class="ds-tag ds-tag-mut">Mutable</span>
+          <span class="ds-tag ds-tag-nord">Sin orden</span>
+          <span class="ds-tag ds-tag-nodup">Sin duplicados</span>
+        </div>
+        <div class="ds-ov-desc">Elimina duplicados y permite operaciones de conjuntos matemáticos.</div>
+      </div>
+    </div>
+    <!-- Tabs -->
+    <div class="ds-tabs">
+      <button class="ds-tab-btn active" id="ds-tab-lista" onclick="dsTab('lista')">📋 Listas</button>
+      <button class="ds-tab-btn" id="ds-tab-tupla" onclick="dsTab('tupla')">📌 Tuplas</button>
+      <button class="ds-tab-btn" id="ds-tab-dict" onclick="dsTab('dict')">📖 Diccionarios</button>
+      <button class="ds-tab-btn" id="ds-tab-conj" onclick="dsTab('conj')">🔵 Conjuntos</button>
+      <button class="ds-tab-btn" id="ds-tab-act" onclick="dsTab('act')">✏️ Actividades</button>
+    </div>
+
+    <!-- LISTAS -->
+    <div id="ds-lista" class="ds-panel">
+      <h3 class="ds-panel-title">📋 Listas — <code>list</code></h3>
+      <p class="ds-panel-sub">Colección <strong>ordenada y mutable</strong> de elementos. Acepta tipos mixtos y duplicados. Se define con corchetes <code>[ ]</code>.</p>
+      <div class="ds-syntax"><pre><span class="cm"># Crear listas</span>
+<span class="nm">frutas</span> = [<span class="st">"manzana"</span>, <span class="st">"pera"</span>, <span class="st">"uva"</span>]
+<span class="nm">numeros</span> = [<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>, <span class="nm">40</span>]
+<span class="nm">mixta</span>  = [<span class="st">"Ana"</span>, <span class="nm">16</span>, <span class="nm">True</span>]          <span class="cm"># tipos mezclados</span>
+<span class="nm">vacia</span>  = []
+
+<span class="cm"># Acceso por índice (empieza en 0)</span>
+<span class="kw">print</span>(frutas[<span class="nm">0</span>])    <span class="cm"># "manzana"</span>
+<span class="kw">print</span>(frutas[-<span class="nm">1</span>])   <span class="cm"># "uva" (último)</span>
+<span class="kw">print</span>(frutas[<span class="nm">0</span>:<span class="nm">2</span>])  <span class="cm"># ["manzana", "pera"] (slice)</span>
+
+<span class="cm"># Modificar</span>
+frutas[<span class="nm">1</span>] = <span class="st">"kiwi"</span>  <span class="cm"># reemplazar</span>
+frutas.append(<span class="st">"naranja"</span>)   <span class="cm"># añadir al final</span>
+frutas.insert(<span class="nm">0</span>, <span class="st">"fresa"</span>)  <span class="cm"># insertar en posición</span>
+frutas.remove(<span class="st">"uva"</span>)        <span class="cm"># eliminar por valor</span>
+ultimo = frutas.pop()         <span class="cm"># extraer el último</span>
+frutas.sort()                 <span class="cm"># ordenar (modifica la lista)</span>
+frutas.reverse()              <span class="cm"># invertir</span>
+
+<span class="cm"># Consultar</span>
+<span class="kw">print</span>(<span class="kw">len</span>(frutas))           <span class="cm"># longitud</span>
+<span class="kw">print</span>(<span class="st">"pera"</span> <span class="kw">in</span> frutas)      <span class="cm"># True/False</span>
+<span class="kw">print</span>(frutas.count(<span class="st">"kiwi"</span>)) <span class="cm"># nº de apariciones</span>
+<span class="kw">print</span>(frutas.index(<span class="st">"kiwi"</span>)) <span class="cm"># posición</span></pre></div>
+      <p class="ds-methods-title">Métodos principales</p>
+      <table class="ds-table">
+        <tr><th>Método</th><th>Descripción</th><th>Ejemplo</th></tr>
+        <tr><td><code>append(x)</code></td><td>Añade <em>x</em> al final</td><td><code>lista.append(5)</code></td></tr>
+        <tr><td><code>insert(i, x)</code></td><td>Inserta <em>x</em> en posición <em>i</em></td><td><code>lista.insert(0, "a")</code></td></tr>
+        <tr><td><code>remove(x)</code></td><td>Elimina la primera aparición de <em>x</em></td><td><code>lista.remove("a")</code></td></tr>
+        <tr><td><code>pop(i)</code></td><td>Extrae y devuelve el elemento en <em>i</em> (defecto: último)</td><td><code>lista.pop()</code></td></tr>
+        <tr><td><code>sort()</code></td><td>Ordena la lista de menor a mayor</td><td><code>lista.sort(reverse=True)</code></td></tr>
+        <tr><td><code>reverse()</code></td><td>Invierte el orden</td><td><code>lista.reverse()</code></td></tr>
+        <tr><td><code>index(x)</code></td><td>Devuelve la posición de <em>x</em></td><td><code>lista.index("b")</code></td></tr>
+        <tr><td><code>count(x)</code></td><td>Cuenta las apariciones de <em>x</em></td><td><code>lista.count(3)</code></td></tr>
+        <tr><td><code>extend(l)</code></td><td>Añade todos los elementos de otra lista</td><td><code>lista.extend([7,8])</code></td></tr>
+        <tr><td><code>clear()</code></td><td>Vacía la lista</td><td><code>lista.clear()</code></td></tr>
+      </table>
+      <div class="ds-example">
+        <p class="ds-example-title">🎯 Ejemplo práctico — Gestión de una playlist</p>
+        <div class="ds-syntax"><pre><span class="nm">playlist</span> = [<span class="st">"Bohemian Rhapsody"</span>, <span class="st">"Hotel California"</span>, <span class="st">"Stairway to Heaven"</span>]
+playlist.append(<span class="st">"Imagine"</span>)
+playlist.insert(<span class="nm">0</span>, <span class="st">"Yesterday"</span>)
+playlist.remove(<span class="st">"Hotel California"</span>)
+playlist.sort()
+<span class="kw">print</span>(<span class="st">f"Tienes {</span><span class="kw">len</span>(playlist)<span class="st">} canciones"</span>)  <span class="cm"># 4</span>
+<span class="kw">for</span> i, cancion <span class="kw">in</span> <span class="kw">enumerate</span>(playlist, <span class="nm">1</span>):
+    <span class="kw">print</span>(<span class="st">f"{i}. {cancion}"</span>)</pre></div>
+      </div>
+    </div>
+
+    <!-- TUPLAS -->
+    <div id="ds-tupla" class="ds-panel" style="display:none">
+      <h3 class="ds-panel-title">📌 Tuplas — <code>tuple</code></h3>
+      <p class="ds-panel-sub">Colección <strong>ordenada e inmutable</strong>. Una vez creada, no puede modificarse. Se define con paréntesis <code>( )</code> o simplemente con comas.</p>
+      <div class="ds-syntax"><pre><span class="cm"># Crear tuplas</span>
+<span class="nm">coordenadas</span> = (<span class="nm">40.415</span>, -<span class="nm">3.703</span>)         <span class="cm"># Madrid</span>
+<span class="nm">rgb_rojo</span>    = (<span class="nm">255</span>, <span class="nm">0</span>, <span class="nm">0</span>)
+<span class="nm">dimensiones</span> = (<span class="nm">1920</span>, <span class="nm">1080</span>)
+<span class="nm">singleton</span>   = (<span class="nm">42</span>,)                      <span class="cm"># tupla de 1 elem. (coma obligatoria)</span>
+<span class="nm">sin_parent</span>  = <span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>               <span class="cm"># también es tupla</span>
+
+<span class="cm"># Acceso (igual que lista)</span>
+<span class="kw">print</span>(coordenadas[<span class="nm">0</span>])   <span class="cm"># 40.415</span>
+<span class="kw">print</span>(rgb_rojo[-<span class="nm">1</span>])     <span class="cm"># 0</span>
+
+<span class="cm"># Desempaquetado (unpacking)</span>
+lat, lon = coordenadas
+r, g, b  = rgb_rojo
+<span class="kw">print</span>(<span class="st">f"Latitud: {lat}, Longitud: {lon}"</span>)
+
+<span class="cm"># ¿Por qué usarlas? Garantía de inmutabilidad</span>
+<span class="cm"># coordenadas[0] = 41.0   → ❌ TypeError: 'tuple' object does not support item assignment</span>
+
+<span class="cm"># Métodos disponibles (solo dos)</span>
+dias = (<span class="st">"lunes"</span>, <span class="st">"martes"</span>, <span class="st">"lunes"</span>, <span class="st">"miércoles"</span>)
+<span class="kw">print</span>(dias.count(<span class="st">"lunes"</span>))    <span class="cm"># 2</span>
+<span class="kw">print</span>(dias.index(<span class="st">"martes"</span>))   <span class="cm"># 1</span>
+
+<span class="cm"># Tuplas vs Listas — regla práctica</span>
+<span class="cm"># ¿Los datos pueden cambiar? → Lista</span>
+<span class="cm"># ¿Son fijos por definición? → Tupla (colores RGB, coordenadas, versión...)</span></pre></div>
+      <p class="ds-methods-title">Cuándo usar tuplas</p>
+      <table class="ds-table">
+        <tr><th>Caso de uso</th><th>Ejemplo</th></tr>
+        <tr><td>Coordenadas geográficas</td><td><code>punto = (lat, lon, altitud)</code></td></tr>
+        <tr><td>Colores RGB/RGBA</td><td><code>rojo = (255, 0, 0)</code></td></tr>
+        <tr><td>Registros de base de datos</td><td><code>fila = (1, "Ana", "Cáceres")</code></td></tr>
+        <tr><td>Valores de retorno múltiples</td><td><code>return min_val, max_val</code></td></tr>
+        <tr><td>Claves de diccionario</td><td><code>d[(x, y)] = "casilla"</code></td></tr>
+      </table>
+      <div class="ds-example">
+        <p class="ds-example-title">🎯 Ejemplo práctico — Sistema de colores</p>
+        <div class="ds-syntax"><pre><span class="nm">PALETA</span> = {
+    <span class="st">"rojo"</span>:   (<span class="nm">220</span>, <span class="nm">38</span>, <span class="nm">38</span>),
+    <span class="st">"verde"</span>:  (<span class="nm">22</span>, <span class="nm">163</span>, <span class="nm">74</span>),
+    <span class="st">"azul"</span>:   (<span class="nm">37</span>, <span class="nm">99</span>, <span class="nm">235</span>),
+}
+<span class="kw">for</span> nombre, (r, g, b) <span class="kw">in</span> PALETA.items():
+    <span class="kw">print</span>(<span class="st">f"{nombre}: rgb({r},{g},{b})"</span>)</pre></div>
+      </div>
+    </div>
+
+    <!-- DICCIONARIOS -->
+    <div id="ds-dict" class="ds-panel" style="display:none">
+      <h3 class="ds-panel-title">📖 Diccionarios — <code>dict</code></h3>
+      <p class="ds-panel-sub">Colección de pares <strong>clave → valor</strong>, mutable y ordenada (Python ≥ 3.7). Se define con llaves <code>{ }</code> y dos puntos <code>:</code>. Acceso instantáneo por clave.</p>
+      <div class="ds-syntax"><pre><span class="cm"># Crear diccionario</span>
+<span class="nm">alumno</span> = {
+    <span class="st">"nombre"</span>: <span class="st">"Ana"</span>,
+    <span class="st">"edad"</span>:   <span class="nm">16</span>,
+    <span class="st">"notas"</span>:  [<span class="nm">8</span>, <span class="nm">9</span>, <span class="nm">7</span>, <span class="nm">8</span>],
+    <span class="st">"activo"</span>: <span class="nm">True</span>
+}
+
+<span class="cm"># Leer valores</span>
+<span class="kw">print</span>(alumno[<span class="st">"nombre"</span>])             <span class="cm"># "Ana"</span>
+<span class="kw">print</span>(alumno.get(<span class="st">"ciudad"</span>, <span class="st">"N/A"</span>))  <span class="cm"># "N/A" (clave inexistente, sin error)</span>
+
+<span class="cm"># Modificar / añadir</span>
+alumno[<span class="st">"ciudad"</span>] = <span class="st">"Plasencia"</span>      <span class="cm"># nueva clave</span>
+alumno[<span class="st">"edad"</span>]   = <span class="nm">17</span>               <span class="cm"># actualizar</span>
+alumno.update({<span class="st">"curso"</span>: <span class="st">"1ºBach"</span>, <span class="st">"grupo"</span>: <span class="st">"A"</span>})
+
+<span class="cm"># Eliminar</span>
+alumno.pop(<span class="st">"activo"</span>)                <span class="cm"># elimina y devuelve el valor</span>
+<span class="kw">del</span> alumno[<span class="st">"ciudad"</span>]               <span class="cm"># elimina sin devolver</span>
+
+<span class="cm"># Iterar</span>
+<span class="kw">for</span> clave <span class="kw">in</span> alumno.keys():
+    <span class="kw">print</span>(clave)
+<span class="kw">for</span> valor <span class="kw">in</span> alumno.values():
+    <span class="kw">print</span>(valor)
+<span class="kw">for</span> clave, valor <span class="kw">in</span> alumno.items():  <span class="cm"># ← el más usado</span>
+    <span class="kw">print</span>(<span class="st">f"{clave}: {valor}"</span>)
+
+<span class="cm"># Comprobar existencia</span>
+<span class="kw">if</span> <span class="st">"nombre"</span> <span class="kw">in</span> alumno:
+    <span class="kw">print</span>(<span class="st">"Tiene nombre"</span>)</pre></div>
+      <p class="ds-methods-title">Métodos principales</p>
+      <table class="ds-table">
+        <tr><th>Método</th><th>Descripción</th><th>Devuelve</th></tr>
+        <tr><td><code>get(k, default)</code></td><td>Valor de clave k; devuelve default si no existe</td><td>Valor o default</td></tr>
+        <tr><td><code>keys()</code></td><td>Todas las claves</td><td><code>dict_keys</code></td></tr>
+        <tr><td><code>values()</code></td><td>Todos los valores</td><td><code>dict_values</code></td></tr>
+        <tr><td><code>items()</code></td><td>Todos los pares (clave, valor)</td><td><code>dict_items</code></td></tr>
+        <tr><td><code>update(d)</code></td><td>Añade/actualiza con otro diccionario</td><td>None</td></tr>
+        <tr><td><code>pop(k)</code></td><td>Elimina clave k y devuelve su valor</td><td>Valor</td></tr>
+        <tr><td><code>setdefault(k, v)</code></td><td>Devuelve valor de k; si no existe lo crea con v</td><td>Valor</td></tr>
+        <tr><td><code>clear()</code></td><td>Vacía el diccionario</td><td>None</td></tr>
+      </table>
+      <div class="ds-example">
+        <p class="ds-example-title">🎯 Ejemplo práctico — Contador de palabras</p>
+        <div class="ds-syntax"><pre><span class="nm">texto</span> = <span class="st">"hola mundo hola python mundo hola"</span>
+<span class="nm">contador</span> = {}
+<span class="kw">for</span> palabra <span class="kw">in</span> texto.split():
+    contador[palabra] = contador.get(palabra, <span class="nm">0</span>) + <span class="nm">1</span>
+
+<span class="kw">print</span>(contador)
+<span class="cm"># {'hola': 3, 'mundo': 2, 'python': 1}</span>
+
+<span class="cm"># Ordenar por frecuencia (de mayor a menor)</span>
+ordenado = sorted(contador.items(), key=<span class="kw">lambda</span> x: x[<span class="nm">1</span>], reverse=<span class="nm">True</span>)
+<span class="kw">for</span> palabra, veces <span class="kw">in</span> ordenado:
+    <span class="kw">print</span>(<span class="st">f"{palabra}: {'█' * veces} ({veces})"</span>)</pre></div>
+      </div>
+    </div>
+
+    <!-- CONJUNTOS -->
+    <div id="ds-conj" class="ds-panel" style="display:none">
+      <h3 class="ds-panel-title">🔵 Conjuntos — <code>set</code></h3>
+      <p class="ds-panel-sub">Colección <strong>mutable, sin orden y sin duplicados</strong>. Se define con llaves <code>{ }</code> (sin dos puntos). Soporta operaciones matemáticas de conjuntos.</p>
+      <div class="ds-syntax"><pre><span class="cm"># Crear conjuntos</span>
+<span class="nm">pares</span>   = {<span class="nm">2</span>, <span class="nm">4</span>, <span class="nm">6</span>, <span class="nm">8</span>}
+<span class="nm">impares</span> = {<span class="nm">1</span>, <span class="nm">3</span>, <span class="nm">5</span>, <span class="nm">7</span>}
+<span class="nm">vacio</span>   = set()               <span class="cm"># ⚠️ {} crearía un dict, no un set</span>
+
+<span class="cm"># Eliminar duplicados de una lista</span>
+<span class="nm">lista</span> = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">3</span>, <span class="nm">3</span>]
+<span class="nm">unico</span> = set(lista)            <span class="cm"># {1, 2, 3}</span>
+
+<span class="cm"># Añadir / eliminar</span>
+pares.add(<span class="nm">10</span>)                 <span class="cm"># añadir elemento</span>
+pares.remove(<span class="nm">8</span>)               <span class="cm"># eliminar (error si no existe)</span>
+pares.discard(<span class="nm">99</span>)             <span class="cm"># eliminar sin error</span>
+
+<span class="cm"># Operaciones de conjuntos</span>
+<span class="nm">a</span> = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>}
+<span class="nm">b</span> = {<span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>}
+
+<span class="nm">union</span>         = a | b          <span class="cm"># {1,2,3,4,5,6}  ← todos</span>
+<span class="nm">interseccion</span>  = a &amp; b          <span class="cm"># {3,4}          ← comunes</span>
+<span class="nm">diferencia</span>    = a - b          <span class="cm"># {1,2}          ← en a pero no en b</span>
+<span class="nm">sim_diff</span>      = a ^ b          <span class="cm"># {1,2,5,6}      ← en uno solo</span>
+
+<span class="cm"># Comparar conjuntos</span>
+<span class="kw">print</span>({<span class="nm">1</span>,<span class="nm">2</span>}.issubset(a))      <span class="cm"># True  ({1,2} ⊆ a)</span>
+<span class="kw">print</span>(a.issuperset({<span class="nm">1</span>,<span class="nm">2</span>}))    <span class="cm"># True  (a ⊇ {1,2})</span>
+<span class="kw">print</span>(a.isdisjoint({<span class="nm">7</span>,<span class="nm">8</span>}))    <span class="cm"># True  (sin elementos comunes)</span></pre></div>
+      <p class="ds-methods-title">Operaciones entre conjuntos</p>
+      <table class="ds-table">
+        <tr><th>Operación</th><th>Símbolo</th><th>Método equivalente</th><th>Resultado</th></tr>
+        <tr><td>Unión</td><td><code>a | b</code></td><td><code>a.union(b)</code></td><td>Todos los elementos de ambos</td></tr>
+        <tr><td>Intersección</td><td><code>a &amp; b</code></td><td><code>a.intersection(b)</code></td><td>Solo los comunes</td></tr>
+        <tr><td>Diferencia</td><td><code>a - b</code></td><td><code>a.difference(b)</code></td><td>En a pero no en b</td></tr>
+        <tr><td>Dif. simétrica</td><td><code>a ^ b</code></td><td><code>a.symmetric_difference(b)</code></td><td>En uno solo</td></tr>
+      </table>
+      <div class="ds-example">
+        <p class="ds-example-title">🎯 Ejemplo práctico — Alumnos por grupos</p>
+        <div class="ds-syntax"><pre><span class="nm">grupo_A</span> = {<span class="st">"Ana"</span>, <span class="st">"Carlos"</span>, <span class="st">"María"</span>, <span class="st">"Pedro"</span>}
+<span class="nm">grupo_B</span> = {<span class="st">"Carlos"</span>, <span class="st">"Laura"</span>, <span class="st">"María"</span>, <span class="st">"Juan"</span>}
+
+en_ambos  = grupo_A &amp; grupo_B    <span class="cm"># {"Carlos","María"}</span>
+en_alguno = grupo_A | grupo_B    <span class="cm"># todos (6 alumnos)</span>
+solo_A    = grupo_A - grupo_B    <span class="cm"># {"Ana","Pedro"}</span>
+
+<span class="kw">print</span>(<span class="st">f"En ambos grupos: {en_ambos}"</span>)
+<span class="kw">print</span>(<span class="st">f"Total de alumnos únicos: {len(en_alguno)}"</span>)</pre></div>
+      </div>
+    </div>
+
+    <!-- ACTIVIDADES -->
+    <div id="ds-act" class="ds-panel" style="display:none">
+      <h3 class="ds-panel-title">✏️ Actividades — Estructuras de Datos</h3>
+      <p class="ds-panel-sub">5 actividades con corrección automática. Escribe tu código Python y pulsa <strong>Comprobar</strong>.</p>
+      <div class="ds-act-tabs">
+        <button class="ds-act-tab active" onclick="dsEx(0)">Act 1 · Lista</button>
+        <button class="ds-act-tab" onclick="dsEx(1)">Act 2 · Lista ★</button>
+        <button class="ds-act-tab" onclick="dsEx(2)">Act 3 · Diccionario</button>
+        <button class="ds-act-tab" onclick="dsEx(3)">Act 4 · Diccionario ★</button>
+        <button class="ds-act-tab" onclick="dsEx(4)">Act 5 · Conjunto ★★</button>
+      </div>
+      <div id="ds-ex-container"></div>
+    </div>
+  </div>
+
+<div class="ex-block" id="ex-ds"><div class="ex-hdr" onclick="exToggle('ds')"><span>📝 Actividades propuestas — Estructuras de datos</span><div class="ex-hdr-r"><span class="ex-badge">4 ejercicios</span><span class="ex-chev open" id="ex-chev-ds">▼</span></div></div><div class="ex-body" id="ex-body-ds"><div class="ex-tabs"><button class="ex-tab on" onclick="exTab('ds',0)">EJ-DS-A</button><button class="ex-tab" onclick="exTab('ds',1)">EJ-DS-B</button><button class="ex-tab" onclick="exTab('ds',2)">EJ-DS-C</button><button class="ex-tab" onclick="exTab('ds',3)">EJ-DS-D</button></div><div class="ex-panel on" id="ex-panel-ds-0"><div class="ex-card"><div class="ex-card-h"><h4>EJ-DS-A — Inventario de aula</h4><span class="diff-basic">Básico</span></div><p class="ex-desc">Gestiona el inventario de equipos del aula usando una <code>list</code>. Practica <code>append()</code>, <code>insert()</code>, <code>remove()</code>, <code>sort()</code>, slicing e <code>index()</code>.</p></div><textarea class="ex-code" id="ex-code-ds-0" spellcheck="false" oninput="exSave('ds',0,this.value)"># ╔══════════════════════════════════════╗
+# ║  EJ-DS-A: Inventario de aula        ║
+# ║  Listas + operaciones fundamentales  ║
+# ╚══════════════════════════════════════╝
+
+inventario = ["ordenador", "proyector", "pizarra", "tablet", "impresora"]
+
+# 1. Imprime la lista original y su longitud
+print("Inventario inicial:")
+# ...
+
+# 2. Añade "webcam" al final e inserta "router" en posición 0
+# ...
+
+# 3. Elimina "impresora" de la lista
+# ...
+
+# 4. Ordena la lista alfabéticamente y recórrela numerada
+# ...
+
+# 5. Busca "tablet" y muestra su posición
+# ...
+
+# 6. Guarda en una variable los 3 primeros elementos (slicing) e imprímelos
+# ...
+</textarea><div class="ex-btnrow"><button class="ex-btn-dl" onclick="exDownload('ds',0)">⬇ Descargar ej_ds_a_inventario.py</button><button class="ex-btn-sol" id="btn-sol-ds-0" onclick="exRevealSol('ds',0)" style="display:none">🔑 Ver solución (Profesor)</button></div><div class="ex-sol-area" id="sol-area-ds-0" style="display:none"></div></div><div class="ex-panel" id="ex-panel-ds-1"><div class="ex-card"><div class="ex-card-h"><h4>EJ-DS-B — Agenda de clase</h4><span class="diff-medium">Medio</span></div><p class="ex-desc">Construye una agenda de alumnos con <code>dict</code> anidados. Practica acceso por clave, <code>.items()</code>, <code>.values()</code> y comprensión de lista para calcular la media de notas.</p></div><textarea class="ex-code" id="ex-code-ds-1" spellcheck="false" oninput="exSave('ds',1,this.value)"># ╔══════════════════════════════════════╗
+# ║  EJ-DS-B: Agenda de clase           ║
+# ║  Diccionarios anidados              ║
+# ╚══════════════════════════════════════╝
+
+# 1. Crea un diccionario 'agenda' con al menos 3 alumnos
+#    Cada alumno: {"nombre": ..., "nota": ..., "email": ...}
+agenda = {}
+
+# 2. Añade un cuarto alumno directamente al diccionario
+
+# 3. Modifica la nota de uno de los alumnos
+
+# 4. Recorre agenda e imprime: nombre, nota y si está aprobado/suspenso
+print("── Listado completo ──")
+for clave, datos in agenda.items():
+    # ...
+    pass
+
+# 5. Calcula e imprime la media de la clase usando comprensión de lista
+notas = [d["nota"] for d in agenda.values()]
+media = # ...
+print(f"Media de clase: {media:.2f}")
+
+# 6. Comprueba si existe la clave "maria" en la agenda
+</textarea><div class="ex-btnrow"><button class="ex-btn-dl" onclick="exDownload('ds',1)">⬇ Descargar ej_ds_b_agenda.py</button><button class="ex-btn-sol" id="btn-sol-ds-1" onclick="exRevealSol('ds',1)" style="display:none">🔑 Ver solución (Profesor)</button></div><div class="ex-sol-area" id="sol-area-ds-1" style="display:none"></div></div><div class="ex-panel" id="ex-panel-ds-2"><div class="ex-card"><div class="ex-card-h"><h4>EJ-DS-C — Análisis de texto</h4><span class="diff-medium">Medio</span></div><p class="ex-desc">Analiza un texto con <code>set</code> y <code>dict</code>. Calcula palabras únicas, frecuencias y practica la intersección (<code>&amp;</code>) y diferencia (<code>-</code>) de conjuntos.</p></div><textarea class="ex-code" id="ex-code-ds-2" spellcheck="false" oninput="exSave('ds',2,this.value)"># ╔══════════════════════════════════════╗
+# ║  EJ-DS-C: Análisis de texto         ║
+# ║  Sets + conteo con diccionarios     ║
+# ╚══════════════════════════════════════╝
+
+texto = "Python es un lenguaje de programación Python es moderno y Python es popular"
+
+# 1. Convierte el texto en lista de palabras (en minúsculas con .lower().split())
+palabras = # ...
+
+# 2. Crea un conjunto con las palabras únicas y muestra cuántas hay
+unicas = # ...
+
+# 3. Encuentra las palabras que aparecen más de una vez
+repetidas = # ...
+print(f"Palabras repetidas: {repetidas}")
+
+# 4. Crea un diccionario de frecuencias {palabra: veces_que_aparece}
+frecuencia = {}
+for palabra in palabras:
+    # ...
+    pass
+print("Frecuencias:", frecuencia)
+
+# 5. Compara con otra frase usando operaciones de conjuntos (&amp; y -)
+frase2 = "Java es un lenguaje de programación orientado a objetos"
+set2   = set(frase2.lower().split())
+comunes = # intersección
+solo1   = # diferencia (palabras solo en el texto original)
+print(f"Comunes: {comunes}")
+print(f"Exclusivas del primer texto: {solo1}")
+</textarea><div class="ex-btnrow"><button class="ex-btn-dl" onclick="exDownload('ds',2)">⬇ Descargar ej_ds_c_texto.py</button><button class="ex-btn-sol" id="btn-sol-ds-2" onclick="exRevealSol('ds',2)" style="display:none">🔑 Ver solución (Profesor)</button></div><div class="ex-sol-area" id="sol-area-ds-2" style="display:none"></div></div><div class="ex-panel" id="ex-panel-ds-3"><div class="ex-card"><div class="ex-card-h"><h4>EJ-DS-D — Comprensiones y tuplas</h4><span class="diff-hard">Avanzado</span></div><p class="ex-desc">Domina las <strong>comprensiones de lista y diccionario</strong> y las <code>tuple</code>. Practica <code>zip()</code>, desempaquetado y filtros dentro de comprensiones.</p></div><textarea class="ex-code" id="ex-code-ds-3" spellcheck="false" oninput="exSave('ds',3,this.value)"># ╔══════════════════════════════════════╗
+# ║  EJ-DS-D: Comprensiones y tuplas   ║
+# ║  List/dict comprehensions + zip     ║
+# ╚══════════════════════════════════════╝
+
+# 1. Crea una tupla con las coordenadas de Plasencia y desempaquétala
+coordenadas = (40.6391, -6.0952)
+lat, lon = # ...
+print(f"Lat: {lat}, Lon: {lon}")
+
+# 2. Comprensión de lista: cuadrados del 1 al 10
+cuadrados = [# ...]
+print(f"Cuadrados: {cuadrados}")
+
+# 3. Comprensión con filtro: solo números impares del 1 al 20
+impares = [# ... if ...]
+print(f"Impares: {impares}")
+
+# 4. Dict comprehension: {número: cuadrado} para 1..7
+tabla = {# ...}
+print(f"Tabla cuadrados: {tabla}")
+
+# 5. Usa zip() para emparejar nombres y notas, luego filtra aprobados
+nombres = ["Ana", "Luis", "Sofía", "Pedro"]
+notas   = [8.5, 7.0, 9.1, 5.0]
+
+expedientes = list(zip(# ...))
+aprobados   = [(n, nota) for n, nota in expedientes if # ...]
+print(f"Aprobados: {aprobados}")
+</textarea><div class="ex-btnrow"><button class="ex-btn-dl" onclick="exDownload('ds',3)">⬇ Descargar ej_ds_d_comprensiones.py</button><button class="ex-btn-sol" id="btn-sol-ds-3" onclick="exRevealSol('ds',3)" style="display:none">🔑 Ver solución (Profesor)</button></div><div class="ex-sol-area" id="sol-area-ds-3" style="display:none"></div></div></div></div></section>
+
+<!-- AUTOEVALUACIÓN -->
+<section class="ficha-section" id="autoeval">
+  <div class="section-header">
+    <span class="section-num" style="background:var(--purple)">AE</span>
+    <h2 class="ficha-h2">Autoevaluación</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+    <p style="font-size:.85rem;color:#666;margin-bottom:14px">Marca tu nivel de logro en cada competencia de la sesión.</p>
+    <div class="autoeval-legend">
+      <span>❌ <strong>No logrado</strong> — No he llegado a hacerlo</span>
+      <span>⚠️ <strong>En proceso</strong> — Lo entiendo pero cometo errores</span>
+      <span>✅ <strong>Logrado</strong> — Lo hago correctamente</span>
+      <span>⭐ <strong>Excelente</strong> — Lo domino y podría explicárselo a un compañero</span>
+    </div>
+    <div class="autoeval-grid">
+
+      <div class="autoeval-item">
+        <span class="autoeval-comp">He instalado Python y las extensiones de VSCode y sé ejecutar un script desde el terminal integrado</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f04ae1" id="f04ae1-0" value="0"><label for="f04ae1-0"><span class="ae-i">❌</span>No logrado</label>
+          <input type="radio" name="f04ae1" id="f04ae1-1" value="1"><label for="f04ae1-1"><span class="ae-i">⚠️</span>En proceso</label>
+          <input type="radio" name="f04ae1" id="f04ae1-2" value="2"><label for="f04ae1-2"><span class="ae-i">✅</span>Logrado</label>
+          <input type="radio" name="f04ae1" id="f04ae1-3" value="3"><label for="f04ae1-3"><span class="ae-i">⭐</span>Excelente</label>
+        </div>
+      </div>
+
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Sé usar <code>print()</code> e <code>input()</code> y entiendo la diferencia entre mostrar datos y pedirlos al usuario</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f04ae2" id="f04ae2-0" value="0"><label for="f04ae2-0"><span class="ae-i">❌</span>No logrado</label>
+          <input type="radio" name="f04ae2" id="f04ae2-1" value="1"><label for="f04ae2-1"><span class="ae-i">⚠️</span>En proceso</label>
+          <input type="radio" name="f04ae2" id="f04ae2-2" value="2"><label for="f04ae2-2"><span class="ae-i">✅</span>Logrado</label>
+          <input type="radio" name="f04ae2" id="f04ae2-3" value="3"><label for="f04ae2-3"><span class="ae-i">⭐</span>Excelente</label>
+        </div>
+      </div>
+
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Declaro variables de tipo <code>int</code>, <code>float</code>, <code>str</code> y <code>bool</code>, y sé convertir entre tipos con <code>int()</code>, <code>float()</code> y <code>str()</code></span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f04ae3" id="f04ae3-0" value="0"><label for="f04ae3-0"><span class="ae-i">❌</span>No logrado</label>
+          <input type="radio" name="f04ae3" id="f04ae3-1" value="1"><label for="f04ae3-1"><span class="ae-i">⚠️</span>En proceso</label>
+          <input type="radio" name="f04ae3" id="f04ae3-2" value="2"><label for="f04ae3-2"><span class="ae-i">✅</span>Logrado</label>
+          <input type="radio" name="f04ae3" id="f04ae3-3" value="3"><label for="f04ae3-3"><span class="ae-i">⭐</span>Excelente</label>
+        </div>
+      </div>
+
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Uso correctamente los operadores aritméticos, de comparación y lógicos para construir expresiones</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f04ae4" id="f04ae4-0" value="0"><label for="f04ae4-0"><span class="ae-i">❌</span>No logrado</label>
+          <input type="radio" name="f04ae4" id="f04ae4-1" value="1"><label for="f04ae4-1"><span class="ae-i">⚠️</span>En proceso</label>
+          <input type="radio" name="f04ae4" id="f04ae4-2" value="2"><label for="f04ae4-2"><span class="ae-i">✅</span>Logrado</label>
+          <input type="radio" name="f04ae4" id="f04ae4-3" value="3"><label for="f04ae4-3"><span class="ae-i">⭐</span>Excelente</label>
+        </div>
+      </div>
+
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Escribo condicionales <code>if/elif/else</code> con indentación correcta y los combino con <code>and</code>/<code>or</code></span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f04ae5" id="f04ae5-0" value="0"><label for="f04ae5-0"><span class="ae-i">❌</span>No logrado</label>
+          <input type="radio" name="f04ae5" id="f04ae5-1" value="1"><label for="f04ae5-1"><span class="ae-i">⚠️</span>En proceso</label>
+          <input type="radio" name="f04ae5" id="f04ae5-2" value="2"><label for="f04ae5-2"><span class="ae-i">✅</span>Logrado</label>
+          <input type="radio" name="f04ae5" id="f04ae5-3" value="3"><label for="f04ae5-3"><span class="ae-i">⭐</span>Excelente</label>
+        </div>
+      </div>
+
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Uso bucles <code>for</code> con <code>range()</code> y bucles <code>while</code> para repetir acciones y validar entradas</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f04ae6" id="f04ae6-0" value="0"><label for="f04ae6-0"><span class="ae-i">❌</span>No logrado</label>
+          <input type="radio" name="f04ae6" id="f04ae6-1" value="1"><label for="f04ae6-1"><span class="ae-i">⚠️</span>En proceso</label>
+          <input type="radio" name="f04ae6" id="f04ae6-2" value="2"><label for="f04ae6-2"><span class="ae-i">✅</span>Logrado</label>
+          <input type="radio" name="f04ae6" id="f04ae6-3" value="3"><label for="f04ae6-3"><span class="ae-i">⭐</span>Excelente</label>
+        </div>
+      </div>
+
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Defino funciones con <code>def</code>, les paso parámetros, uso <code>return</code> y comprendo la diferencia entre función y llamada a función</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f04ae7" id="f04ae7-0" value="0"><label for="f04ae7-0"><span class="ae-i">❌</span>No logrado</label>
+          <input type="radio" name="f04ae7" id="f04ae7-1" value="1"><label for="f04ae7-1"><span class="ae-i">⚠️</span>En proceso</label>
+          <input type="radio" name="f04ae7" id="f04ae7-2" value="2"><label for="f04ae7-2"><span class="ae-i">✅</span>Logrado</label>
+          <input type="radio" name="f04ae7" id="f04ae7-3" value="3"><label for="f04ae7-3"><span class="ae-i">⭐</span>Excelente</label>
+        </div>
+      </div>
+
+    </div>
+    <label style="display:block;font-size:.75rem;font-weight:700;color:#666;margin-bottom:6px">¿Qué es lo que más te ha costado de esta sesión?</label>
+    <textarea class="autoeval-reflection" placeholder="Escribe aquí tu reflexión personal..."></textarea>
+  </div>
+</section>
+
+<footer class="ficha-footer">
+  <span>IES Valle del Jerte &nbsp;&middot;&nbsp; Plasencia, C&aacute;ceres</span>
+  <span>IA 1.&ordm; Bachillerato &nbsp;&middot;&nbsp; 
+
+<section class="ficha-section" id="autoeval05">
+  <div class="section-header">
+    <span class="section-num" style="background:var(--purple)">AE</span>
+    <h2 class="ficha-h2">Autoevaluaci&oacute;n</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+    <p style="font-size:.85rem;color:#666;margin-bottom:14px">Marca tu nivel de logro en cada competencia de la sesi&oacute;n.</p>
+    <div class="autoeval-legend">
+      <span>&#10060; <strong>No logrado</strong> &mdash; No he llegado a hacerlo</span>
+      <span>&#9888;&#65039; <strong>En proceso</strong> &mdash; Lo entiendo pero cometo errores</span>
+      <span>&#9989; <strong>Logrado</strong> &mdash; Lo hago correctamente</span>
+      <span>&#11088; <strong>Excelente</strong> &mdash; Lo domino y podr&iacute;a explic&aacute;rselo a un compa&ntilde;ero</span>
+    </div>
+    <div class="autoeval-grid">
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Creo y manejo listas: a&ntilde;adir, modificar, eliminar y acceder por &iacute;ndice</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f05ae1" id="f05ae1-0" value="0"><label for="f05ae1-0"><span class="ae-i">&#10060;</span>No logrado</label>
+          <input type="radio" name="f05ae1" id="f05ae1-1" value="1"><label for="f05ae1-1"><span class="ae-i">&#9888;&#65039;</span>En proceso</label>
+          <input type="radio" name="f05ae1" id="f05ae1-2" value="2"><label for="f05ae1-2"><span class="ae-i">&#9989;</span>Logrado</label>
+          <input type="radio" name="f05ae1" id="f05ae1-3" value="3"><label for="f05ae1-3"><span class="ae-i">&#11088;</span>Excelente</label>
+        </div>
+      </div>
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Distingo cu&aacute;ndo usar lista, tupla, diccionario o conjunto seg&uacute;n el problema</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f05ae2" id="f05ae2-0" value="0"><label for="f05ae2-0"><span class="ae-i">&#10060;</span>No logrado</label>
+          <input type="radio" name="f05ae2" id="f05ae2-1" value="1"><label for="f05ae2-1"><span class="ae-i">&#9888;&#65039;</span>En proceso</label>
+          <input type="radio" name="f05ae2" id="f05ae2-2" value="2"><label for="f05ae2-2"><span class="ae-i">&#9989;</span>Logrado</label>
+          <input type="radio" name="f05ae2" id="f05ae2-3" value="3"><label for="f05ae2-3"><span class="ae-i">&#11088;</span>Excelente</label>
+        </div>
+      </div>
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Accedo a valores de un diccionario por clave y recorro sus elementos con bucles</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f05ae3" id="f05ae3-0" value="0"><label for="f05ae3-0"><span class="ae-i">&#10060;</span>No logrado</label>
+          <input type="radio" name="f05ae3" id="f05ae3-1" value="1"><label for="f05ae3-1"><span class="ae-i">&#9888;&#65039;</span>En proceso</label>
+          <input type="radio" name="f05ae3" id="f05ae3-2" value="2"><label for="f05ae3-2"><span class="ae-i">&#9989;</span>Logrado</label>
+          <input type="radio" name="f05ae3" id="f05ae3-3" value="3"><label for="f05ae3-3"><span class="ae-i">&#11088;</span>Excelente</label>
+        </div>
+      </div>
+      <div class="autoeval-item">
+        <span class="autoeval-comp">Aplico operaciones de conjunto (uni&oacute;n, intersecci&oacute;n, diferencia) y comprendo su utilidad</span>
+        <div class="autoeval-levels">
+          <input type="radio" name="f05ae4" id="f05ae4-0" value="0"><label for="f05ae4-0"><span class="ae-i">&#10060;</span>No logrado</label>
+          <input type="radio" name="f05ae4" id="f05ae4-1" value="1"><label for="f05ae4-1"><span class="ae-i">&#9888;&#65039;</span>En proceso</label>
+          <input type="radio" name="f05ae4" id="f05ae4-2" value="2"><label for="f05ae4-2"><span class="ae-i">&#9989;</span>Logrado</label>
+          <input type="radio" name="f05ae4" id="f05ae4-3" value="3"><label for="f05ae4-3"><span class="ae-i">&#11088;</span>Excelente</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <span>Inteligencia Artificial &nbsp;&middot;&nbsp; Plasencia, C&aacute;ceres</span>
+  <span>IA 1.&ordm; Bachillerato &nbsp;&middot;&nbsp; Sesi&oacute;n 05</span>
+</footer>

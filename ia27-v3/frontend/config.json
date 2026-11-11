@@ -1,0 +1,6 @@
+{
+  "_ayuda": "Configuración PERMANENTE de la app. Solo el administrador la modifica (en GitHub). Tras cambiarla, Netlify redespliega y se aplica a todos los dispositivos.",
+  "driveUrl": "",
+  "sheetsUrl": "",
+  "actualizado": ""
+}

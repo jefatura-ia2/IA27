@@ -1,0 +1,179 @@
+<!--
+  PLANTILLA DE FICHA · IA 1º Bachillerato · IES Valle del Jerte
+  ──────────────────────────────────────────────────────────────
+  Copia este archivo, cambia los textos y súbelo desde
+  Panel Profesor → 📄 Fichas. Mantén las clases (header, toc,
+  ficha-section, activity-block, ex-block, fc-card…) para que la ficha
+  tenga el mismo formato que las demás. Puedes borrar los bloques que no uses.
+-->
+<header class="header">
+  <div class="header-text">
+    <div class="session-num">Sesión 07</div>
+    <h1 class="ficha-h1">Título de la <em>sesión</em></h1>
+    <div class="meta">Inteligencia Artificial &nbsp;·&nbsp; 10 Nov 2026 &nbsp;·&nbsp; 2 horas</div>
+  </div>
+  <img class="header-logo" src="img/logo-ies.png" alt="IES Valle del Jerte">
+</header>
+
+<style>
+/* Tarjetas de autoevaluación (no borrar si usas el bloque de tarjetas) */
+.fc-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.fc-ctrl-btn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:.85rem;font-weight:600}
+#fc-score{margin-left:auto;font-size:.9rem;font-weight:700;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border)}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.fc-card{height:180px;cursor:pointer;perspective:800px;border-radius:12px}
+.fc-card.fc-known{outline:2.5px solid var(--green)}
+.fc-card.fc-unknown{outline:2.5px solid var(--red)}
+.fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;border:1.5px solid var(--border);padding:16px;display:flex;flex-direction:column;justify-content:center}
+.fc-back{transform:rotateY(180deg)}
+.fc-num{font-size:.72rem;font-weight:700;margin-bottom:8px;font-family:var(--mono)}
+.fc-q{font-size:.95rem;font-weight:600;margin:0}
+.fc-a{font-size:.85rem;margin:0 0 auto;line-height:1.5;overflow:auto;max-height:100px}
+.fc-hint{font-size:.75rem;color:#999;margin-top:auto;text-align:center}
+.fc-btns{display:flex;gap:8px;margin-top:10px}
+.fc-btn{flex:1;padding:6px;border-radius:8px;border:none;cursor:pointer;font-size:.8rem;font-weight:700}
+.fc-btn-no{background:#fee2e2;color:#dc2626}.fc-btn-yes{background:#dcfce7;color:#16a34a}
+</style>
+
+<div class="toc">
+  <div class="toc-title">Contenidos</div>
+  <ol>
+    <li><a href="#s7-1">Primer apartado de teoría</a></li>
+    <li><a href="#s7-2">Segundo apartado de teoría</a></li>
+    <li><a href="#s7-ej">✏️ Ejercicios propuestos</a></li>
+    <li><a href="#s7-py">🐍 Ejercicios de práctica (Python)</a></li>
+    <li><a href="#tarjetas">🃏 Tarjetas de autoevaluación</a></li>
+    <li><a href="#s7-entrega">📨 Actividad de entrega final</a></li>
+  </ol>
+</div>
+
+<!-- ══════════ SECCIÓN DE TEORÍA (desplegable) ══════════ -->
+<section class="ficha-section" id="s7-1">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="ficha-h2">Primer apartado de teoría</span>
+    <span class="section-time">15 min</span>
+  </div>
+  <div class="section-body">
+    <p>Texto de la explicación. Puedes usar <strong>negritas</strong>, listas y tablas.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Concepto</th><th>Definición</th></tr></thead>
+      <tbody><tr><td>Ejemplo</td><td>Descripción del ejemplo</td></tr></tbody>
+    </table></div>
+    <div class="tip">💡 Consejo o idea clave.</div>
+    <div class="warn">⚠️ Aviso o error frecuente.</div>
+  </div>
+</section>
+
+<section class="ficha-section" id="s7-2">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="ficha-h2">Segundo apartado de teoría</span>
+    <span class="section-time">20 min</span>
+  </div>
+  <div class="section-body">
+    <p>Más contenido…</p>
+  </div>
+</section>
+
+<!-- ══════════ EJERCICIOS PROPUESTOS (enunciado desplegable + descarga + subida) ══════════ -->
+<section class="ficha-section" id="s7-ej">
+  <div class="section-header">
+    <span class="section-num" style="background:#16a34a">EJ</span>
+    <span class="ficha-h2">Ejercicios propuestos</span>
+    <span class="section-time">30 min</span>
+  </div>
+  <div class="section-body">
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">1</span><h4>Título del ejercicio 1</h4></div>
+      <div class="act-body">
+        <p>Enunciado del ejercicio.</p>
+        <ol><li>Apartado a</li><li>Apartado b</li></ol>
+      </div>
+    </div>
+    <div class="activity-block">
+      <div class="act-header"><span class="act-num">2</span><h4>Título del ejercicio 2</h4></div>
+      <div class="act-body"><p>Enunciado del ejercicio.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ EJERCICIOS DE PRÁCTICA EN PYTHON (botón «Subir mi .py» automático) ══════════ -->
+<section class="ficha-section" id="s7-py">
+  <div class="section-header">
+    <span class="section-num">PY</span>
+    <span class="ficha-h2">Ejercicios de práctica</span>
+    <span class="section-time">30 min</span>
+  </div>
+  <div class="section-body">
+    <div class="ex-block" id="ex-s7">
+      <div class="ex-hdr" onclick="exToggle('s7')">
+        <span>📝 Ejercicios de práctica</span>
+        <div class="ex-hdr-r"><span class="ex-badge">2 ejercicios</span><span class="ex-chev" id="ex-chev-s7">▼</span></div>
+      </div>
+      <div class="ex-body" id="ex-body-s7">
+        <div class="ex-tabs">
+          <button class="ex-tab on" id="ex-tabBtn-s7-0" onclick="exTab('s7',0)">EJ-07A</button>
+          <button class="ex-tab" id="ex-tabBtn-s7-1" onclick="exTab('s7',1)">EJ-07B</button>
+        </div>
+        <div class="ex-panel on" id="ex-panel-s7-0">
+          <div class="ex-card">
+            <div class="ex-card-h"><h4>EJ-07A — Título</h4><span class="diff-basic">Básico</span></div>
+            <p class="ex-desc">Enunciado del ejercicio de programación.</p>
+            <textarea class="ex-code" id="ex-code-s7-0" spellcheck="false" oninput="exSave('s7',0,this.value)"># EJ-07A — Título
+# Escribe aquí tu código
+
+print("Hola")</textarea>
+            <div class="ex-btnrow"><button class="ex-btn-dl" onclick="exDownload('s7',0)">⬇ Descargar ej07a.py</button></div>
+          </div>
+        </div>
+        <div class="ex-panel" id="ex-panel-s7-1">
+          <div class="ex-card">
+            <div class="ex-card-h"><h4>EJ-07B — Título</h4><span class="diff-medium">Medio</span></div>
+            <p class="ex-desc">Enunciado.</p>
+            <textarea class="ex-code" id="ex-code-s7-1" spellcheck="false" oninput="exSave('s7',1,this.value)"># EJ-07B</textarea>
+            <div class="ex-btnrow"><button class="ex-btn-dl" onclick="exDownload('s7',1)">⬇ Descargar ej07b.py</button></div>
+          </div>
+        </div>
+        <div class="ex-bar"><span>📦 Todos los ejercicios en un único archivo</span><button class="ex-btn-all" onclick="exDownloadAll()">⬇ Descargar ejercicios_S07.py</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TARJETAS DE AUTOEVALUACIÓN ══════════ -->
+<section id="tarjetas" style="margin:32px 0">
+  <h2>🃏 Tarjetas de autoevaluación</h2>
+  <div class="fc-controls">
+    <button class="fc-ctrl-btn" onclick="fcFlipAll(this)">👁 Mostrar todas</button>
+    <button class="fc-ctrl-btn" onclick="fcReset()">🔄 Reiniciar</button>
+    <span id="fc-score">0 / 2 dominadas</span>
+  </div>
+  <div class="fc-grid">
+    <div class="fc-card" id="fc1" onclick="fcFlip(this)"><div class="fc-inner">
+      <div class="fc-front"><span class="fc-num">1/2</span><p class="fc-q">Pregunta 1</p><span class="fc-hint">👆 Haz clic para responder</span></div>
+      <div class="fc-back"><p class="fc-a">Respuesta 1</p><div class="fc-btns" onclick="event.stopPropagation()">
+        <button class="fc-btn fc-btn-no" onclick="fcMark('fc1',0)">❌ No lo sé</button><button class="fc-btn fc-btn-yes" onclick="fcMark('fc1',1)">✅ Lo domino</button></div></div>
+    </div></div>
+    <div class="fc-card" id="fc2" onclick="fcFlip(this)"><div class="fc-inner">
+      <div class="fc-front"><span class="fc-num">2/2</span><p class="fc-q">Pregunta 2</p><span class="fc-hint">👆 Haz clic para responder</span></div>
+      <div class="fc-back"><p class="fc-a">Respuesta 2</p><div class="fc-btns" onclick="event.stopPropagation()">
+        <button class="fc-btn fc-btn-no" onclick="fcMark('fc2',0)">❌ No lo sé</button><button class="fc-btn fc-btn-yes" onclick="fcMark('fc2',1)">✅ Lo domino</button></div></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══════════ ACTIVIDAD DE ENTREGA FINAL ══════════ -->
+<section class="ficha-section" id="s7-entrega">
+  <div class="section-header">
+    <span class="section-num" style="background:#16a34a">📨</span>
+    <span class="ficha-h2">Actividad de entrega final</span>
+    <span class="section-time">Entrega: 1 semana</span>
+  </div>
+  <div class="section-body">
+    <p>Descripción de la tarea, formato del archivo (<code>S07_usuario.pdf</code>) y criterios.</p>
+    <button type="button" class="btn" onclick="openSubmit()">📨 Entregar mi actividad</button>
+  </div>
+</section>
